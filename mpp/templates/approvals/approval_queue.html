@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Genehmigungen{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Offene Genehmigungen</h1>
+{% if requests %}
+<div class="overflow-x-auto">
+  <table class="table table-zebra">
+    <thead><tr><th>#</th><th>Bestellung</th><th>Service</th><th>Erstellt</th><th>Aktionen</th></tr></thead>
+    <tbody>
+      {% for req in requests %}
+      <tr>
+        <td>{{ req.pk }}</td>
+        <td>Order #{{ req.order.pk }}</td>
+        <td>{{ req.rule.template.name }}</td>
+        <td>{{ req.created_at|date:"d.m.Y H:i" }}</td>
+        <td class="flex gap-2">
+          <form method="post" action="{% url 'approvals:approve' pk=req.pk %}">
+            {% csrf_token %}
+            <button class="btn btn-success btn-sm">Genehmigen</button>
+          </form>
+          <form method="post" action="{% url 'approvals:reject' pk=req.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="comment" value="">
+            <button class="btn btn-error btn-sm">Ablehnen</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="text-center py-12 text-base-content/50">Keine offenen Genehmigungen.</div>
+{% endif %}
+{% endblock %}
