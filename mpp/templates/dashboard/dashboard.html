@@ -4,135 +4,195 @@
 {% block content %}
 <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
 
-<!-- Stat Cards -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-  <div class="stat bg-base-100 shadow rounded-box">
-    <div class="stat-title">Offene Bestellungen</div>
-    <div class="stat-value text-primary">{{ stats.open_orders|default:"0" }}</div>
-  </div>
-  <div class="stat bg-base-100 shadow rounded-box">
-    <div class="stat-title">Offene Genehmigungen</div>
-    <div class="stat-value text-warning">{{ stats.pending_approvals|default:"0" }}</div>
-  </div>
-  <div class="stat bg-base-100 shadow rounded-box">
-    <div class="stat-title">Aktive Subscriptions</div>
-    <div class="stat-value text-success">{{ stats.active_subscriptions|default:"0" }}</div>
-  </div>
-  <div class="stat bg-base-100 shadow rounded-box">
-    <div class="stat-title">Service-Templates</div>
-    <div class="stat-value text-accent">{{ stats.total_templates|default:"0" }}</div>
-  </div>
-</div>
+<div style="display:flex; flex-direction:column; gap:1.5rem;">
 
-<!-- Charts Row -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-  <div class="card bg-base-100 shadow">
-    <div class="card-body">
-      <h2 class="card-title">Bestellungen nach Status</h2>
-      <canvas id="statusChart" height="200"></canvas>
+  <!-- Row 1: Stat Cards (4 columns) -->
+  <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem;">
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Offene Bestellungen</div>
+      <div class="stat-value" style="color:#3B82F6;">{{ stats.open_orders|default:"0" }}</div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Offene Genehmigungen</div>
+      <div class="stat-value" style="color:#F59E0B;">{{ stats.pending_approvals|default:"0" }}</div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Aktive Services</div>
+      <div class="stat-value" style="color:#10B981;">{{ stats.active_subscriptions|default:"0" }}</div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Templates</div>
+      <div class="stat-value" style="color:#6B7280;">{{ stats.total_templates|default:"0" }}</div>
     </div>
   </div>
-  <div class="card bg-base-100 shadow">
-    <div class="card-body">
-      <h2 class="card-title">Bestellungen pro Monat</h2>
-      <canvas id="timelineChart" height="200"></canvas>
-    </div>
-  </div>
-</div>
 
-<!-- Recent Orders + Popular Services -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-  <div class="card bg-base-100 shadow">
-    <div class="card-body">
-      <h2 class="card-title">Letzte Bestellungen</h2>
-      {% if recent_orders %}
-      <div class="overflow-x-auto">
-        <table class="table table-sm">
-          <thead><tr><th>#</th><th>Status</th><th>Erstellt</th></tr></thead>
-          <tbody>
-            {% for order in recent_orders %}
-            <tr>
-              <td><a href="{% url 'orders:detail' pk=order.pk %}" class="link link-primary">#{{ order.pk }}</a></td>
-              <td>{% status_badge order.status %}</td>
-              <td>{{ order.created_at|date:"d.m.Y" }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+  <!-- Row 2: Quick-Access Tiles (Notifications + Review Requests) -->
+  <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:1rem;">
+    <a href="{% url 'notifications:list' %}" class="card bg-base-100 shadow hover:shadow-lg transition-shadow" style="text-decoration:none;">
+      <div class="card-body" style="flex-direction:row; justify-content:space-between; align-items:center;">
+        <div>
+          <h3 class="font-bold">Benachrichtigungen</h3>
+          <p class="text-sm text-base-content/50">Ungelesene Nachrichten</p>
+        </div>
+        {% if stats.unread_notifications > 0 %}
+        <span style="background:#EF4444; color:white; border-radius:50%; width:2.5rem; height:2.5rem; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.875rem;">
+          {% if stats.unread_notifications > 99 %}99+{% else %}{{ stats.unread_notifications }}{% endif %}
+        </span>
+        {% else %}
+        <span style="font-size:1.5rem;">🔔</span>
+        {% endif %}
       </div>
-      {% else %}
-      <p class="text-base-content/50">Keine Bestellungen vorhanden.</p>
-      {% endif %}
+    </a>
+    {% if pending_approval_count > 0 or user.role == "approver" or user.role == "admin" or user.role == "superadmin" %}
+    <a href="{% url 'approvals:queue' %}" class="card bg-base-100 shadow hover:shadow-lg transition-shadow" style="text-decoration:none;">
+      <div class="card-body" style="flex-direction:row; justify-content:space-between; align-items:center;">
+        <div>
+          <h3 class="font-bold">Review Requests</h3>
+          <p class="text-sm text-base-content/50">Offene Genehmigungen</p>
+        </div>
+        {% if stats.pending_approvals > 0 %}
+        <span style="background:#F59E0B; color:white; border-radius:50%; width:2.5rem; height:2.5rem; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.875rem;">
+          {{ stats.pending_approvals }}
+        </span>
+        {% else %}
+        <span style="font-size:1.5rem;">✅</span>
+        {% endif %}
+      </div>
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- Row 3: Recent Orders + Donut Chart -->
+  <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:1rem;">
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title text-base">Letzte Bestellungen</h2>
+        {% if recent_orders %}
+        <div class="overflow-x-auto">
+          <table class="table table-sm">
+            <thead><tr><th>#</th><th>Notizen</th><th>Status</th><th>Erstellt</th></tr></thead>
+            <tbody>
+              {% for order in recent_orders %}
+              <tr>
+                <td><a href="{% url 'orders:detail' pk=order.pk %}" class="link link-primary">#{{ order.pk }}</a></td>
+                <td class="text-sm">{{ order.notes|truncatewords:5|default:"—" }}</td>
+                <td>{% status_badge order.status %}</td>
+                <td class="text-sm">{{ order.created_at|date:"d.m.Y" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <a href="{% url 'orders:list' %}" class="link link-primary text-sm mt-2">Alle anzeigen →</a>
+        {% else %}
+        <p class="text-base-content/50">Keine Bestellungen vorhanden.</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title text-base">Bestellungen nach Status</h2>
+        <div style="max-width:250px; margin:0 auto;">
+          <canvas id="statusChart"></canvas>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="card bg-base-100 shadow">
-    <div class="card-body">
-      <h2 class="card-title">Beliebte Services</h2>
-      {% if popular_templates %}
-      <ul class="space-y-2">
-        {% for tpl in popular_templates %}
-        <li class="flex justify-between items-center">
-          <a href="{% url 'catalog:detail' pk=tpl.template_id %}" class="link link-primary">{{ tpl.template__name }}</a>
-          <span class="badge badge-outline">{{ tpl.order_count }}x</span>
-        </li>
-        {% endfor %}
-      </ul>
-      {% else %}
-      <p class="text-base-content/50">Noch keine Daten vorhanden.</p>
-      {% endif %}
+
+  <!-- Row 4: Popular Services + Timeline Chart -->
+  <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:1rem;">
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title text-base">Beliebte Services</h2>
+        {% if popular_templates %}
+        <ul style="list-style:none; padding:0; margin:0;">
+          {% for tpl in popular_templates %}
+          <li style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid oklch(0.869 0 0);">
+            <a href="{% url 'catalog:detail' pk=tpl.template_id %}" class="link link-primary text-sm">{{ tpl.template__name }}</a>
+            <span class="badge badge-outline badge-sm">{{ tpl.order_count }}x bestellt</span>
+          </li>
+          {% endfor %}
+        </ul>
+        <a href="{% url 'catalog:list' %}" class="link link-primary text-sm mt-2">Zum Shop →</a>
+        {% else %}
+        <p class="text-base-content/50">Noch keine Daten vorhanden.</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title text-base">Bestellungen pro Monat</h2>
+        <canvas id="timelineChart" style="max-height:200px;"></canvas>
+      </div>
     </div>
   </div>
+
 </div>
 
 <!-- Chart.js Data + Init -->
 {{ orders_by_status|json_script:"orders-by-status" }}
 {{ orders_by_month|json_script:"orders-by-month" }}
 <script>
-const STATUS_COLORS = {
-  draft: '#9CA3AF', submitted: '#3B82F6', pending_approval: '#F59E0B',
-  approved: '#8B5CF6', provisioning: '#6366F1', done: '#10B981',
-  failed: '#EF4444', rejected: '#F97316'
-};
-const STATUS_LABELS = {
-  draft: 'Entwurf', submitted: 'Eingereicht', pending_approval: 'Genehmigung',
-  approved: 'Genehmigt', provisioning: 'Bereitstellung', done: 'Abgeschlossen',
-  failed: 'Fehlgeschlagen', rejected: 'Abgelehnt'
-};
+document.addEventListener('DOMContentLoaded', function() {
+  var STATUS_COLORS = {
+    draft: '#9CA3AF', submitted: '#3B82F6', pending_approval: '#F59E0B',
+    approved: '#8B5CF6', provisioning: '#6366F1', done: '#10B981',
+    failed: '#EF4444', rejected: '#F97316'
+  };
+  var STATUS_LABELS = {
+    draft: 'Entwurf', submitted: 'Eingereicht', pending_approval: 'Genehmigung',
+    approved: 'Genehmigt', provisioning: 'Bereitstellung', done: 'Abgeschlossen',
+    failed: 'Fehlgeschlagen', rejected: 'Abgelehnt'
+  };
 
-// Donut Chart
-const statusData = JSON.parse(document.getElementById('orders-by-status').textContent);
-if (statusData && statusData.length > 0) {
-  new Chart(document.getElementById('statusChart'), {
-    type: 'doughnut',
-    data: {
-      labels: statusData.map(d => STATUS_LABELS[d.status] || d.status),
-      datasets: [{
-        data: statusData.map(d => d.count),
-        backgroundColor: statusData.map(d => STATUS_COLORS[d.status] || '#9CA3AF'),
-      }]
-    },
-    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
-  });
-}
+  // Donut Chart
+  try {
+    var statusData = JSON.parse(document.getElementById('orders-by-status').textContent);
+    if (statusData && statusData.length > 0) {
+      new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+          labels: statusData.map(function(d) { return STATUS_LABELS[d.status] || d.status; }),
+          datasets: [{
+            data: statusData.map(function(d) { return d.count; }),
+            backgroundColor: statusData.map(function(d) { return STATUS_COLORS[d.status] || '#9CA3AF'; }),
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } }
+        }
+      });
+    }
+  } catch(e) { console.error('Status chart error:', e); }
 
-// Line Chart
-const timelineData = JSON.parse(document.getElementById('orders-by-month').textContent);
-if (timelineData && timelineData.length > 0) {
-  new Chart(document.getElementById('timelineChart'), {
-    type: 'line',
-    data: {
-      labels: timelineData.map(d => d.month),
-      datasets: [{
-        label: 'Bestellungen',
-        data: timelineData.map(d => d.count),
-        borderColor: '#3B82F6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        tension: 0.3,
-        fill: true,
-      }]
-    },
-    options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
-  });
-}
+  // Line Chart
+  try {
+    var timelineData = JSON.parse(document.getElementById('orders-by-month').textContent);
+    if (timelineData && timelineData.length > 0) {
+      new Chart(document.getElementById('timelineChart'), {
+        type: 'line',
+        data: {
+          labels: timelineData.map(function(d) { return d.month; }),
+          datasets: [{
+            label: 'Bestellungen',
+            data: timelineData.map(function(d) { return d.count; }),
+            borderColor: '#3B82F6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.3,
+            fill: true,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+  } catch(e) { console.error('Timeline chart error:', e); }
+});
 </script>
 {% endblock %}

@@ -4,150 +4,180 @@
 {% block content %}
 <h1 class="text-2xl font-bold mb-6">Admin Dashboard</h1>
 
-<!-- System-wide Stat Cards -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-  <div class="stat bg-base-100 shadow rounded-box">
-    <div class="stat-title">Bestellungen gesamt</div>
-    <div class="stat-value text-primary">{{ stats.total_orders|default:"0" }}</div>
-  </div>
-  <div class="stat bg-base-100 shadow rounded-box">
-    <div class="stat-title">Offene Genehmigungen</div>
-    <div class="stat-value text-warning">{{ stats.pending_approvals|default:"0" }}</div>
-  </div>
-  <div class="stat bg-base-100 shadow rounded-box">
-    <div class="stat-title">Aktive Subscriptions</div>
-    <div class="stat-value text-success">{{ stats.active_subscriptions|default:"0" }}</div>
-  </div>
-  <div class="stat bg-base-100 shadow rounded-box">
-    <div class="stat-title">Benutzer</div>
-    <div class="stat-value text-accent">{{ stats.total_users|default:"0" }}</div>
-  </div>
-</div>
+<div style="display:flex; flex-direction:column; gap:1.5rem;">
 
-<!-- Status Breakdown -->
-<div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 mb-8">
-  {% for item in status_counts %}
-  <div class="stat bg-base-100 shadow rounded-box p-3">
-    <div class="stat-title text-xs">{% status_badge item.status %}</div>
-    <div class="stat-value text-lg">{{ item.count }}</div>
-  </div>
-  {% endfor %}
-</div>
-
-<!-- Charts Row -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-  <div class="card bg-base-100 shadow">
-    <div class="card-body">
-      <h2 class="card-title">Bestellungen nach Status</h2>
-      <canvas id="statusChart" height="200"></canvas>
+  <!-- Row 1: System-wide Stat Cards -->
+  <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem;">
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Bestellungen gesamt</div>
+      <div class="stat-value" style="color:#3B82F6;">{{ stats.total_orders|default:"0" }}</div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Offene Genehmigungen</div>
+      <div class="stat-value" style="color:#F59E0B;">{{ stats.pending_approvals|default:"0" }}</div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Aktive Subscriptions</div>
+      <div class="stat-value" style="color:#10B981;">{{ stats.total_subscriptions|default:"0" }}</div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Templates</div>
+      <div class="stat-value" style="color:#6B7280;">{{ stats.total_templates|default:"0" }}</div>
     </div>
   </div>
-  <div class="card bg-base-100 shadow">
-    <div class="card-body">
-      <h2 class="card-title">Bestellungen pro Monat</h2>
-      <canvas id="timelineChart" height="200"></canvas>
+
+  <!-- Row 2: Status Breakdown Cards -->
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap:0.5rem;">
+    <div class="bg-base-100 shadow rounded-box p-3 text-center">
+      <div class="text-xs text-base-content/50">Entwurf</div>
+      <div class="text-xl font-bold" style="color:#9CA3AF;">{{ stats.draft|default:"0" }}</div>
+    </div>
+    <div class="bg-base-100 shadow rounded-box p-3 text-center">
+      <div class="text-xs text-base-content/50">Eingereicht</div>
+      <div class="text-xl font-bold" style="color:#3B82F6;">{{ stats.submitted|default:"0" }}</div>
+    </div>
+    <div class="bg-base-100 shadow rounded-box p-3 text-center">
+      <div class="text-xs text-base-content/50">Genehmigung</div>
+      <div class="text-xl font-bold" style="color:#F59E0B;">{{ stats.pending_approval|default:"0" }}</div>
+    </div>
+    <div class="bg-base-100 shadow rounded-box p-3 text-center">
+      <div class="text-xs text-base-content/50">Genehmigt</div>
+      <div class="text-xl font-bold" style="color:#8B5CF6;">{{ stats.approved|default:"0" }}</div>
+    </div>
+    <div class="bg-base-100 shadow rounded-box p-3 text-center">
+      <div class="text-xs text-base-content/50">Bereitstellung</div>
+      <div class="text-xl font-bold" style="color:#6366F1;">{{ stats.provisioning|default:"0" }}</div>
+    </div>
+    <div class="bg-base-100 shadow rounded-box p-3 text-center">
+      <div class="text-xs text-base-content/50">Abgeschlossen</div>
+      <div class="text-xl font-bold" style="color:#10B981;">{{ stats.done|default:"0" }}</div>
+    </div>
+    <div class="bg-base-100 shadow rounded-box p-3 text-center">
+      <div class="text-xs text-base-content/50">Fehlgeschlagen</div>
+      <div class="text-xl font-bold" style="color:#EF4444;">{{ stats.failed|default:"0" }}</div>
+    </div>
+    <div class="bg-base-100 shadow rounded-box p-3 text-center">
+      <div class="text-xs text-base-content/50">Abgelehnt</div>
+      <div class="text-xl font-bold" style="color:#F97316;">{{ stats.rejected|default:"0" }}</div>
     </div>
   </div>
-</div>
 
-<!-- Recent Orders (system-wide) + System Health -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-  <div class="card bg-base-100 shadow">
-    <div class="card-body">
-      <h2 class="card-title">Letzte Bestellungen (systemweit)</h2>
-      {% if recent_orders %}
-      <div class="overflow-x-auto">
-        <table class="table table-sm">
-          <thead><tr><th>#</th><th>Benutzer</th><th>Status</th><th>Erstellt</th></tr></thead>
-          <tbody>
-            {% for order in recent_orders %}
-            <tr>
-              <td><a href="{% url 'orders:detail' pk=order.pk %}" class="link link-primary">#{{ order.pk }}</a></td>
-              <td>{{ order.requester.username }}</td>
-              <td>{% status_badge order.status %}</td>
-              <td>{{ order.created_at|date:"d.m.Y" }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+  <!-- Row 3: Recent Orders + Donut Chart -->
+  <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:1rem;">
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title text-base">Letzte Bestellungen (systemweit)</h2>
+        {% if recent_orders %}
+        <div class="overflow-x-auto">
+          <table class="table table-sm">
+            <thead><tr><th>#</th><th>Benutzer</th><th>Status</th><th>Erstellt</th></tr></thead>
+            <tbody>
+              {% for order in recent_orders %}
+              <tr>
+                <td><a href="{% url 'orders:detail' pk=order.pk %}" class="link link-primary">#{{ order.pk }}</a></td>
+                <td class="text-sm">{{ order.user.username }}</td>
+                <td>{% status_badge order.status %}</td>
+                <td class="text-sm">{{ order.created_at|date:"d.m.Y" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p class="text-base-content/50">Keine Bestellungen vorhanden.</p>
+        {% endif %}
       </div>
-      {% else %}
-      <p class="text-base-content/50">Keine Bestellungen vorhanden.</p>
-      {% endif %}
     </div>
-  </div>
-  <div class="card bg-base-100 shadow">
-    <div class="card-body">
-      <h2 class="card-title">Systemstatus</h2>
-      <div class="space-y-3">
-        <div class="flex justify-between items-center">
-          <span class="font-medium">Datenbank</span>
-          <span class="badge badge-success">Verbunden</span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="font-medium">CMDB-Modus</span>
-          <span class="badge badge-outline">{{ cmdb_mode|default:"stub" }}</span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="font-medium">Celery</span>
-          <span class="badge badge-outline">{{ celery_mode|default:"eager" }}</span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="font-medium">Service-Templates</span>
-          <span class="badge badge-outline">{{ stats.total_templates|default:"0" }}</span>
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title text-base">Bestellungen nach Status</h2>
+        <div style="max-width:250px; margin:0 auto;">
+          <canvas id="statusChart"></canvas>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Row 4: System Health + Timeline Chart -->
+  <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:1rem;">
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title text-base">Systemstatus</h2>
+        <div style="display:flex; flex-direction:column; gap:0.75rem; margin-top:0.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="font-medium text-sm">Datenbank</span>
+            <span class="badge badge-success">Verbunden</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="font-medium text-sm">CMDB-Modus</span>
+            <span class="badge badge-outline">Stub</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="font-medium text-sm">Celery</span>
+            <span class="badge badge-outline">Eager (synchron)</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="font-medium text-sm">Service-Templates</span>
+            <span class="badge badge-outline">{{ stats.total_templates|default:"0" }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h2 class="card-title text-base">Bestellungen pro Monat</h2>
+        <canvas id="timelineChart" style="max-height:200px;"></canvas>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- Chart.js Data + Init -->
 {{ orders_by_status|json_script:"orders-by-status" }}
 {{ orders_by_month|json_script:"orders-by-month" }}
 <script>
-const STATUS_COLORS = {
-  draft: '#9CA3AF', submitted: '#3B82F6', pending_approval: '#F59E0B',
-  approved: '#8B5CF6', provisioning: '#6366F1', done: '#10B981',
-  failed: '#EF4444', rejected: '#F97316'
-};
-const STATUS_LABELS = {
-  draft: 'Entwurf', submitted: 'Eingereicht', pending_approval: 'Genehmigung',
-  approved: 'Genehmigt', provisioning: 'Bereitstellung', done: 'Abgeschlossen',
-  failed: 'Fehlgeschlagen', rejected: 'Abgelehnt'
-};
-
-const statusData = JSON.parse(document.getElementById('orders-by-status').textContent);
-if (statusData && statusData.length > 0) {
-  new Chart(document.getElementById('statusChart'), {
-    type: 'doughnut',
-    data: {
-      labels: statusData.map(d => STATUS_LABELS[d.status] || d.status),
-      datasets: [{
-        data: statusData.map(d => d.count),
-        backgroundColor: statusData.map(d => STATUS_COLORS[d.status] || '#9CA3AF'),
-      }]
-    },
-    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
-  });
-}
-
-const timelineData = JSON.parse(document.getElementById('orders-by-month').textContent);
-if (timelineData && timelineData.length > 0) {
-  new Chart(document.getElementById('timelineChart'), {
-    type: 'line',
-    data: {
-      labels: timelineData.map(d => d.month),
-      datasets: [{
-        label: 'Bestellungen',
-        data: timelineData.map(d => d.count),
-        borderColor: '#3B82F6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        tension: 0.3,
-        fill: true,
-      }]
-    },
-    options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
-  });
-}
+document.addEventListener('DOMContentLoaded', function() {
+  var STATUS_COLORS = {
+    draft: '#9CA3AF', submitted: '#3B82F6', pending_approval: '#F59E0B',
+    approved: '#8B5CF6', provisioning: '#6366F1', done: '#10B981',
+    failed: '#EF4444', rejected: '#F97316'
+  };
+  var STATUS_LABELS = {
+    draft: 'Entwurf', submitted: 'Eingereicht', pending_approval: 'Genehmigung',
+    approved: 'Genehmigt', provisioning: 'Bereitstellung', done: 'Abgeschlossen',
+    failed: 'Fehlgeschlagen', rejected: 'Abgelehnt'
+  };
+  try {
+    var statusData = JSON.parse(document.getElementById('orders-by-status').textContent);
+    if (statusData && statusData.length > 0) {
+      new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+          labels: statusData.map(function(d) { return STATUS_LABELS[d.status] || d.status; }),
+          datasets: [{ data: statusData.map(function(d) { return d.count; }),
+            backgroundColor: statusData.map(function(d) { return STATUS_COLORS[d.status] || '#9CA3AF'; }) }]
+        },
+        options: { responsive: true, maintainAspectRatio: true,
+          plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } } }
+      });
+    }
+  } catch(e) { console.error('Status chart error:', e); }
+  try {
+    var timelineData = JSON.parse(document.getElementById('orders-by-month').textContent);
+    if (timelineData && timelineData.length > 0) {
+      new Chart(document.getElementById('timelineChart'), {
+        type: 'line',
+        data: { labels: timelineData.map(function(d) { return d.month; }),
+          datasets: [{ label: 'Bestellungen', data: timelineData.map(function(d) { return d.count; }),
+            borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246, 0.1)', tension: 0.3, fill: true }]
+        },
+        options: { responsive: true, maintainAspectRatio: true,
+          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+          plugins: { legend: { display: false } } }
+      });
+    }
+  } catch(e) { console.error('Timeline chart error:', e); }
+});
 </script>
 {% endblock %}
