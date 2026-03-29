@@ -1,0 +1,13 @@
+{
+  "name": "mpp-frontend",
+  "private": true,
+  "scripts": {
+    "css:build": "tailwindcss -i mpp/static/css/input.css -o mpp/static/css/output.css",
+    "css:watch": "tailwindcss -i mpp/static/css/input.css -o mpp/static/css/output.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0",
+    "tailwindcss": "^4.0",
+    "daisyui": "^5.0"
+  }
+}
