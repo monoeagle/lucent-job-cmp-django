@@ -1,5 +1,4 @@
 """Admin panel views (not Django admin — custom admin dashboard)."""
-import json
 from django.views.generic import TemplateView
 from core.mixins import AdminRequiredMixin, SuperadminRequiredMixin
 from apps.approvals.models import ApprovalRule
@@ -13,12 +12,8 @@ class AdminDashboardView(AdminRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["stats"] = DashboardService.get_admin_stats()
-        ctx["orders_by_status"] = json.dumps(
-            DashboardService.get_orders_by_status()
-        )
-        ctx["orders_by_month"] = json.dumps(
-            DashboardService.get_orders_by_month()
-        )
+        ctx["orders_by_status"] = DashboardService.get_orders_by_status()
+        ctx["orders_by_month"] = DashboardService.get_orders_by_month()
         ctx["recent_orders"] = DashboardService.get_recent_orders(limit=10)
         return ctx
 
