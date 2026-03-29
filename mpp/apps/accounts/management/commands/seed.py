@@ -65,9 +65,8 @@ class Command(BaseCommand):
 
         linux = ServiceTemplate.objects.get(name="Linux VM")
         windows = ServiceTemplate.objects.get(name="Windows VM")
-        postgres = ServiceTemplate.objects.get(name="PostgreSQL DB")
 
-        # ORD-1: Draft — Web-Cluster
+        # ORD-1: Draft — Web-Cluster Q3 Projekt (1x Linux VM)
         o1 = Order.objects.create(
             user=requester, status=OrderStatus.DRAFT,
             notes="Neues Kundenprojekt Q3",
@@ -75,45 +74,103 @@ class Command(BaseCommand):
         OrderItem.objects.create(
             order=o1, template=linux,
             parameters={
-                "cpu": 2, "ram_gb": 4, "disk_gb": 50,
-                "os_version": "ubuntu-24.04", "hostname": "web-q3-01",
-                "ha": False, "backup": "daily", "extra_disk_gb": 0,
+                "system_type": "web", "mandant": "a1",
+                "security_area": "sec1", "org_area": "ou1",
+                "location": "standort1", "dns_server": "10.1.0.10",
+                "lb_subnet": "10.1.100.0/24",
+                "ad_tier": "tier2", "network_layer": "frontend",
+                "network_vlan": "vlan100", "ad_assignment": "app",
+                "vmware_cluster": "single-site",
+                "tshirt_size": "s", "cpu_cores": 2, "ram_gb": 4,
+                "os_disk_gb": 60, "extra_disk_1": 0, "extra_disk_2": 0,
+                "extra_disk_3": 0, "extra_disk_4": 0,
+                "description_text": "Nginx Reverse Proxy fuer Kundenprojekt Q3",
+                "orderer_email": "requester@test.local",
+                "responsible_email": "ops-team@test.local",
+                "contact_group_email": "web-team@test.local",
+                "ticket_id": "JIRA-4711",
+                "maintenance_window": "wed-02-06", "patch_wave": "wave1",
+                "backup_enabled": True, "site_replication": False,
+                "os_template": "ubuntu-2404",
             },
         )
 
-        # ORD-2: Draft — Windows App-Server
+        # ORD-2: Draft — Windows App-Server Buchhaltung (1x Windows VM)
         o2 = Order.objects.create(
             user=requester, status=OrderStatus.DRAFT,
-            notes="App-Server für Buchhaltung",
+            notes="App-Server fuer Buchhaltung",
         )
         OrderItem.objects.create(
             order=o2, template=windows,
             parameters={
-                "cpu": 8, "ram_gb": 16, "disk_gb": 100,
-                "os_version": "win-server-2022", "hostname": "app-buch-01",
-                "domain_join": True, "backup": "daily", "extra_disk_gb": 0,
+                "system_type": "app", "mandant": "b1",
+                "security_area": "sec2", "org_area": "ou2",
+                "location": "standort2", "dns_server": "10.3.0.10",
+                "ad_tier": "tier1", "network_layer": "backend",
+                "network_vlan": "vlan110", "ad_assignment": "prod",
+                "vmware_cluster": "dual-site",
+                "tshirt_size": "l", "cpu_cores": 8, "ram_gb": 16,
+                "os_disk_gb": 120, "extra_disk_1": 100, "extra_disk_2": 0,
+                "extra_disk_3": 0, "extra_disk_4": 0,
+                "description_text": "Buchhaltungs-Applikationsserver",
+                "orderer_email": "requester@test.local",
+                "responsible_email": "finance-ops@test.local",
+                "contact_group_email": "finance-team@test.local",
+                "ticket_id": "JIRA-4712",
+                "maintenance_window": "sun-02-06", "patch_wave": "wave3",
+                "backup_enabled": True, "site_replication": True,
+                "os_template": "win2022",
             },
         )
 
         # ORD-3: Pending Approval — Produktions-Webserver (2 Items)
         o3 = Order.objects.create(
             user=requester, status=OrderStatus.PENDING_APPROVAL,
-            notes="Erweiterung Webfarm für Black Friday",
+            notes="Erweiterung Webfarm fuer Black Friday",
         )
         OrderItem.objects.create(
             order=o3, template=linux,
             parameters={
-                "cpu": 8, "ram_gb": 16, "disk_gb": 100,
-                "os_version": "ubuntu-24.04", "hostname": "nginx-prod-01",
-                "ha": True, "backup": "daily", "extra_disk_gb": 0,
+                "system_type": "web", "mandant": "a1",
+                "security_area": "sec1", "org_area": "ou1",
+                "location": "standort1", "dns_server": "10.1.0.10",
+                "lb_subnet": "10.1.100.0/24",
+                "ad_tier": "tier2", "network_layer": "frontend",
+                "network_vlan": "vlan100", "ad_assignment": "prod",
+                "vmware_cluster": "dual-site",
+                "tshirt_size": "l", "cpu_cores": 8, "ram_gb": 16,
+                "os_disk_gb": 120, "extra_disk_1": 0, "extra_disk_2": 0,
+                "extra_disk_3": 0, "extra_disk_4": 0,
+                "description_text": "Nginx Reverse Proxy Produktion",
+                "orderer_email": "requester@test.local",
+                "responsible_email": "ops-team@test.local",
+                "contact_group_email": "web-team@test.local",
+                "ticket_id": "JIRA-5001",
+                "maintenance_window": "sun-02-06", "patch_wave": "wave3",
+                "backup_enabled": True, "site_replication": True,
+                "os_template": "ubuntu-2404",
             },
         )
         OrderItem.objects.create(
             order=o3, template=linux,
             parameters={
-                "cpu": 16, "ram_gb": 32, "disk_gb": 200,
-                "os_version": "rhel-9", "hostname": "db-prod-01",
-                "ha": True, "backup": "daily", "extra_disk_gb": 500,
+                "system_type": "db", "mandant": "a1",
+                "security_area": "sec1", "org_area": "ou1",
+                "location": "standort1", "dns_server": "10.1.0.10",
+                "ad_tier": "tier1", "network_layer": "backend",
+                "network_vlan": "vlan100", "ad_assignment": "prod",
+                "vmware_cluster": "dual-site",
+                "tshirt_size": "xl", "cpu_cores": 16, "ram_gb": 32,
+                "os_disk_gb": 200, "extra_disk_1": 500, "extra_disk_2": 200,
+                "extra_disk_3": 0, "extra_disk_4": 0,
+                "description_text": "PostgreSQL Datenbank-Server Produktion",
+                "orderer_email": "requester@test.local",
+                "responsible_email": "dba-team@test.local",
+                "contact_group_email": "db-team@test.local",
+                "ticket_id": "JIRA-5002",
+                "maintenance_window": "sun-02-06", "patch_wave": "wave3",
+                "backup_enabled": True, "site_replication": True,
+                "os_template": "rhel9",
             },
         )
         rule3 = ApprovalRule.objects.filter(template=linux).first()
@@ -134,21 +191,35 @@ class Command(BaseCommand):
             category="approval",
         )
 
-        # ORD-4: Validated — Dev-Umgebung
+        # ORD-4: Submitted — Dev-Umgebung Team Alpha (1x Linux VM)
         o4 = Order.objects.create(
-            user=requester, status=OrderStatus.VALIDATED,
-            notes="Entwicklungsumgebung für Microservices-Projekt",
+            user=requester, status=OrderStatus.SUBMITTED,
+            notes="Entwicklungsumgebung fuer Microservices-Projekt",
         )
         OrderItem.objects.create(
             order=o4, template=linux,
             parameters={
-                "cpu": 4, "ram_gb": 8, "disk_gb": 80,
-                "os_version": "ubuntu-24.04", "hostname": "dev-alpha-01",
-                "ha": False, "backup": "weekly", "extra_disk_gb": 100,
+                "system_type": "app", "mandant": "a1",
+                "security_area": "sec2", "org_area": "ou1",
+                "location": "standort1", "dns_server": "10.2.0.10",
+                "ad_tier": "tier1", "network_layer": "backend",
+                "network_vlan": "vlan200", "ad_assignment": "debug",
+                "vmware_cluster": "single-site",
+                "tshirt_size": "m", "cpu_cores": 4, "ram_gb": 8,
+                "os_disk_gb": 80, "extra_disk_1": 100, "extra_disk_2": 0,
+                "extra_disk_3": 0, "extra_disk_4": 0,
+                "description_text": "Docker Host fuer Microservices-Entwicklung",
+                "orderer_email": "requester@test.local",
+                "responsible_email": "dev-lead@test.local",
+                "contact_group_email": "team-alpha@test.local",
+                "ticket_id": "JIRA-4800",
+                "maintenance_window": "wed-02-06", "patch_wave": "wave1",
+                "backup_enabled": True, "site_replication": False,
+                "os_template": "ubuntu-2404",
             },
         )
 
-        # ORD-5: Done — SAP Application Server
+        # ORD-5: Done — SAP Application Server (1x Windows VM) + Subscription
         o5 = Order.objects.create(
             user=requester, status=OrderStatus.DONE,
             notes="SAP S/4HANA Produktionsumgebung",
@@ -156,9 +227,23 @@ class Command(BaseCommand):
         item5 = OrderItem.objects.create(
             order=o5, template=windows,
             parameters={
-                "cpu": 8, "ram_gb": 16, "disk_gb": 200,
-                "os_version": "win-server-2022", "hostname": "sap-prod-01",
-                "domain_join": True, "backup": "daily", "extra_disk_gb": 200,
+                "system_type": "app", "mandant": "a1",
+                "security_area": "sec1", "org_area": "ou1",
+                "location": "standort1", "dns_server": "10.1.0.10",
+                "ad_tier": "tier1", "network_layer": "backend",
+                "network_vlan": "vlan100", "ad_assignment": "prod",
+                "vmware_cluster": "dual-site",
+                "tshirt_size": "l", "cpu_cores": 8, "ram_gb": 16,
+                "os_disk_gb": 120, "extra_disk_1": 200, "extra_disk_2": 100,
+                "extra_disk_3": 0, "extra_disk_4": 0,
+                "description_text": "SAP S/4HANA Produktionsumgebung",
+                "orderer_email": "requester@test.local",
+                "responsible_email": "sap-admin@test.local",
+                "contact_group_email": "sap-team@test.local",
+                "ticket_id": "JIRA-3500",
+                "maintenance_window": "sun-02-06", "patch_wave": "wave3",
+                "backup_enabled": True, "site_replication": True,
+                "os_template": "win2022",
             },
         )
         Subscription.objects.create(
@@ -170,51 +255,93 @@ class Command(BaseCommand):
             category="provisioning", is_read=True,
         )
 
-        # ORD-6: Done — Monitoring Stack
+        # ORD-6: Done — Monitoring Stack (1x Linux VM) + Subscription
         o6 = Order.objects.create(
             user=requester, status=OrderStatus.DONE,
-            notes="Zentrales Monitoring für alle Standorte",
+            notes="Zentrales Monitoring fuer alle Standorte",
         )
         item6 = OrderItem.objects.create(
             order=o6, template=linux,
             parameters={
-                "cpu": 4, "ram_gb": 8, "disk_gb": 100,
-                "os_version": "almalinux-10", "hostname": "monitor-01",
-                "ha": False, "backup": "daily", "extra_disk_gb": 200,
+                "system_type": "app", "mandant": "a1",
+                "security_area": "sec1", "org_area": "ou1",
+                "location": "standort1", "dns_server": "10.1.0.10",
+                "ad_tier": "tier1", "network_layer": "management",
+                "network_vlan": "vlan100", "ad_assignment": "app",
+                "vmware_cluster": "single-site",
+                "tshirt_size": "m", "cpu_cores": 4, "ram_gb": 8,
+                "os_disk_gb": 80, "extra_disk_1": 200, "extra_disk_2": 100,
+                "extra_disk_3": 0, "extra_disk_4": 0,
+                "description_text": "Prometheus + Grafana Monitoring Stack",
+                "orderer_email": "requester@test.local",
+                "responsible_email": "ops-team@test.local",
+                "contact_group_email": "monitoring-team@test.local",
+                "ticket_id": "JIRA-3200",
+                "maintenance_window": "sat-02-06", "patch_wave": "wave2",
+                "backup_enabled": True, "site_replication": False,
+                "os_template": "alma10",
             },
         )
         Subscription.objects.create(
             user=requester, order_item=item6, status="active",
         )
 
-        # ORD-7: Done — Domain Controller (by admin)
+        # ORD-7: Done — Domain Controller Standort2 (by admin, 1x Windows VM)
         o7 = Order.objects.create(
             user=admin, status=OrderStatus.DONE,
-            notes="Zweiter DC für HA",
+            notes="Zweiter DC fuer HA",
         )
         item7 = OrderItem.objects.create(
             order=o7, template=windows,
             parameters={
-                "cpu": 4, "ram_gb": 8, "disk_gb": 100,
-                "os_version": "win-server-2022", "hostname": "dc-standort2-01",
-                "domain_join": True, "backup": "daily", "extra_disk_gb": 0,
+                "system_type": "dc", "mandant": "a1",
+                "security_area": "sec1", "org_area": "ou1",
+                "location": "standort2", "dns_server": "10.3.0.10",
+                "ad_tier": "tier0", "network_layer": "backend",
+                "network_vlan": "vlan100", "ad_assignment": "prod",
+                "vmware_cluster": "dual-site",
+                "tshirt_size": "m", "cpu_cores": 4, "ram_gb": 8,
+                "os_disk_gb": 80, "extra_disk_1": 0, "extra_disk_2": 0,
+                "extra_disk_3": 0, "extra_disk_4": 0,
+                "description_text": "Zweiter Domain Controller fuer HA am Standort2",
+                "orderer_email": "admin@test.local",
+                "responsible_email": "ad-team@test.local",
+                "contact_group_email": "infra-team@test.local",
+                "ticket_id": "JIRA-2800",
+                "maintenance_window": "sun-02-06", "patch_wave": "wave3",
+                "backup_enabled": True, "site_replication": True,
+                "os_template": "win2022",
             },
         )
         Subscription.objects.create(
             user=admin, order_item=item7, status="active",
         )
 
-        # ORD-8: Pending Approval — Fileserver (by approver)
+        # ORD-8: Pending Approval — Fileserver Abteilung Finanzen (by approver)
         o8 = Order.objects.create(
             user=approver, status=OrderStatus.PENDING_APPROVAL,
-            notes="Ablösung alter NAS-Appliance",
+            notes="Abloesung alter NAS-Appliance",
         )
         OrderItem.objects.create(
             order=o8, template=windows,
             parameters={
-                "cpu": 8, "ram_gb": 16, "disk_gb": 200,
-                "os_version": "win-server-2022", "hostname": "fs-finance-01",
-                "domain_join": True, "backup": "daily", "extra_disk_gb": 1000,
+                "system_type": "fp", "mandant": "b1",
+                "security_area": "sec1", "org_area": "ou2",
+                "location": "standort1", "dns_server": "10.1.0.10",
+                "ad_tier": "tier1", "network_layer": "backend",
+                "network_vlan": "vlan100", "ad_assignment": "prod",
+                "vmware_cluster": "dual-site",
+                "tshirt_size": "l", "cpu_cores": 8, "ram_gb": 16,
+                "os_disk_gb": 120, "extra_disk_1": 1000, "extra_disk_2": 1000,
+                "extra_disk_3": 500, "extra_disk_4": 0,
+                "description_text": "Fileserver zur Abloesung alter NAS-Appliance",
+                "orderer_email": "approver@test.local",
+                "responsible_email": "storage-team@test.local",
+                "contact_group_email": "finance-team@test.local",
+                "ticket_id": "JIRA-4900",
+                "maintenance_window": "sun-02-06", "patch_wave": "wave3",
+                "backup_enabled": True, "site_replication": True,
+                "os_template": "win2022",
             },
         )
         rule8 = ApprovalRule.objects.filter(template=windows).first()
