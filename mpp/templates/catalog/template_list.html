@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Service-Katalog{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Service-Katalog</h1>
+<div class="flex gap-4 mb-6">
+  <input type="search" name="q" value="{{ request.GET.q|default:'' }}"
+         class="input input-bordered flex-1"
+         placeholder="Service suchen..."
+         hx-get="{% url 'catalog:list' %}"
+         hx-target="#template-grid"
+         hx-trigger="input changed delay:300ms"
+         hx-include="[name='category']">
+  <select name="category" class="select select-bordered"
+          hx-get="{% url 'catalog:list' %}"
+          hx-target="#template-grid"
+          hx-trigger="change"
+          hx-include="[name='q']">
+    <option value="">Alle Kategorien</option>
+    {% for value, label in filter_form.fields.category.choices %}
+      {% if value %}<option value="{{ value }}" {% if request.GET.category == value %}selected{% endif %}>{{ label }}</option>{% endif %}
+    {% endfor %}
+  </select>
+</div>
+<div id="template-grid">
+  {% include "catalog/partials/template_grid.html" %}
+</div>
+{% endblock %}

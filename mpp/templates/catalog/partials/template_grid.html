@@ -1,0 +1,18 @@
+{% if templates %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  {% for t in templates %}
+  <div class="card bg-base-100 shadow-md hover:shadow-lg transition-shadow">
+    <div class="card-body">
+      <h2 class="card-title">{{ t.name }}<span class="badge badge-outline">{{ t.category }}</span></h2>
+      <p class="text-sm text-base-content/70">{{ t.description|truncatewords:20 }}</p>
+      <div class="text-xs text-base-content/50">{{ t.parameters|length }} Parameter &middot; v{{ t.version }}</div>
+      <div class="card-actions justify-end mt-2">
+        <a href="{% url 'catalog:detail' pk=t.pk %}" class="btn btn-primary btn-sm">Details</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-12 text-base-content/50">Keine Templates gefunden.</div>
+{% endif %}
