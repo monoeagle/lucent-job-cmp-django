@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ service_template.name }} hinzufügen{% endblock %}
+{% block content %}
+<div class="breadcrumbs text-sm mb-4">
+  <ul>
+    <li><a href="{% url 'orders:list' %}">Bestellungen</a></li>
+    <li><a href="{% url 'orders:detail' pk=order_pk %}">Bestellung #{{ order_pk }}</a></li>
+    <li>{{ service_template.name }} hinzufügen</li>
+  </ul>
+</div>
+
+<div class="card bg-base-100 shadow-xl max-w-2xl">
+  <div class="card-body">
+    <h1 class="card-title">{{ service_template.name }} hinzufügen</h1>
+    <p class="text-base-content/70 mb-4">{{ service_template.description }}</p>
+
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-control mt-3">
+        <label class="label">
+          <span class="label-text">{{ field.label }}{% if field.field.required %} *{% endif %}</span>
+        </label>
+        {{ field }}
+        {% if field.errors %}
+        <label class="label"><span class="label-text-alt text-error">{{ field.errors.0 }}</span></label>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <div class="flex gap-2 mt-6">
+        <button type="submit" class="btn btn-primary">Hinzufügen</button>
+        <a href="{% url 'orders:detail' pk=order_pk %}" class="btn btn-ghost">Abbrechen</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

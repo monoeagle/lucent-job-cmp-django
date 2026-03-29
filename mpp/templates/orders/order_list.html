@@ -2,51 +2,68 @@
 {% load mpp_tags %}
 {% block title %}Bestellungen{% endblock %}
 {% block content %}
-<div class="flex justify-between items-center mb-6">
-  <h1 class="text-2xl font-bold">Meine Bestellungen</h1>
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold">Bestellungen</h1>
   <a href="{% url 'catalog:list' %}" class="btn btn-primary btn-sm">Zum Shop</a>
+</div>
+
+<!-- Workspace Tabs -->
+<div class="tabs tabs-bordered mb-4">
+  <a class="tab {% if current_tab == 'mine' %}tab-active{% endif %}"
+     href="?tab=mine{% if current_status %}&status={{ current_status }}{% endif %}">
+    Meine Bestellungen
+  </a>
+  {% if can_see_all %}
+  <a class="tab {% if current_tab == 'all' %}tab-active{% endif %}"
+     href="?tab=all{% if current_status %}&status={{ current_status }}{% endif %}">
+    Alle Bestellungen
+  </a>
+  {% endif %}
 </div>
 
 <!-- Status Filter Pills -->
 <div class="flex flex-wrap gap-2 mb-6">
-  <a href="{% url 'orders:list' %}"
-     class="btn btn-sm {% if not status_filter %}btn-primary{% else %}btn-outline{% endif %}">Alle</a>
-  <a href="?status=draft"
-     class="btn btn-sm {% if status_filter == 'draft' %}btn-primary{% else %}btn-outline{% endif %}">Entwurf</a>
-  <a href="?status=submitted"
-     class="btn btn-sm {% if status_filter == 'submitted' %}btn-primary{% else %}btn-outline{% endif %}">Eingereicht</a>
-  <a href="?status=pending_approval"
-     class="btn btn-sm {% if status_filter == 'pending_approval' %}btn-primary{% else %}btn-outline{% endif %}">Genehmigung</a>
-  <a href="?status=provisioning"
-     class="btn btn-sm {% if status_filter == 'provisioning' %}btn-primary{% else %}btn-outline{% endif %}">Bereitstellung</a>
-  <a href="?status=done"
-     class="btn btn-sm {% if status_filter == 'done' %}btn-primary{% else %}btn-outline{% endif %}">Aktiv</a>
-  <a href="?status=failed"
-     class="btn btn-sm {% if status_filter == 'failed' %}btn-primary{% else %}btn-outline{% endif %}">Fehlgeschlagen</a>
+  <a href="?tab={{ current_tab }}" class="btn btn-sm {% if not current_status %}btn-primary{% else %}btn-ghost{% endif %}">Alle</a>
+  <a href="?tab={{ current_tab }}&status=draft" class="btn btn-sm {% if current_status == 'draft' %}btn-primary{% else %}btn-ghost{% endif %}">Entwurf</a>
+  <a href="?tab={{ current_tab }}&status=submitted" class="btn btn-sm {% if current_status == 'submitted' %}btn-primary{% else %}btn-ghost{% endif %}">Eingereicht</a>
+  <a href="?tab={{ current_tab }}&status=pending_approval" class="btn btn-sm {% if current_status == 'pending_approval' %}btn-primary{% else %}btn-ghost{% endif %}">Genehmigung</a>
+  <a href="?tab={{ current_tab }}&status=provisioning" class="btn btn-sm {% if current_status == 'provisioning' %}btn-primary{% else %}btn-ghost{% endif %}">Bereitstellung</a>
+  <a href="?tab={{ current_tab }}&status=done" class="btn btn-sm {% if current_status == 'done' %}btn-primary{% else %}btn-ghost{% endif %}">Aktiv</a>
+  <a href="?tab={{ current_tab }}&status=failed" class="btn btn-sm {% if current_status == 'failed' %}btn-primary{% else %}btn-ghost{% endif %}">Fehlgeschlagen</a>
+  <a href="?tab={{ current_tab }}&status=rejected" class="btn btn-sm {% if current_status == 'rejected' %}btn-primary{% else %}btn-ghost{% endif %}">Abgelehnt</a>
 </div>
 
+<!-- Orders Table -->
 {% if orders %}
 <div class="overflow-x-auto">
-  <table class="table table-zebra w-full">
+  <table class="table table-zebra">
     <thead>
-      <tr><th>#</th><th>Status</th><th>Items</th><th>Erstellt</th><th></th></tr>
+      <tr>
+        <th>#</th>
+        <th>Notizen</th>
+        {% if current_tab == 'all' %}<th>Besteller</th>{% endif %}
+        <th>Status</th>
+        <th>Positionen</th>
+        <th>Erstellt</th>
+        <th></th>
+      </tr>
     </thead>
     <tbody>
       {% for order in orders %}
-      <tr>
-        <td class="font-mono">#{{ order.pk }}</td>
+      <tr class="hover">
+        <td class="font-mono">{{ order.pk }}</td>
+        <td>{{ order.notes|truncatewords:8|default:"—" }}</td>
+        {% if current_tab == 'all' %}<td>{{ order.user.username }}</td>{% endif %}
         <td>{% status_badge order.status %}</td>
         <td>{{ order.items.count }}</td>
         <td>{{ order.created_at|date:"d.m.Y H:i" }}</td>
-        <td>
-          <a href="{% url 'orders:detail' pk=order.pk %}" class="btn btn-primary btn-sm btn-outline">Details</a>
-        </td>
+        <td><a href="{% url 'orders:detail' pk=order.pk %}" class="btn btn-primary btn-xs">Details</a></td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
 {% else %}
-<div class="text-center py-12 text-base-content/50">Keine Bestellungen für den gewählten Filter.</div>
+<div class="text-center py-12 text-base-content/50">Keine Bestellungen gefunden.</div>
 {% endif %}
 {% endblock %}
