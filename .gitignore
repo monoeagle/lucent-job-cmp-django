@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+venv/
+.env
+*.sqlite3
+node_modules/
+mpp/static/css/output.css
+.pytest_cache/
+.ruff_cache/
