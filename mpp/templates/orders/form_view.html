@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load mpp_tags %}
+{% block title %}{{ service_template.name }} bestellen — Formular{% endblock %}
+{% block content %}
+<div class="breadcrumbs text-sm mb-4">
+  <ul>
+    <li><a href="{% url 'catalog:list' %}">Katalog</a></li>
+    <li><a href="{% url 'catalog:detail' pk=service_template.pk %}">{{ service_template.name }}</a></li>
+    <li>Bestellen (Formular)</li>
+  </ul>
+</div>
+
+<!-- View Toggle -->
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold">{{ service_template.name }} bestellen</h1>
+  <div class="btn-group">
+    <a href="{% url 'orders:create' template_pk=service_template.pk %}" class="btn btn-sm btn-ghost">Wizard</a>
+    <a href="{% url 'orders:create_form' template_pk=service_template.pk %}" class="btn btn-sm btn-primary">Formular</a>
+  </div>
+</div>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <!-- Left: All form sections (3 cols) -->
+    <div class="lg:col-span-3 space-y-6">
+
+      <!-- Context Section -->
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <h2 class="card-title text-lg border-b border-base-300 pb-2 mb-4">Kontext</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {% for field_name in context_fields %}
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-medium">{{ form|field_label:field_name }} <span class="text-error">*</span></span>
+              </label>
+              {{ form|field_widget:field_name }}
+              {% if form|field_errors:field_name %}
+              <label class="label"><span class="label-text-alt text-error">{{ form|field_errors:field_name }}</span></label>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Parameter Sections (grouped) -->
+      {% for group_name, params in grouped_parameters %}
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <h2 class="card-title text-lg border-b border-base-300 pb-2 mb-4">{{ group_name|title }}</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% for param in params %}
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-medium">
+                  {{ param.label }}
+                  {% if param.required %}<span class="text-error">*</span>{% endif %}
+                </span>
+              </label>
+              {% with field_name=param.key %}
+              {% if param.type == "boolean" %}
+              <label class="cursor-pointer label justify-start gap-3">
+                {{ form|field_widget:field_name }}
+                <span class="label-text">{{ param.label }} aktivieren</span>
+              </label>
+              {% else %}
+              {{ form|field_widget:field_name }}
+              {% endif %}
+              {% if form|field_errors:field_name %}
+              <label class="label"><span class="label-text-alt text-error">{{ form|field_errors:field_name }}</span></label>
+              {% endif %}
+              {% endwith %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+
+    <!-- Right: Sticky Sidebar (1 col) -->
+    <div class="lg:col-span-1">
+      <div class="card bg-base-100 shadow sticky top-4">
+        <div class="card-body">
+          <h3 class="card-title text-base">{{ service_template.name }}</h3>
+          <p class="text-sm text-base-content/50">{{ service_template.category }} · v{{ service_template.version }}</p>
+          <p class="text-xs text-base-content/50 mt-2">{{ service_template.description|truncatewords:15 }}</p>
+
+          <div class="divider text-xs">Anzahl</div>
+          <div class="form-control">
+            {{ form.quantity }}
+            <span class="text-xs text-base-content/50 mt-1">Instanz(en)</span>
+          </div>
+
+          <button type="submit" class="btn btn-success btn-block mt-4">
+            Zur Bestellung hinzufügen
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- Mobile fixed bottom bar -->
+<div class="fixed bottom-0 left-0 right-0 bg-base-100 border-t border-base-300 p-4 lg:hidden z-50">
+  <div class="flex items-center justify-between max-w-screen-xl mx-auto">
+    <div>
+      <div class="font-bold">{{ service_template.name }}</div>
+      <div class="text-xs text-base-content/50">{{ service_template.category }}</div>
+    </div>
+    <button type="submit" form="order-form" class="btn btn-success btn-sm">Bestellen</button>
+  </div>
+</div>
+{% endblock %}

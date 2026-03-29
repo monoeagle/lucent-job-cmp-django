@@ -12,6 +12,7 @@ from core.mixins import RequesterRequiredMixin
 
 from .forms import (
     ContextForm,
+    FullOrderForm,
     OrderParameterForm,
     ParameterGroupForm,
     QuantityForm,
@@ -286,6 +287,84 @@ class OrderCreateView(RequesterRequiredMixin, View):
         except (ValidationError, ConflictError) as e:
             messages.error(request, e.message)
             return redirect("orders:create", template_pk=template_pk)
+
+
+class OrderFormView(RequesterRequiredMixin, View):
+    """Single-page form view — all fields on one page with sidebar summary."""
+
+    def _get_template(self, template_pk):
+        try:
+            return CatalogService.get_template(template_pk)
+        except NotFoundError:
+            raise Http404
+
+    def _get_grouped_parameters(self, template):
+        """Return parameters grouped by 'group' field, sorted by display_order."""
+        groups = {}
+        for param in template.parameters:
+            group = param.get("group", "Allgemein")
+            if group not in groups:
+                groups[group] = []
+            groups[group].append(param)
+        return sorted(
+            groups.items(),
+            key=lambda g: min(p.get("display_order", 999) for p in g[1]),
+        )
+
+    def get(self, request, template_pk):
+        template = self._get_template(template_pk)
+        form = FullOrderForm(template_parameters=template.parameters)
+        grouped = self._get_grouped_parameters(template)
+        return render(request, "orders/form_view.html", {
+            "service_template": template,
+            "form": form,
+            "grouped_parameters": grouped,
+            "context_fields": ["location", "tenant", "security_zone"],
+        })
+
+    def post(self, request, template_pk):
+        template = self._get_template(template_pk)
+        form = FullOrderForm(request.POST, template_parameters=template.parameters)
+        grouped = self._get_grouped_parameters(template)
+
+        if not form.is_valid():
+            return render(request, "orders/form_view.html", {
+                "service_template": template,
+                "form": form,
+                "grouped_parameters": grouped,
+                "context_fields": ["location", "tenant", "security_zone"],
+            })
+
+        # Extract parameters (exclude context + quantity fields)
+        context_keys = {"location", "tenant", "security_zone", "quantity"}
+        parameters = {
+            k: v for k, v in form.cleaned_data.items()
+            if k not in context_keys
+        }
+
+        try:
+            order = OrderService.create_order(
+                user=request.user,
+                notes=f"{template.name} bestellt",
+            )
+            OrderService.add_item(
+                order_id=order.pk,
+                template_id=template.pk,
+                parameters=parameters,
+            )
+            messages.success(
+                request,
+                f"Bestellung #{order.pk} erstellt mit {template.name}.",
+            )
+            return redirect("orders:detail", pk=order.pk)
+        except (ValidationError, ConflictError) as e:
+            messages.error(request, e.message)
+            return render(request, "orders/form_view.html", {
+                "service_template": template,
+                "form": form,
+                "grouped_parameters": grouped,
+                "context_fields": ["location", "tenant", "security_zone"],
+            })
 
 
 class OrderAddItemView(RequesterRequiredMixin, FormView):

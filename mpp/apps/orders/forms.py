@@ -169,3 +169,83 @@ class QuantityForm(forms.Form):
             },
         ),
     )
+
+
+class FullOrderForm(forms.Form):
+    """All-in-one form: context + all parameters + quantity on a single page."""
+
+    def __init__(self, *args, template_parameters=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # --- Context fields ---
+        client = CmdbStubClient()
+
+        locations = client.list_locations()
+        self.fields["location"] = forms.ChoiceField(
+            label="Standort",
+            choices=[("", "Bitte wählen...")] + [
+                (loc["id"], f"{loc['name']} ({loc['datacenter']})")
+                for loc in locations
+            ],
+            widget=forms.Select(attrs={"class": "select select-bordered w-full"}),
+        )
+
+        tenants = client.list_tenants()
+        self.fields["tenant"] = forms.ChoiceField(
+            label="Mandant",
+            choices=[("", "Bitte wählen...")] + [
+                (t["id"], t["name"]) for t in tenants
+            ],
+            widget=forms.Select(attrs={"class": "select select-bordered w-full"}),
+        )
+
+        zones = client.get_zones()
+        self.fields["security_zone"] = forms.ChoiceField(
+            label="Sicherheitszone",
+            choices=[("", "Bitte wählen...")] + [
+                (z, z.title()) for z in zones
+            ],
+            widget=forms.Select(attrs={"class": "select select-bordered w-full"}),
+        )
+
+        # --- Parameter fields (grouped) ---
+        if template_parameters:
+            for param in sorted(template_parameters, key=lambda p: p.get("display_order", 999)):
+                key = param["key"]
+                label = param.get("label", key)
+                required = param.get("required", False)
+                param_type = param.get("type", "string")
+                default = param.get("default")
+
+                if param_type == "choice":
+                    options = param.get("options", [])
+                    self.fields[key] = forms.ChoiceField(
+                        choices=[("", "Bitte wählen...")] + [(o, o) for o in options],
+                        required=required, label=label,
+                        widget=forms.Select(attrs={"class": "select select-bordered w-full"}),
+                    )
+                elif param_type == "boolean":
+                    self.fields[key] = forms.BooleanField(
+                        required=False, label=label,
+                        widget=forms.CheckboxInput(attrs={"class": "checkbox checkbox-primary"}),
+                    )
+                elif param_type in ("integer", "float"):
+                    field_cls = forms.IntegerField if param_type == "integer" else forms.FloatField
+                    self.fields[key] = field_cls(
+                        required=required, label=label,
+                        widget=forms.NumberInput(attrs={"class": "input input-bordered w-full"}),
+                    )
+                else:
+                    self.fields[key] = forms.CharField(
+                        required=required, label=label,
+                        widget=forms.TextInput(attrs={"class": "input input-bordered w-full"}),
+                    )
+
+                if default is not None and not self.is_bound:
+                    self.fields[key].initial = default
+
+        # --- Quantity ---
+        self.fields["quantity"] = forms.IntegerField(
+            min_value=1, max_value=50, initial=1, label="Anzahl",
+            widget=forms.NumberInput(attrs={"class": "input input-bordered w-24", "min": "1", "max": "50"}),
+        )

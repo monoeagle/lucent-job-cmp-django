@@ -5,8 +5,17 @@
   <ul>
     <li><a href="{% url 'catalog:list' %}">Katalog</a></li>
     <li><a href="{% url 'catalog:detail' pk=service_template.pk %}">{{ service_template.name }}</a></li>
-    <li>Bestellen</li>
+    <li>Bestellen (Wizard)</li>
   </ul>
+</div>
+
+<!-- View Toggle -->
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold">{{ service_template.name }} bestellen</h1>
+  <div class="btn-group">
+    <a href="{% url 'orders:create' template_pk=service_template.pk %}" class="btn btn-sm btn-primary">Wizard</a>
+    <a href="{% url 'orders:create_form' template_pk=service_template.pk %}" class="btn btn-sm btn-ghost">Formular</a>
+  </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
