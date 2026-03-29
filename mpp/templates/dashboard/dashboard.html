@@ -145,6 +145,14 @@ document.addEventListener('DOMContentLoaded', function() {
     failed: 'Fehlgeschlagen', rejected: 'Abgelehnt'
   };
 
+  // Debug: check if Chart is available
+  if (typeof Chart === 'undefined') {
+    console.error('ERROR: Chart.js not loaded!');
+    document.getElementById('statusChart').parentElement.innerHTML = '<p style="color:red;">Chart.js nicht geladen — bitte Cache leeren (Strg+Shift+R)</p>';
+    return;
+  }
+  console.log('Chart.js loaded:', Chart.version);
+
   // Donut Chart
   try {
     var statusData = JSON.parse(document.getElementById('orders-by-status').textContent);
