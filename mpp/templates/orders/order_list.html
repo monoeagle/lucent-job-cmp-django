@@ -9,16 +9,14 @@
 
 <!-- Workspace Tabs -->
 <div class="tabs tabs-bordered mb-4">
-  <a class="tab {% if current_tab == 'mine' %}tab-active{% endif %}"
-     href="?tab=mine{% if current_status %}&status={{ current_status }}{% endif %}">
-    Meine Bestellungen
-  </a>
-  {% if can_see_all %}
   <a class="tab {% if current_tab == 'all' %}tab-active{% endif %}"
      href="?tab=all{% if current_status %}&status={{ current_status }}{% endif %}">
     Alle Bestellungen
   </a>
-  {% endif %}
+  <a class="tab {% if current_tab == 'mine' %}tab-active{% endif %}"
+     href="?tab=mine{% if current_status %}&status={{ current_status }}{% endif %}">
+    Meine Bestellungen
+  </a>
 </div>
 
 <!-- Status Filter Pills -->

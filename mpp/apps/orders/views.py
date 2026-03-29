@@ -37,7 +37,7 @@ class OrderListView(RequesterRequiredMixin, ListView):
         )
 
     def get_queryset(self):
-        tab = self.request.GET.get("tab", "mine")
+        tab = self.request.GET.get("tab", "all")
         if tab == "all" and self._can_see_all():
             qs = Order.objects.select_related("user").all()
         else:
@@ -51,7 +51,7 @@ class OrderListView(RequesterRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx["current_tab"] = self.request.GET.get("tab", "mine")
+        ctx["current_tab"] = self.request.GET.get("tab", "all")
         ctx["current_status"] = self.request.GET.get("status", "")
         ctx["can_see_all"] = self._can_see_all()
         return ctx
