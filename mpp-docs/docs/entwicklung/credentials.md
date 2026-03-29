@@ -35,8 +35,8 @@ Werden über `python manage.py seed` erstellt.
 | Port | 5432 |
 | User | mpp |
 | Passwort | mpp |
-| Dev-DB | mpp_dev |
-| Test-DB | mpp_test |
+| Dev-DB | mpp_django_dev |
+| Test-DB | mpp_django_test |
 
 ## Django Admin
 

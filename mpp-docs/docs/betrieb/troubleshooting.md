@@ -19,12 +19,12 @@ sudo systemctl start postgresql
 
 ### Datenbank existiert nicht
 
-**Symptom:** `FATAL: database "mpp_dev" does not exist`
+**Symptom:** `FATAL: database "mpp_django_dev" does not exist`
 
 ```bash
 # DB anlegen (braucht superuser)
-sudo -u postgres createdb mpp_dev -O mpp
-sudo -u postgres createdb mpp_test -O mpp
+sudo -u postgres createdb mpp_django_dev -O mpp
+sudo -u postgres createdb mpp_django_test -O mpp
 ```
 
 Falls der User `mpp` nicht existiert:
@@ -39,11 +39,11 @@ sudo -u postgres psql -c "CREATE USER mpp WITH PASSWORD 'mpp' CREATEDB;"
 
 ```bash
 # Test-DB zurücksetzen
-PGPASSWORD=mpp psql -h localhost -U mpp -d mpp_test -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+PGPASSWORD=mpp psql -h localhost -U mpp -d mpp_django_test -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
 cd mpp && DJANGO_SETTINGS_MODULE=config.settings.testing python manage.py migrate
 
 # Dev-DB zurücksetzen
-PGPASSWORD=mpp psql -h localhost -U mpp -d mpp_dev -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+PGPASSWORD=mpp psql -h localhost -U mpp -d mpp_django_dev -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
 cd mpp && python manage.py migrate && python manage.py seed
 ```
 
@@ -149,5 +149,5 @@ python manage.py shell
 python manage.py show_urls  # (braucht django-extensions)
 
 # Datenbank-Inhalt prüfen
-PGPASSWORD=mpp psql -h localhost -U mpp -d mpp_dev -c "SELECT username, role FROM users;"
+PGPASSWORD=mpp psql -h localhost -U mpp -d mpp_django_dev -c "SELECT username, role FROM users;"
 ```

@@ -42,8 +42,8 @@ pip install -r requirements/dev.txt
 ```bash
 # User und Datenbanken anlegen
 sudo -u postgres psql -c "CREATE USER mpp WITH PASSWORD 'mpp' CREATEDB;"
-sudo -u postgres createdb mpp_dev -O mpp
-sudo -u postgres createdb mpp_test -O mpp
+sudo -u postgres createdb mpp_django_dev -O mpp
+sudo -u postgres createdb mpp_django_test -O mpp
 ```
 
 ### 3. Django einrichten

@@ -4,13 +4,13 @@ SECRET_KEY = "test-secret-key"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "mpp_test",
+        "NAME": "mpp_django_test",
         "USER": "mpp",
         "PASSWORD": "mpp",
         "HOST": "localhost",
         "PORT": "5432",
         "TEST": {
-            "NAME": "mpp_test",
+            "NAME": "mpp_django_test",
         },
     }
 }

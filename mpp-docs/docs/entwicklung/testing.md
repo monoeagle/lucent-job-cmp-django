@@ -49,7 +49,7 @@ class TestOrderCreateView:
         assert Order.objects.filter(user=user).count() == 1
 ```
 
-- Echte PostgreSQL-Datenbank (mpp_test)
+- Echte PostgreSQL-Datenbank (mpp_django_test)
 - Django Test-Client für HTTP-Requests
 - Transaktions-Isolation pro Test
 
@@ -126,13 +126,13 @@ pythonpath = mpp
 testpaths = tests
 ```
 
-**testing.py:** Schnelle Passwort-Hashes (`MD5PasswordHasher`), Celery EAGER-Modus, Test-Datenbank `mpp_test`.
+**testing.py:** Schnelle Passwort-Hashes (`MD5PasswordHasher`), Celery EAGER-Modus, Test-Datenbank `mpp_django_test`.
 
 ## Hinweis: keepdb
 
 Die Test-DB wird mit `keepdb=True` wiederverwendet (mpp-User hat kein CREATEDB). Bei Schema-Änderungen muss die DB manuell gelöscht werden:
 
 ```bash
-PGPASSWORD=mpp psql -h localhost -U mpp -d mpp_test -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+PGPASSWORD=mpp psql -h localhost -U mpp -d mpp_django_test -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
 cd mpp && python manage.py migrate --settings=config.settings.testing
 ```
