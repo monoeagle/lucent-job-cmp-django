@@ -1,0 +1,42 @@
+- id: net-prod-fra
+  name: Production Frankfurt
+  location_id: loc-fra
+  vlan: 100
+  cidr: "10.1.0.0/24"
+  zone: production
+- id: net-dev-fra
+  name: Development Frankfurt
+  location_id: loc-fra
+  vlan: 200
+  cidr: "10.2.0.0/24"
+  zone: development
+- id: net-prod-ber
+  name: Production Berlin
+  location_id: loc-ber
+  vlan: 100
+  cidr: "10.3.0.0/24"
+  zone: production
+- id: net-mgmt-fra
+  name: Management Frankfurt
+  location_id: loc-fra
+  vlan: 300
+  cidr: "10.4.0.0/24"
+  zone: management
+- id: net-dev-ber
+  name: Development Berlin
+  location_id: loc-ber
+  vlan: 200
+  cidr: "10.5.0.0/24"
+  zone: development
+- id: net-prod-muc
+  name: Production München
+  location_id: loc-muc
+  vlan: 100
+  cidr: "10.6.0.0/24"
+  zone: production
+- id: net-dev-muc
+  name: Development München
+  location_id: loc-muc
+  vlan: 200
+  cidr: "10.7.0.0/24"
+  zone: development

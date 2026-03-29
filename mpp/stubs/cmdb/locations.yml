@@ -1,0 +1,9 @@
+- id: loc-fra
+  name: Frankfurt
+  datacenter: DC-FRA-01
+- id: loc-ber
+  name: Berlin
+  datacenter: DC-BER-01
+- id: loc-muc
+  name: München
+  datacenter: DC-MUC-01
