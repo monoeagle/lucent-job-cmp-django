@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center min-h-[60vh]">
+  <div class="card w-96 bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title justify-center">Login</h2>
+      <form method="post" action="{% url 'account_login' %}">
+        {% csrf_token %}
+        <div class="form-control">
+          <label class="label"><span class="label-text">Benutzername</span></label>
+          <input type="text" name="login" class="input input-bordered" placeholder="Benutzername" required>
+        </div>
+        <div class="form-control mt-2">
+          <label class="label"><span class="label-text">Passwort</span></label>
+          <input type="password" name="password" class="input input-bordered" placeholder="Passwort" required>
+        </div>
+        {% if form.errors %}
+          <div class="alert alert-error mt-4"><span>Benutzername oder Passwort falsch.</span></div>
+        {% endif %}
+        <div class="form-control mt-6">
+          <button type="submit" class="btn btn-primary">Einloggen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

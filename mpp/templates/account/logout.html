@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Logout{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center min-h-[60vh]">
+  <div class="card w-96 bg-base-100 shadow-xl">
+    <div class="card-body text-center">
+      <h2 class="card-title justify-center">Abmelden</h2>
+      <p>Möchten Sie sich wirklich abmelden?</p>
+      <form method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-error mt-4">Abmelden</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
