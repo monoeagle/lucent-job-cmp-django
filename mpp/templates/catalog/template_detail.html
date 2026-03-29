@@ -31,8 +31,10 @@
     </div>
     {% endif %}
     <div class="card-actions justify-end mt-6">
-      <a href="{% url 'catalog:list' %}" class="btn btn-ghost">Zurueck</a>
-      <a href="{% url 'orders:create' template_pk=template.pk %}" class="btn btn-primary">Bestellen</a>
+      <a href="{% url 'catalog:list' %}" class="btn btn-ghost">Zurück</a>
+      <a href="{% url 'orders:create' template_pk=template.pk %}" class="btn btn-primary btn-lg">
+        Jetzt bestellen
+      </a>
     </div>
   </div>
 </div>
