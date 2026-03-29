@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Regeln{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Regelwerk</h1>
+
+<div role="tablist" class="tabs tabs-bordered mb-6">
+  <input type="radio" name="rules_tabs" role="tab" class="tab" aria-label="Genehmigungsregeln" checked="checked">
+  <div role="tabpanel" class="tab-content pt-4">
+    {% if approval_rules %}
+    <div class="overflow-x-auto">
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr><th>Template</th><th>Bedingung</th><th>Genehmiger-Rolle</th><th>Aktiv</th></tr>
+        </thead>
+        <tbody>
+          {% for rule in approval_rules %}
+          <tr>
+            <td>{{ rule.template.name }}</td>
+            <td><code class="text-sm">{{ rule.condition|default:"immer" }}</code></td>
+            <td><span class="badge badge-outline">{{ rule.approver_role }}</span></td>
+            <td>
+              {% if rule.is_active %}<span class="badge badge-success badge-sm">Ja</span>
+              {% else %}<span class="badge badge-ghost badge-sm">Nein</span>{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-base-content/50 py-4">Keine Genehmigungsregeln definiert.</p>
+    {% endif %}
+  </div>
+
+  <input type="radio" name="rules_tabs" role="tab" class="tab" aria-label="Verfügbarkeit">
+  <div role="tabpanel" class="tab-content pt-4">
+    {% if availability_rules %}
+    <div class="overflow-x-auto">
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr><th>Template</th><th>Regel</th><th>Wert</th><th>Aktiv</th></tr>
+        </thead>
+        <tbody>
+          {% for rule in availability_rules %}
+          <tr>
+            <td>{{ rule.template.name }}</td>
+            <td>{{ rule.rule_type }}</td>
+            <td><code class="text-sm">{{ rule.value }}</code></td>
+            <td>
+              {% if rule.is_active %}<span class="badge badge-success badge-sm">Ja</span>
+              {% else %}<span class="badge badge-ghost badge-sm">Nein</span>{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-base-content/50 py-4">Keine Verfügbarkeitsregeln definiert.</p>
+    {% endif %}
+  </div>
+
+  <input type="radio" name="rules_tabs" role="tab" class="tab" aria-label="Kontext-Einschränkungen">
+  <div role="tabpanel" class="tab-content pt-4">
+    {% if context_restrictions %}
+    <div class="overflow-x-auto">
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr><th>Template</th><th>Feld</th><th>Erlaubte Werte</th></tr>
+        </thead>
+        <tbody>
+          {% for r in context_restrictions %}
+          <tr>
+            <td>{{ r.template.name }}</td>
+            <td>{{ r.field_name }}</td>
+            <td><code class="text-sm">{{ r.allowed_values }}</code></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-base-content/50 py-4">Keine Kontext-Einschränkungen definiert.</p>
+    {% endif %}
+  </div>
+
+  <input type="radio" name="rules_tabs" role="tab" class="tab" aria-label="Mandantenzuordnung">
+  <div role="tabpanel" class="tab-content pt-4">
+    {% if tenant_assignments %}
+    <div class="overflow-x-auto">
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr><th>Template</th><th>Mandant</th><th>Zugewiesen am</th></tr>
+        </thead>
+        <tbody>
+          {% for a in tenant_assignments %}
+          <tr>
+            <td>{{ a.template.name }}</td>
+            <td>{{ a.tenant.name }}</td>
+            <td>{{ a.created_at|date:"d.m.Y" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-base-content/50 py-4">Keine Mandantenzuordnungen definiert.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

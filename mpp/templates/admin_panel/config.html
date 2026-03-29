@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Konfiguration{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Systemkonfiguration</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <!-- Auth -->
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      <h2 class="card-title">Authentifizierung</h2>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+          <span class="font-medium">Provider</span>
+          <span class="badge badge-outline">django-allauth</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-medium">Social Login</span>
+          <span class="badge badge-outline">{{ social_providers|default:"Nicht konfiguriert" }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-medium">E-Mail-Verifizierung</span>
+          <span class="badge badge-outline">{{ email_verification|default:"mandatory" }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CMDB -->
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      <h2 class="card-title">CMDB-Anbindung</h2>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+          <span class="font-medium">Modus</span>
+          <span class="badge badge-outline">{{ cmdb_mode|default:"stub" }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-medium">Endpoint</span>
+          <span class="text-base-content/70">{{ cmdb_endpoint|default:"--" }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Database -->
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      <h2 class="card-title">Datenbank</h2>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+          <span class="font-medium">Engine</span>
+          <span class="badge badge-outline">{{ db_engine|default:"PostgreSQL" }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-medium">Host</span>
+          <span class="text-base-content/70">{{ db_host|default:"localhost" }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-medium">Name</span>
+          <span class="text-base-content/70">{{ db_name|default:"mpp" }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Celery -->
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      <h2 class="card-title">Task Queue (Celery)</h2>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+          <span class="font-medium">Modus</span>
+          <span class="badge badge-outline">{{ celery_mode|default:"eager (synchron)" }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-medium">Broker</span>
+          <span class="text-base-content/70">{{ celery_broker|default:"--" }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% load mpp_tags %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+<h1 class="text-2xl font-bold mb-6">Admin Dashboard</h1>
 
-<!-- Stat Cards -->
+<!-- System-wide Stat Cards -->
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
   <div class="stat bg-base-100 shadow rounded-box">
-    <div class="stat-title">Offene Bestellungen</div>
-    <div class="stat-value text-primary">{{ stats.open_orders|default:"0" }}</div>
+    <div class="stat-title">Bestellungen gesamt</div>
+    <div class="stat-value text-primary">{{ stats.total_orders|default:"0" }}</div>
   </div>
   <div class="stat bg-base-100 shadow rounded-box">
     <div class="stat-title">Offene Genehmigungen</div>
@@ -19,9 +19,19 @@
     <div class="stat-value text-success">{{ stats.active_subscriptions|default:"0" }}</div>
   </div>
   <div class="stat bg-base-100 shadow rounded-box">
-    <div class="stat-title">Service-Templates</div>
-    <div class="stat-value text-accent">{{ stats.total_templates|default:"0" }}</div>
+    <div class="stat-title">Benutzer</div>
+    <div class="stat-value text-accent">{{ stats.total_users|default:"0" }}</div>
   </div>
+</div>
+
+<!-- Status Breakdown -->
+<div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 mb-8">
+  {% for item in status_counts %}
+  <div class="stat bg-base-100 shadow rounded-box p-3">
+    <div class="stat-title text-xs">{% status_badge item.status %}</div>
+    <div class="stat-value text-lg">{{ item.count }}</div>
+  </div>
+  {% endfor %}
 </div>
 
 <!-- Charts Row -->
@@ -40,19 +50,20 @@
   </div>
 </div>
 
-<!-- Recent Orders + Popular Services -->
+<!-- Recent Orders (system-wide) + System Health -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
   <div class="card bg-base-100 shadow">
     <div class="card-body">
-      <h2 class="card-title">Letzte Bestellungen</h2>
+      <h2 class="card-title">Letzte Bestellungen (systemweit)</h2>
       {% if recent_orders %}
       <div class="overflow-x-auto">
         <table class="table table-sm">
-          <thead><tr><th>#</th><th>Status</th><th>Erstellt</th></tr></thead>
+          <thead><tr><th>#</th><th>Benutzer</th><th>Status</th><th>Erstellt</th></tr></thead>
           <tbody>
             {% for order in recent_orders %}
             <tr>
               <td><a href="{% url 'orders:detail' pk=order.pk %}" class="link link-primary">#{{ order.pk }}</a></td>
+              <td>{{ order.requester.username }}</td>
               <td>{% status_badge order.status %}</td>
               <td>{{ order.created_at|date:"d.m.Y" }}</td>
             </tr>
@@ -67,19 +78,25 @@
   </div>
   <div class="card bg-base-100 shadow">
     <div class="card-body">
-      <h2 class="card-title">Beliebte Services</h2>
-      {% if popular_templates %}
-      <ul class="space-y-2">
-        {% for tpl in popular_templates %}
-        <li class="flex justify-between items-center">
-          <a href="{% url 'catalog:detail' slug=tpl.slug %}" class="link link-primary">{{ tpl.name }}</a>
-          <span class="badge badge-outline">{{ tpl.order_count }}x</span>
-        </li>
-        {% endfor %}
-      </ul>
-      {% else %}
-      <p class="text-base-content/50">Noch keine Daten vorhanden.</p>
-      {% endif %}
+      <h2 class="card-title">Systemstatus</h2>
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="font-medium">Datenbank</span>
+          <span class="badge badge-success">Verbunden</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="font-medium">CMDB-Modus</span>
+          <span class="badge badge-outline">{{ cmdb_mode|default:"stub" }}</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="font-medium">Celery</span>
+          <span class="badge badge-outline">{{ celery_mode|default:"eager" }}</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="font-medium">Service-Templates</span>
+          <span class="badge badge-outline">{{ stats.total_templates|default:"0" }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -99,7 +116,6 @@ const STATUS_LABELS = {
   failed: 'Fehlgeschlagen', rejected: 'Abgelehnt'
 };
 
-// Donut Chart
 const statusData = JSON.parse(document.getElementById('orders-by-status').textContent);
 if (statusData && statusData.length > 0) {
   new Chart(document.getElementById('statusChart'), {
@@ -115,7 +131,6 @@ if (statusData && statusData.length > 0) {
   });
 }
 
-// Line Chart
 const timelineData = JSON.parse(document.getElementById('orders-by-month').textContent);
 if (timelineData && timelineData.length > 0) {
   new Chart(document.getElementById('timelineChart'), {

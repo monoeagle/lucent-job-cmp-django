@@ -1,35 +1,81 @@
 {% extends "base.html" %}
+{% load mpp_tags %}
 {% block title %}Genehmigungen{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-bold mb-6">Offene Genehmigungen</h1>
+<h1 class="text-2xl font-bold mb-6">Genehmigungen</h1>
+
+<!-- Status Filter Tabs -->
+<div role="tablist" class="tabs tabs-boxed mb-6">
+  <a role="tab" class="tab {% if not status_filter or status_filter == 'pending' %}tab-active{% endif %}"
+     href="?status=pending">Ausstehend</a>
+  <a role="tab" class="tab {% if status_filter == 'approved' %}tab-active{% endif %}"
+     href="?status=approved">Genehmigt</a>
+  <a role="tab" class="tab {% if status_filter == 'rejected' %}tab-active{% endif %}"
+     href="?status=rejected">Abgelehnt</a>
+  <a role="tab" class="tab {% if status_filter == 'all' %}tab-active{% endif %}"
+     href="?status=all">Alle</a>
+</div>
+
 {% if requests %}
-<div class="overflow-x-auto">
-  <table class="table table-zebra">
-    <thead><tr><th>#</th><th>Bestellung</th><th>Service</th><th>Erstellt</th><th>Aktionen</th></tr></thead>
-    <tbody>
-      {% for req in requests %}
-      <tr>
-        <td>{{ req.pk }}</td>
-        <td>Order #{{ req.order.pk }}</td>
-        <td>{{ req.rule.template.name }}</td>
-        <td>{{ req.created_at|date:"d.m.Y H:i" }}</td>
-        <td class="flex gap-2">
-          <form method="post" action="{% url 'approvals:approve' pk=req.pk %}">
-            {% csrf_token %}
-            <button class="btn btn-success btn-sm">Genehmigen</button>
-          </form>
+<div class="space-y-3">
+  {% for req in requests %}
+  <div class="collapse collapse-arrow bg-base-100 shadow">
+    <input type="checkbox">
+    <div class="collapse-title flex items-center gap-3">
+      <span class="font-mono text-sm">#{{ req.pk }}</span>
+      {% status_badge req.status %}
+      <span class="font-medium">Order #{{ req.order.pk }}</span>
+      <span class="text-sm text-base-content/60 ml-auto mr-8">{{ req.created_at|date:"d.m.Y H:i" }}</span>
+    </div>
+    <div class="collapse-content">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <p class="text-sm"><span class="font-medium">Antragsteller:</span> {{ req.order.requester.username }}</p>
+          <p class="text-sm"><span class="font-medium">Service-Template:</span> {{ req.rule.template.name }}</p>
+          <p class="text-sm"><span class="font-medium">Regel:</span> {{ req.rule.condition|default:"Standard" }}</p>
+        </div>
+        <div>
+          <p class="text-sm"><span class="font-medium">Erstellt:</span> {{ req.created_at|date:"d.m.Y H:i" }}</p>
+          {% if req.decided_at %}
+          <p class="text-sm"><span class="font-medium">Entschieden:</span> {{ req.decided_at|date:"d.m.Y H:i" }}</p>
+          <p class="text-sm"><span class="font-medium">Entscheider:</span> {{ req.decided_by.username }}</p>
+          {% endif %}
+          {% if req.comment %}
+          <p class="text-sm"><span class="font-medium">Kommentar:</span> {{ req.comment }}</p>
+          {% endif %}
+        </div>
+      </div>
+      {% if req.status == "pending" %}
+      <div class="flex gap-2 mt-2">
+        <form method="post" action="{% url 'approvals:approve' pk=req.pk %}">
+          {% csrf_token %}
+          <button class="btn btn-success btn-sm">Genehmigen</button>
+        </form>
+        <button class="btn btn-error btn-sm" onclick="document.getElementById('reject-modal-{{ req.pk }}').showModal()">Ablehnen</button>
+      </div>
+
+      <!-- Reject Modal -->
+      <dialog id="reject-modal-{{ req.pk }}" class="modal">
+        <div class="modal-box">
+          <h3 class="text-lg font-bold">Genehmigung ablehnen</h3>
+          <p class="py-2 text-sm text-base-content/70">Bitte geben Sie einen Grund für die Ablehnung an.</p>
           <form method="post" action="{% url 'approvals:reject' pk=req.pk %}">
             {% csrf_token %}
-            <input type="hidden" name="comment" value="">
-            <button class="btn btn-error btn-sm">Ablehnen</button>
+            <textarea name="comment" class="textarea textarea-bordered w-full" rows="3" placeholder="Ablehnungsgrund..."></textarea>
+            <div class="modal-action">
+              <button type="button" class="btn btn-ghost" onclick="this.closest('dialog').close()">Abbrechen</button>
+              <button type="submit" class="btn btn-error">Ablehnen</button>
+            </div>
           </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+      </dialog>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
 </div>
 {% else %}
-<div class="text-center py-12 text-base-content/50">Keine offenen Genehmigungen.</div>
+<div class="text-center py-12 text-base-content/50">Keine Genehmigungen für den gewählten Filter.</div>
 {% endif %}
 {% endblock %}
