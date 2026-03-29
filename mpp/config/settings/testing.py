@@ -1,0 +1,14 @@
+from .base import *  # noqa: F401,F403
+DEBUG = False
+SECRET_KEY = "test-secret-key"
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "mpp_test",
+        "USER": "mpp",
+        "PASSWORD": "mpp",
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
+}
+PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
