@@ -10,6 +10,7 @@ from core.exceptions import ConflictError, NotFoundError, ValidationError
 from core.mixins import RequesterRequiredMixin
 
 from .forms import OrderParameterForm
+from .models import Order
 from .services import OrderService
 
 
@@ -20,7 +21,16 @@ class OrderListView(RequesterRequiredMixin, ListView):
     context_object_name = "orders"
 
     def get_queryset(self):
-        return OrderService.list_user_orders(user_id=self.request.user.pk)
+        qs = Order.objects.filter(user=self.request.user).select_related("user")
+        status = self.request.GET.get("status")
+        if status:
+            qs = qs.filter(status=status)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["current_status"] = self.request.GET.get("status", "")
+        return ctx
 
 
 class OrderDetailView(RequesterRequiredMixin, DetailView):

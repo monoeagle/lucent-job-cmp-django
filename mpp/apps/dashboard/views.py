@@ -1,8 +1,8 @@
+"""Dashboard views."""
+import json
 from django.views.generic import TemplateView
-
-from apps.notifications.services import NotificationService
-from apps.orders.models import Order
 from core.mixins import RequesterRequiredMixin
+from .services import DashboardService
 
 
 class DashboardView(RequesterRequiredMixin, TemplateView):
@@ -11,6 +11,13 @@ class DashboardView(RequesterRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         user = self.request.user
-        ctx["order_count"] = Order.objects.filter(user=user).count()
-        ctx["unread_notifications"] = NotificationService.unread_count(user.pk)
+        ctx["stats"] = DashboardService.get_user_stats(user)
+        ctx["orders_by_status"] = json.dumps(
+            DashboardService.get_orders_by_status(user=user)
+        )
+        ctx["orders_by_month"] = json.dumps(
+            DashboardService.get_orders_by_month(user=user)
+        )
+        ctx["recent_orders"] = DashboardService.get_recent_orders(user=user)
+        ctx["popular_templates"] = DashboardService.get_popular_templates()
         return ctx

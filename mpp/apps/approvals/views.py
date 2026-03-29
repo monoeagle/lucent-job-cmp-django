@@ -1,28 +1,34 @@
-"""Views for the approvals app."""
+"""Approval views."""
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.views import View
 from django.views.generic import ListView
-
 from core.exceptions import ConflictError, NotFoundError
 from core.mixins import ApproverRequiredMixin
-
+from .models import ApprovalRequest
 from .services import ApprovalService
 
 
 class ApprovalQueueView(ApproverRequiredMixin, ListView):
-    """Display pending approval requests for approvers."""
-
     template_name = "approvals/approval_queue.html"
     context_object_name = "requests"
 
     def get_queryset(self):
-        return ApprovalService.list_pending_requests()
+        status = self.request.GET.get("status", "pending")
+        qs = ApprovalRequest.objects.select_related(
+            "order", "order__user", "rule", "rule__template", "decided_by"
+        )
+        if status == "all":
+            return qs.all()
+        return qs.filter(status=status)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["current_status"] = self.request.GET.get("status", "pending")
+        return ctx
 
 
 class ApprovalApproveView(ApproverRequiredMixin, View):
-    """Approve a pending approval request."""
-
     def post(self, request, pk):
         try:
             ApprovalService.approve(pk, request.user)
@@ -33,8 +39,6 @@ class ApprovalApproveView(ApproverRequiredMixin, View):
 
 
 class ApprovalRejectView(ApproverRequiredMixin, View):
-    """Reject a pending approval request."""
-
     def post(self, request, pk):
         comment = request.POST.get("comment", "")
         try:

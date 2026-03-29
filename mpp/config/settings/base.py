@@ -16,6 +16,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "django_htmx",
     # Local apps
+    "core",
     "apps.accounts",
     "apps.dashboard",
     "apps.catalog",
@@ -55,6 +56,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "core.context_processors.badge_counts",
             ],
         },
     },
