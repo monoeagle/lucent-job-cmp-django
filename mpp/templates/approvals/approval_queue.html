@@ -17,116 +17,226 @@
 </div>
 
 {% if requests %}
-<div style="display:flex; flex-direction:column; gap:1.5rem;">
-  {% for req in requests %}
-  <div class="card bg-base-100 shadow">
 
-    <!-- Header Row: Title + Date + Status -->
-    <div class="card-body pb-0">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div style="display:flex; align-items:center; gap:0.75rem;">
-          <h2 class="card-title text-lg">{{ req.order.notes|default:"Bestellung" }}</h2>
-        </div>
-        <div style="display:flex; align-items:center; gap:0.75rem;">
-          <span class="text-sm">{{ req.created_at|date:"d.m.Y" }}</span>
-          {% status_badge req.status %}
-        </div>
+<!-- Bulk Actions (only for pending) -->
+{% if current_status == 'pending' %}
+<div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+  <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+    <input type="checkbox" id="select-all" class="checkbox checkbox-sm">
+    <span class="text-sm">Alle auswählen</span>
+  </label>
+  <button onclick="bulkApprove()" class="btn btn-success btn-sm">Ausgewählte genehmigen</button>
+  <button onclick="document.getElementById('bulk-reject-modal').showModal()" class="btn btn-error btn-sm">Ausgewählte ablehnen</button>
+</div>
+{% endif %}
+
+<div style="display:flex; flex-direction:column; gap:1rem;">
+  {% for req in requests %}
+  <div class="card bg-base-100 shadow" id="review-{{ req.pk }}">
+
+    <!-- Collapsible Header — click to expand/collapse -->
+    <div style="display:flex; align-items:center; padding:1rem 1.5rem; cursor:pointer; gap:0.75rem;"
+         onclick="toggleReview({{ req.pk }}, event)">
+
+      {% if req.status == "pending" %}
+      <input type="checkbox" class="checkbox checkbox-sm review-checkbox"
+             value="{{ req.pk }}" onclick="event.stopPropagation()">
+      {% endif %}
+
+      <div style="flex:1; display:flex; align-items:center; gap:0.75rem;">
+        <span class="font-bold">{{ req.order.notes|default:"Bestellung" }}</span>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <span class="text-sm" style="color:oklch(0.556 0 0);">{{ req.created_at|date:"d.m.Y" }}</span>
+        {% status_badge req.status %}
+        <span id="arrow-{{ req.pk }}" style="transition:transform 0.2s; font-size:0.75rem;">▼</span>
       </div>
     </div>
 
-    <!-- Order Info Grid -->
-    <div class="card-body pt-2">
-      <div style="display:grid; grid-template-columns: auto 1fr; gap:0.25rem 2rem; font-size:0.875rem;">
-        <span class="font-medium">Bestellnummer:</span>
-        <span>Order #{{ req.order.pk }}</span>
+    <!-- Collapsible Body -->
+    <div id="body-{{ req.pk }}" style="display:none; border-top:1px solid oklch(0.869 0 0);">
+      <div style="padding:1rem 1.5rem;">
 
-        <span class="font-medium">Bestellt von:</span>
-        <span class="font-bold">{{ req.order.user.username }}</span>
+        <!-- Order Info Grid -->
+        <div style="display:grid; grid-template-columns: auto 1fr; gap:0.25rem 2rem; font-size:0.875rem;">
+          <span class="font-medium">Bestellnummer:</span>
+          <span>Order #{{ req.order.pk }}</span>
 
-        <span class="font-medium">Angefragt am:</span>
-        <span>{{ req.order.created_at|date:"d.m.Y" }}</span>
+          <span class="font-medium">Bestellt von:</span>
+          <span class="font-bold">{{ req.order.user.username }}</span>
 
-        {% if req.order.notes %}
-        <span class="font-medium">Geschäftsgrund:</span>
-        <span>{{ req.order.notes }}</span>
-        {% endif %}
+          <span class="font-medium">Angefragt am:</span>
+          <span>{{ req.order.created_at|date:"d.m.Y" }}</span>
 
-        {% if req.decided_by %}
-        <span class="font-medium">Entschieden von:</span>
-        <span class="font-bold">{{ req.decided_by.username }}</span>
-        {% endif %}
-
-        {% if req.decided_at %}
-        <span class="font-medium">Entschieden am:</span>
-        <span>{{ req.decided_at|date:"d.m.Y H:i" }}</span>
-        {% endif %}
-
-        {% if req.comment %}
-        <span class="font-medium">Entscheidungsgrund:</span>
-        <span>{{ req.comment }}</span>
-        {% endif %}
-      </div>
-
-      <!-- Order Items (Bestellpositionen) -->
-      <h3 class="font-semibold mt-4 mb-2">Bestellpositionen</h3>
-
-      {% for item in req.order.items.all %}
-      <div style="border:1px solid oklch(0.869 0 0); border-radius:0.5rem; padding:1rem; margin-bottom:0.75rem;">
-
-        <!-- Item Header -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
-          <span class="font-bold">{{ item.template.name }}</span>
-          <span style="font-size:0.75rem; color:oklch(0.556 0 0);">{{ item.template.category }} v{{ item.template.version }}</span>
-        </div>
-
-        <!-- Item Parameters Grid (3 columns like Flask) -->
-        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.25rem 1.5rem; font-size:0.8rem;">
-          {% for key, value in item.parameters.items %}
-          {% if value or value == 0 %}
-          <div>
-            <span style="color:oklch(0.556 0 0);">{{ key }}:</span>
-            <span class="font-medium">{% if value == True %}true{% elif value == False %}false{% else %}{{ value }}{% endif %}</span>
-          </div>
+          {% if req.order.notes %}
+          <span class="font-medium">Geschäftsgrund:</span>
+          <span>{{ req.order.notes }}</span>
           {% endif %}
-          {% endfor %}
+
+          {% if req.decided_by %}
+          <span class="font-medium">Entschieden von:</span>
+          <span class="font-bold">{{ req.decided_by.username }}</span>
+          {% endif %}
+
+          {% if req.decided_at %}
+          <span class="font-medium">Entschieden am:</span>
+          <span>{{ req.decided_at|date:"d.m.Y H:i" }}</span>
+          {% endif %}
+
+          {% if req.comment %}
+          <span class="font-medium">Entscheidungsgrund:</span>
+          <span>{{ req.comment }}</span>
+          {% endif %}
         </div>
-      </div>
-      {% empty %}
-      <p class="text-sm text-base-content/50">Keine Positionen.</p>
-      {% endfor %}
 
-      <!-- Action Buttons -->
-      {% if req.status == "pending" %}
-      <div style="display:flex; gap:0.5rem; margin-top:1rem;">
-        <form method="post" action="{% url 'approvals:approve' pk=req.pk %}">
-          {% csrf_token %}
-          <button class="btn btn-success btn-sm">Genehmigen</button>
-        </form>
-        <button class="btn btn-error btn-sm" onclick="document.getElementById('reject-modal-{{ req.pk }}').showModal()">Ablehnen</button>
-      </div>
+        <!-- Order Items -->
+        <h3 class="font-semibold mt-4 mb-2">Bestellpositionen</h3>
 
-      <!-- Reject Modal -->
-      <dialog id="reject-modal-{{ req.pk }}" class="modal">
-        <div class="modal-box">
-          <h3 class="text-lg font-bold">Genehmigung ablehnen</h3>
-          <p class="py-2 text-sm text-base-content/70">Bitte geben Sie einen Grund für die Ablehnung an.</p>
-          <form method="post" action="{% url 'approvals:reject' pk=req.pk %}">
-            {% csrf_token %}
-            <textarea name="comment" class="textarea textarea-bordered w-full" rows="3" placeholder="Ablehnungsgrund..."></textarea>
-            <div class="modal-action">
-              <button type="button" class="btn btn-ghost" onclick="this.closest('dialog').close()">Abbrechen</button>
-              <button type="submit" class="btn btn-error">Ablehnen</button>
+        {% for item in req.order.items.all %}
+        <div style="border:1px solid oklch(0.869 0 0); border-radius:0.5rem; padding:1rem; margin-bottom:0.75rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <span class="font-bold">{{ item.template.name }}</span>
+            <span style="font-size:0.75rem; color:oklch(0.556 0 0);">{{ item.template.category }} v{{ item.template.version }}</span>
+          </div>
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.25rem 1.5rem; font-size:0.8rem;">
+            {% for key, value in item.parameters.items %}
+            {% if value or value == 0 %}
+            <div>
+              <span style="color:oklch(0.556 0 0);">{{ key }}:</span>
+              <span class="font-medium">{% if value == True %}true{% elif value == False %}false{% else %}{{ value }}{% endif %}</span>
             </div>
-          </form>
+            {% endif %}
+            {% endfor %}
+          </div>
         </div>
-        <form method="dialog" class="modal-backdrop"><button>close</button></form>
-      </dialog>
-      {% endif %}
+        {% empty %}
+        <p class="text-sm text-base-content/50">Keine Positionen.</p>
+        {% endfor %}
 
+        <!-- Per-item Action Buttons -->
+        {% if req.status == "pending" %}
+        <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+          <form method="post" action="{% url 'approvals:approve' pk=req.pk %}">
+            {% csrf_token %}
+            <button class="btn btn-success btn-sm">Genehmigen</button>
+          </form>
+          <button class="btn btn-error btn-sm"
+                  onclick="openRejectModal([{{ req.pk }}])">Ablehnen</button>
+        </div>
+        {% endif %}
+
+      </div>
     </div>
   </div>
   {% endfor %}
 </div>
+
+<!-- Bulk Reject Modal -->
+<dialog id="bulk-reject-modal" class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">Ausgewählte ablehnen</h3>
+    <p class="py-2 text-sm text-base-content/70">Bitte geben Sie einen Grund für die Ablehnung an.</p>
+    <textarea id="bulk-reject-comment" class="textarea textarea-bordered w-full" rows="3" placeholder="Ablehnungsgrund..."></textarea>
+    <div class="modal-action">
+      <button type="button" class="btn btn-ghost" onclick="document.getElementById('bulk-reject-modal').close()">Abbrechen</button>
+      <button type="button" class="btn btn-error" onclick="bulkReject()">Ablehnen</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>close</button></form>
+</dialog>
+
+<!-- Hidden forms for bulk operations -->
+<form id="bulk-approve-form" method="post" style="display:none;">
+  {% csrf_token %}
+</form>
+<form id="bulk-reject-form" method="post" style="display:none;">
+  {% csrf_token %}
+  <input type="hidden" name="comment" id="bulk-reject-comment-input">
+</form>
+
+<script>
+// Toggle collapse
+function toggleReview(id, event) {
+  if (event.target.type === 'checkbox') return;
+  var body = document.getElementById('body-' + id);
+  var arrow = document.getElementById('arrow-' + id);
+  if (body.style.display === 'none') {
+    body.style.display = 'block';
+    arrow.style.transform = 'rotate(180deg)';
+  } else {
+    body.style.display = 'none';
+    arrow.style.transform = '';
+  }
+}
+
+// Select All
+document.getElementById('select-all')?.addEventListener('change', function() {
+  document.querySelectorAll('.review-checkbox').forEach(function(cb) {
+    cb.checked = this.checked;
+  }.bind(this));
+});
+
+// Get selected IDs
+function getSelectedIds() {
+  var ids = [];
+  document.querySelectorAll('.review-checkbox:checked').forEach(function(cb) {
+    ids.push(cb.value);
+  });
+  return ids;
+}
+
+// Bulk Approve — submit one by one sequentially
+function bulkApprove() {
+  var ids = getSelectedIds();
+  if (ids.length === 0) { alert('Bitte mindestens eine Genehmigung auswählen.'); return; }
+  if (!confirm('Wollen Sie ' + ids.length + ' Genehmigung(en) erteilen?')) return;
+  submitBulk(ids, 'approve');
+}
+
+// Open reject modal for specific IDs or selected
+var pendingRejectIds = [];
+function openRejectModal(ids) {
+  pendingRejectIds = ids || getSelectedIds();
+  if (pendingRejectIds.length === 0) { alert('Bitte mindestens eine Genehmigung auswählen.'); return; }
+  document.getElementById('bulk-reject-modal').showModal();
+}
+
+// Bulk Reject
+function bulkReject() {
+  var comment = document.getElementById('bulk-reject-comment').value;
+  var ids = pendingRejectIds.length > 0 ? pendingRejectIds : getSelectedIds();
+  if (ids.length === 0) return;
+  document.getElementById('bulk-reject-modal').close();
+  submitBulk(ids, 'reject', comment);
+}
+
+// Submit bulk actions one at a time via hidden form
+function submitBulk(ids, action, comment) {
+  if (ids.length === 0) { location.reload(); return; }
+  var id = ids.shift();
+  var form;
+  if (action === 'approve') {
+    form = document.getElementById('bulk-approve-form');
+    form.action = '/approvals/' + id + '/approve/';
+  } else {
+    form = document.getElementById('bulk-reject-form');
+    form.action = '/approvals/' + id + '/reject/';
+    document.getElementById('bulk-reject-comment-input').value = comment || '';
+  }
+  // For the last one, just submit normally (page reloads)
+  if (ids.length === 0) {
+    form.submit();
+    return;
+  }
+  // For others, use fetch then continue
+  var formData = new FormData(form);
+  fetch(form.action, { method: 'POST', body: formData, redirect: 'follow' })
+    .then(function() { submitBulk(ids, action, comment); })
+    .catch(function() { submitBulk(ids, action, comment); });
+}
+</script>
+
 {% else %}
 <div class="text-center py-12 text-base-content/50">Keine Genehmigungen für den gewählten Filter.</div>
 {% endif %}
