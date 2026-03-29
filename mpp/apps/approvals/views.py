@@ -17,7 +17,7 @@ class ApprovalQueueView(ApproverRequiredMixin, ListView):
         status = self.request.GET.get("status", "pending")
         qs = ApprovalRequest.objects.select_related(
             "order", "order__user", "rule", "rule__template", "decided_by"
-        )
+        ).prefetch_related("order__items", "order__items__template")
         if status == "all":
             return qs.all()
         return qs.filter(status=status)

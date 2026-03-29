@@ -5,48 +5,99 @@
 <h1 class="text-2xl font-bold mb-6">Genehmigungen</h1>
 
 <!-- Status Filter Tabs -->
-<div role="tablist" class="tabs tabs-boxed mb-6">
-  <a role="tab" class="tab {% if not status_filter or status_filter == 'pending' %}tab-active{% endif %}"
+<div role="tablist" class="tabs tabs-bordered mb-6">
+  <a role="tab" class="tab {% if current_status == 'pending' %}tab-active{% endif %}"
      href="?status=pending">Ausstehend</a>
-  <a role="tab" class="tab {% if status_filter == 'approved' %}tab-active{% endif %}"
+  <a role="tab" class="tab {% if current_status == 'approved' %}tab-active{% endif %}"
      href="?status=approved">Genehmigt</a>
-  <a role="tab" class="tab {% if status_filter == 'rejected' %}tab-active{% endif %}"
+  <a role="tab" class="tab {% if current_status == 'rejected' %}tab-active{% endif %}"
      href="?status=rejected">Abgelehnt</a>
-  <a role="tab" class="tab {% if status_filter == 'all' %}tab-active{% endif %}"
+  <a role="tab" class="tab {% if current_status == 'all' %}tab-active{% endif %}"
      href="?status=all">Alle</a>
 </div>
 
 {% if requests %}
-<div class="space-y-3">
+<div style="display:flex; flex-direction:column; gap:1.5rem;">
   {% for req in requests %}
-  <div class="collapse collapse-arrow bg-base-100 shadow">
-    <input type="checkbox">
-    <div class="collapse-title flex items-center gap-3">
-      <span class="font-mono text-sm">#{{ req.pk }}</span>
-      {% status_badge req.status %}
-      <span class="font-medium">Order #{{ req.order.pk }}</span>
-      <span class="text-sm text-base-content/60 ml-auto mr-8">{{ req.created_at|date:"d.m.Y H:i" }}</span>
-    </div>
-    <div class="collapse-content">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div>
-          <p class="text-sm"><span class="font-medium">Antragsteller:</span> {{ req.order.requester.username }}</p>
-          <p class="text-sm"><span class="font-medium">Service-Template:</span> {{ req.rule.template.name }}</p>
-          <p class="text-sm"><span class="font-medium">Regel:</span> {{ req.rule.condition|default:"Standard" }}</p>
+  <div class="card bg-base-100 shadow">
+
+    <!-- Header Row: Title + Date + Status -->
+    <div class="card-body pb-0">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <h2 class="card-title text-lg">{{ req.order.notes|default:"Bestellung" }}</h2>
         </div>
-        <div>
-          <p class="text-sm"><span class="font-medium">Erstellt:</span> {{ req.created_at|date:"d.m.Y H:i" }}</p>
-          {% if req.decided_at %}
-          <p class="text-sm"><span class="font-medium">Entschieden:</span> {{ req.decided_at|date:"d.m.Y H:i" }}</p>
-          <p class="text-sm"><span class="font-medium">Entscheider:</span> {{ req.decided_by.username }}</p>
-          {% endif %}
-          {% if req.comment %}
-          <p class="text-sm"><span class="font-medium">Kommentar:</span> {{ req.comment }}</p>
-          {% endif %}
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <span class="text-sm">{{ req.created_at|date:"d.m.Y" }}</span>
+          {% status_badge req.status %}
         </div>
       </div>
+    </div>
+
+    <!-- Order Info Grid -->
+    <div class="card-body pt-2">
+      <div style="display:grid; grid-template-columns: auto 1fr; gap:0.25rem 2rem; font-size:0.875rem;">
+        <span class="font-medium">Bestellnummer:</span>
+        <span>Order #{{ req.order.pk }}</span>
+
+        <span class="font-medium">Bestellt von:</span>
+        <span class="font-bold">{{ req.order.user.username }}</span>
+
+        <span class="font-medium">Angefragt am:</span>
+        <span>{{ req.order.created_at|date:"d.m.Y" }}</span>
+
+        {% if req.order.notes %}
+        <span class="font-medium">Geschäftsgrund:</span>
+        <span>{{ req.order.notes }}</span>
+        {% endif %}
+
+        {% if req.decided_by %}
+        <span class="font-medium">Entschieden von:</span>
+        <span class="font-bold">{{ req.decided_by.username }}</span>
+        {% endif %}
+
+        {% if req.decided_at %}
+        <span class="font-medium">Entschieden am:</span>
+        <span>{{ req.decided_at|date:"d.m.Y H:i" }}</span>
+        {% endif %}
+
+        {% if req.comment %}
+        <span class="font-medium">Entscheidungsgrund:</span>
+        <span>{{ req.comment }}</span>
+        {% endif %}
+      </div>
+
+      <!-- Order Items (Bestellpositionen) -->
+      <h3 class="font-semibold mt-4 mb-2">Bestellpositionen</h3>
+
+      {% for item in req.order.items.all %}
+      <div style="border:1px solid oklch(0.869 0 0); border-radius:0.5rem; padding:1rem; margin-bottom:0.75rem;">
+
+        <!-- Item Header -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+          <span class="font-bold">{{ item.template.name }}</span>
+          <span style="font-size:0.75rem; color:oklch(0.556 0 0);">{{ item.template.category }} v{{ item.template.version }}</span>
+        </div>
+
+        <!-- Item Parameters Grid (3 columns like Flask) -->
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.25rem 1.5rem; font-size:0.8rem;">
+          {% for key, value in item.parameters.items %}
+          {% if value or value == 0 %}
+          <div>
+            <span style="color:oklch(0.556 0 0);">{{ key }}:</span>
+            <span class="font-medium">{% if value == True %}true{% elif value == False %}false{% else %}{{ value }}{% endif %}</span>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-sm text-base-content/50">Keine Positionen.</p>
+      {% endfor %}
+
+      <!-- Action Buttons -->
       {% if req.status == "pending" %}
-      <div class="flex gap-2 mt-2">
+      <div style="display:flex; gap:0.5rem; margin-top:1rem;">
         <form method="post" action="{% url 'approvals:approve' pk=req.pk %}">
           {% csrf_token %}
           <button class="btn btn-success btn-sm">Genehmigen</button>
@@ -71,6 +122,7 @@
         <form method="dialog" class="modal-backdrop"><button>close</button></form>
       </dialog>
       {% endif %}
+
     </div>
   </div>
   {% endfor %}
