@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}{{ template.name }}{% endblock %}
+{% block content %}
+<div class="breadcrumbs text-sm mb-4">
+  <ul><li><a href="{% url 'catalog:list' %}">Katalog</a></li><li>{{ template.name }}</li></ul>
+</div>
+<div class="card bg-base-100 shadow-xl">
+  <div class="card-body">
+    <h1 class="card-title text-2xl">{{ template.name }}
+      <span class="badge badge-primary">{{ template.category }}</span>
+      <span class="badge badge-ghost">v{{ template.version }}</span>
+    </h1>
+    <p class="mt-2">{{ template.description }}</p>
+    {% if template.parameters %}
+    <h2 class="text-lg font-semibold mt-6 mb-2">Parameter</h2>
+    <div class="overflow-x-auto">
+      <table class="table table-zebra">
+        <thead><tr><th>Name</th><th>Typ</th><th>Pflicht</th><th>Standard</th><th>Optionen</th></tr></thead>
+        <tbody>
+          {% for p in template.parameters %}
+          <tr>
+            <td>{{ p.label|default:p.key }}</td>
+            <td><span class="badge badge-sm">{{ p.type }}</span></td>
+            <td>{% if p.required %}Ja{% else %}Nein{% endif %}</td>
+            <td>{{ p.default|default:"—" }}</td>
+            <td>{% if p.options %}{{ p.options|join:", " }}{% else %}—{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+    <div class="card-actions justify-end mt-6">
+      <a href="{% url 'catalog:list' %}" class="btn btn-ghost">Zurueck</a>
+      <a href="{% url 'orders:create' template_pk=template.pk %}" class="btn btn-primary">Bestellen</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

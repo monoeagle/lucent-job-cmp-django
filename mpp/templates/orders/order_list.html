@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Bestellungen{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Meine Bestellungen</h1>
+{% if orders %}
+<div class="overflow-x-auto">
+  <table class="table table-zebra">
+    <thead><tr><th>#</th><th>Status</th><th>Items</th><th>Erstellt</th><th></th></tr></thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.pk }}</td>
+        <td><span class="badge badge-outline">{{ order.get_status_display }}</span></td>
+        <td>{{ order.items.count }}</td>
+        <td>{{ order.created_at|date:"d.m.Y H:i" }}</td>
+        <td><a href="{% url 'orders:detail' pk=order.pk %}" class="btn btn-primary btn-sm">Details</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="text-center py-12 text-base-content/50">Keine Bestellungen vorhanden.</div>
+{% endif %}
+{% endblock %}

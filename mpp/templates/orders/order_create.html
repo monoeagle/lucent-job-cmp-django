@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Bestellen: {{ service_template.name }}{% endblock %}
+{% block content %}
+<div class="breadcrumbs text-sm mb-4">
+  <ul>
+    <li><a href="{% url 'catalog:list' %}">Katalog</a></li>
+    <li><a href="{% url 'catalog:detail' pk=service_template.pk %}">{{ service_template.name }}</a></li>
+    <li>Bestellen</li>
+  </ul>
+</div>
+<div class="card bg-base-100 shadow-xl max-w-lg">
+  <div class="card-body">
+    <h1 class="card-title">{{ service_template.name }} bestellen</h1>
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-control mt-3">
+        <label class="label"><span class="label-text">{{ field.label }}</span></label>
+        {{ field }}
+        {% if field.errors %}
+          <label class="label"><span class="label-text-alt text-error">{{ field.errors.0 }}</span></label>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <div class="form-control mt-6">
+        <button type="submit" class="btn btn-primary">Bestellen</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
