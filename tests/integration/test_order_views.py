@@ -72,17 +72,69 @@ class TestOrderCreateView:
         response = client.get(reverse("orders:create", kwargs={"template_pk": template.pk}))
         assert response.status_code == 200
 
-    def test_post_creates_order_with_item(self, client):
+    def test_wizard_get_returns_200(self, client):
+        """Wizard GET renders the first step (context)."""
+        user = UserFactory()
+        template = ServiceTemplateFactory()
+        client.force_login(user)
+        response = client.get(
+            reverse("orders:create", kwargs={"template_pk": template.pk}),
+        )
+        assert response.status_code == 200
+        assert "Kontext" in response.content.decode()
+
+    def test_wizard_step_navigation(self, client):
+        """Wizard POST with action=next advances to next step."""
+        user = UserFactory()
+        template = ServiceTemplateFactory()
+        client.force_login(user)
+        url = reverse("orders:create", kwargs={"template_pk": template.pk})
+        # GET first step to init session
+        client.get(url)
+        # POST context step with valid data
+        response = client.post(url, {
+            "action": "next",
+            "location": "loc-fra",
+            "tenant": "tenant-alpha",
+            "security_zone": "production",
+        })
+        assert response.status_code == 302
+
+    def test_wizard_submit_creates_order(self, client):
+        """Full wizard submit creates an order with item."""
         user = UserFactory()
         template = ServiceTemplateFactory(parameters=[
-            {"key": "cpu", "type": "integer", "required": True},
+            {"key": "cpu", "type": "integer", "required": True, "group": "Compute"},
         ])
         client.force_login(user)
-        response = client.post(
-            reverse("orders:create", kwargs={"template_pk": template.pk}),
-            {"cpu": "4"},
-        )
+        url = reverse("orders:create", kwargs={"template_pk": template.pk})
+
+        # Step 0: GET to init session
+        client.get(url)
+
+        # Step 0: POST context
+        client.post(url, {
+            "action": "next",
+            "location": "loc-fra",
+            "tenant": "tenant-alpha",
+            "security_zone": "production",
+        })
+
+        # Step 1: POST parameters (navigate to step 1 first)
+        client.get(url + "?step=1")
+        client.post(url, {
+            "action": "next",
+            "cpu": "4",
+        })
+
+        # Step 2 (summary): POST submit
+        client.get(url + "?step=2")
+        response = client.post(url, {
+            "action": "submit",
+            "quantity": "1",
+        })
         assert response.status_code == 302
+
         from apps.orders.models import Order
         order = Order.objects.filter(user=user).first()
         assert order is not None

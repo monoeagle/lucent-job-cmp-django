@@ -1,0 +1,19 @@
+<!-- Parameter Fields for group: {{ step.label }} -->
+{% for field in form %}
+<div class="form-control mt-4">
+  <label class="label">
+    <span class="label-text font-medium">{{ field.label }}{% if field.field.required %} <span class="text-error">*</span>{% endif %}</span>
+  </label>
+  {% if field.field.widget.input_type == "checkbox" %}
+  <label class="cursor-pointer label justify-start gap-3">
+    {{ field }}
+    <span class="label-text">{{ field.label }} aktivieren</span>
+  </label>
+  {% else %}
+  {{ field }}
+  {% endif %}
+  {% if field.errors %}
+  <label class="label"><span class="label-text-alt text-error">{{ field.errors.0 }}</span></label>
+  {% endif %}
+</div>
+{% endfor %}

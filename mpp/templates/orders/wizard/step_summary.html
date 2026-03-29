@@ -1,0 +1,48 @@
+<!-- Summary -->
+<div class="space-y-4">
+
+  <!-- Context Summary -->
+  {% if context_data %}
+  <div class="bg-base-200 rounded-lg p-4">
+    <h3 class="font-semibold mb-2">Kontext</h3>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+      {% for key, val in context_data.items %}
+      {% if val %}
+      <div>
+        <div class="text-xs text-base-content/50">{{ key }}</div>
+        <div class="font-medium text-sm">{{ val }}</div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Parameters Summary -->
+  <div class="bg-base-200 rounded-lg p-4">
+    <h3 class="font-semibold mb-2">Parameter</h3>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      {% for key, val in all_parameters.items %}
+      <div>
+        <div class="text-xs text-base-content/50">{{ key }}</div>
+        <div class="font-medium text-sm">
+          {% if val == True %}Ja{% elif val == False %}Nein{% elif val == 0 %}0{% elif val %}{{ val }}{% else %}&mdash;{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Quantity -->
+  <div class="bg-base-200 rounded-lg p-4">
+    <h3 class="font-semibold mb-2">Anzahl</h3>
+    <div class="flex items-center gap-4">
+      {{ form.quantity }}
+      <span class="text-sm text-base-content/50">Instanz(en) werden erstellt</span>
+    </div>
+    {% if form.quantity.errors %}
+    <span class="text-error text-sm">{{ form.quantity.errors.0 }}</span>
+    {% endif %}
+  </div>
+
+</div>

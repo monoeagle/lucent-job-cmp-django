@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}{{ service_template.name }} bestellen{% endblock %}
+{% block content %}
+<div class="breadcrumbs text-sm mb-4">
+  <ul>
+    <li><a href="{% url 'catalog:list' %}">Katalog</a></li>
+    <li><a href="{% url 'catalog:detail' pk=service_template.pk %}">{{ service_template.name }}</a></li>
+    <li>Bestellen</li>
+  </ul>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+  <!-- Left: Steps + Form (3 cols) -->
+  <div class="lg:col-span-3">
+
+    <!-- Step Indicator -->
+    <ul class="steps steps-horizontal w-full mb-8">
+      {% for s in steps %}
+      <li class="step {% if forloop.counter0 <= current_step %}step-primary{% endif %}">
+        {% if forloop.counter0 < current_step %}
+        <form method="post" style="display:inline">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="goto">
+          <input type="hidden" name="target_step" value="{{ forloop.counter0 }}">
+          <button type="submit" class="link link-primary text-sm">{{ s.label }}</button>
+        </form>
+        {% else %}
+        <span class="text-sm">{{ s.label }}</span>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+
+    <!-- Current Step Card -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title text-xl mb-4">
+          <span class="badge badge-primary badge-lg">{{ current_step|add:1 }}</span>
+          {{ step.label }}
+        </h2>
+
+        <form method="post">
+          {% csrf_token %}
+
+          {% if step.type == "context" %}
+            {% include "orders/wizard/step_context.html" %}
+          {% elif step.type == "params" %}
+            {% include "orders/wizard/step_params.html" %}
+          {% elif step.type == "summary" %}
+            {% include "orders/wizard/step_summary.html" %}
+          {% endif %}
+
+          <!-- Navigation Buttons -->
+          <div class="flex justify-between mt-8 pt-4 border-t border-base-300">
+            <div>
+              {% if not is_first_step %}
+              <button type="submit" name="action" value="back" class="btn btn-ghost">
+                &larr; Zur&uuml;ck
+              </button>
+              {% endif %}
+            </div>
+            <div>
+              {% if is_last_step %}
+              <button type="submit" name="action" value="submit" class="btn btn-success btn-lg">
+                Zur Bestellung hinzuf&uuml;gen
+              </button>
+              {% else %}
+              <button type="submit" name="action" value="next" class="btn btn-primary">
+                Weiter &rarr;
+              </button>
+              {% endif %}
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Sidebar Summary (1 col) -->
+  <div class="lg:col-span-1">
+    <div class="card bg-base-100 shadow sticky top-4">
+      <div class="card-body">
+        <h3 class="card-title text-base">{{ service_template.name }}</h3>
+        <p class="text-sm text-base-content/50">{{ service_template.category }}</p>
+
+        {% if context_data %}
+        <div class="divider text-xs">Kontext</div>
+        {% for key, val in context_data.items %}
+        {% if val %}
+        <div class="text-xs">
+          <span class="text-base-content/50">{{ key }}:</span> {{ val }}
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+
+        {% if all_parameters %}
+        <div class="divider text-xs">Parameter</div>
+        {% for key, val in all_parameters.items %}
+        <div class="text-xs">
+          <span class="text-base-content/50">{{ key }}:</span>
+          {% if val == True %}Ja{% elif val == False %}Nein{% else %}{{ val }}{% endif %}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% if quantity > 1 %}
+        <div class="divider text-xs">Menge</div>
+        <div class="text-sm font-bold">{{ quantity }}x</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
