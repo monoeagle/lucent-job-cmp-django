@@ -7,6 +7,7 @@
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/output.css' %}">
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script src="{% static 'js/chart.umd.min.js' %}"></script>
 </head>
 <body class="min-h-screen bg-base-200">
   {% include "includes/navbar.html" %}
@@ -22,6 +23,5 @@
     </div>
   </div>
   {% block fixed_sidebar %}{% endblock %}
-  <script src="{% static 'js/chart.umd.min.js' %}"></script>
 </body>
 </html>
