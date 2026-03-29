@@ -1,0 +1,19 @@
+<ul class="menu p-4 w-64 min-h-full bg-base-100 text-base-content">
+  <li class="menu-title">Navigation</li>
+  <li><a href="/">Dashboard</a></li>
+  <li><a href="/catalog/">Service-Katalog</a></li>
+  {% if user.is_authenticated %}
+    <li><a href="/orders/">Bestellungen</a></li>
+    <li><a href="/subscriptions/">Subscriptions</a></li>
+    <li><a href="/notifications/">Benachrichtigungen</a></li>
+    {% if user.role == "approver" or user.role == "admin" or user.role == "superadmin" %}
+      <li class="menu-title">Approver</li>
+      <li><a href="/approvals/">Genehmigungen</a></li>
+    {% endif %}
+    {% if user.role == "admin" or user.role == "superadmin" %}
+      <li class="menu-title">Admin</li>
+      <li><a href="/audit/">Audit-Log</a></li>
+      <li><a href="/admin/">Administration</a></li>
+    {% endif %}
+  {% endif %}
+</ul>
