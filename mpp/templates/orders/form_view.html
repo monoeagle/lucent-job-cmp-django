@@ -85,23 +85,86 @@
   </div>
 </form>
 
-<!-- Required field validation: red borders -->
+<!-- Template parameters as JSON for auto-fill logic -->
+{{ template_parameters_json|json_script:"template-params" }}
+
 <script>
-document.querySelectorAll('#order-form select[required]').forEach(function(sel) {
-  function check() {
-    sel.style.borderColor = !sel.value ? 'oklch(0.637 0.237 25.331)' : '';
+(function() {
+  var params = JSON.parse(document.getElementById('template-params').textContent);
+  var form = document.getElementById('order-form');
+  var ERR_COLOR = 'oklch(0.637 0.237 25.331)';
+
+  // Build lookup: key → param definition
+  var paramMap = {};
+  params.forEach(function(p) { paramMap[p.key] = p; });
+
+  // Build affects_options_of map: source_key → [target_keys]
+  var affectsMap = {};
+  params.forEach(function(p) {
+    if (p.affects_options_of && p.affects_options_of.length) {
+      affectsMap[p.key] = p.affects_options_of;
+    }
+  });
+
+  // Auto-fill: when an enum with metadata is changed, fill target fields
+  function handleAutoFill(sourceKey, selectedValue) {
+    var param = paramMap[sourceKey];
+    if (!param || param.type !== 'enum' || !param.constraints || !param.constraints.options) return;
+    var targets = affectsMap[sourceKey];
+    if (!targets || !targets.length) return;
+
+    // Find selected option's metadata
+    var selectedOption = null;
+    param.constraints.options.forEach(function(opt) {
+      if (opt.value === selectedValue) selectedOption = opt;
+    });
+    if (!selectedOption || !selectedOption.metadata) return;
+
+    // Auto-fill target fields from metadata
+    targets.forEach(function(targetKey) {
+      var metaValue = selectedOption.metadata[targetKey];
+      if (metaValue === undefined) return;
+
+      var targetEl = form.querySelector('[name="' + targetKey + '"]');
+      if (!targetEl) return;
+
+      if (targetEl.tagName === 'SELECT') {
+        // Set select value
+        targetEl.value = String(metaValue);
+        targetEl.dispatchEvent(new Event('change', {bubbles: true}));
+      } else if (targetEl.type === 'number' || targetEl.type === 'text') {
+        targetEl.value = metaValue;
+        targetEl.dispatchEvent(new Event('input', {bubbles: true}));
+      } else if (targetEl.type === 'checkbox') {
+        targetEl.checked = !!metaValue;
+        targetEl.dispatchEvent(new Event('change', {bubbles: true}));
+      }
+    });
   }
-  sel.addEventListener('change', check);
-  check();
-});
-document.querySelectorAll('#order-form input[required]').forEach(function(inp) {
-  function check() {
-    inp.style.borderColor = !inp.value.trim() ? 'oklch(0.637 0.237 25.331)' : '';
-  }
-  inp.addEventListener('input', check);
-  inp.addEventListener('blur', check);
-  check();
-});
+
+  // Listen for changes on all enum selects that have affects_options_of
+  Object.keys(affectsMap).forEach(function(sourceKey) {
+    var el = form.querySelector('[name="' + sourceKey + '"]');
+    if (el) {
+      el.addEventListener('change', function() {
+        handleAutoFill(sourceKey, el.value);
+      });
+    }
+  });
+
+  // Required field validation: red borders
+  form.querySelectorAll('select[required]').forEach(function(sel) {
+    function check() { sel.style.borderColor = !sel.value ? ERR_COLOR : ''; }
+    sel.addEventListener('change', check);
+    check();
+  });
+  form.querySelectorAll('input[required]').forEach(function(inp) {
+    function check() { inp.style.borderColor = !inp.value.trim() ? ERR_COLOR : ''; }
+    inp.addEventListener('input', check);
+    inp.addEventListener('blur', check);
+    check();
+  });
+})();
 </script>
 
 <!-- Mobile: hide sidebar margin -->

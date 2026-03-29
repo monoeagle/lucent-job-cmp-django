@@ -320,6 +320,7 @@ class OrderFormView(RequesterRequiredMixin, View):
             "form": form,
             "grouped_parameters": grouped,
             "context_fields": ["location", "tenant", "security_zone"],
+            "template_parameters_json": template.parameters,
         })
 
     def post(self, request, template_pk):
@@ -333,6 +334,7 @@ class OrderFormView(RequesterRequiredMixin, View):
                 "form": form,
                 "grouped_parameters": grouped,
                 "context_fields": ["location", "tenant", "security_zone"],
+                "template_parameters_json": template.parameters,
             })
 
         # Extract parameters (exclude context + quantity fields)
