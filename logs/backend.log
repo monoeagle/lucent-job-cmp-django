@@ -413,3 +413,11 @@ Watching for file changes with StatReloader
 [29/Mar/2026 23:41:34] "GET /orders/create/2/form/ HTTP/1.1" 200 33512
 [29/Mar/2026 23:41:34] "GET /static/js/chart.umd.min.js HTTP/1.1" 304 0
 [29/Mar/2026 23:41:34] "GET /static/css/output.css HTTP/1.1" 304 0
+[29/Mar/2026 23:43:33] "GET /orders/create/2/form/ HTTP/1.1" 200 33545
+[29/Mar/2026 23:43:43] "GET /orders/create/2/form/ HTTP/1.1" 200 33545
+[29/Mar/2026 23:43:44] "GET /orders/create/2/form/ HTTP/1.1" 200 33545
+[29/Mar/2026 23:43:44] "GET /static/css/output.css HTTP/1.1" 200 115004
+[29/Mar/2026 23:43:44] "GET /static/js/htmx.min.js HTTP/1.1" 200 50917
+[29/Mar/2026 23:43:44] "GET /static/js/chart.umd.min.js HTTP/1.1" 200 205889
+Not Found: /favicon.ico
+[29/Mar/2026 23:43:44] "GET /favicon.ico HTTP/1.1" 404 4488
