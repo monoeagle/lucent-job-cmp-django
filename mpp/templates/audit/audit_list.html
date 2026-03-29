@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Audit-Log{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Audit-Log</h1>
+
+<div class="overflow-x-auto">
+  <table class="table table-zebra w-full">
+    <thead>
+      <tr>
+        <th>Zeitpunkt</th>
+        <th>Benutzer</th>
+        <th>Aktion</th>
+        <th>Ressource</th>
+        <th>ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td>{{ log.timestamp|date:"d.m.Y H:i:s" }}</td>
+        <td>{{ log.user.username|default:"System" }}</td>
+        <td><span class="badge badge-ghost">{{ log.action }}</span></td>
+        <td>{{ log.resource_type }}</td>
+        <td>{{ log.resource_id }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="text-center text-base-content/50">Keine Eintr&auml;ge vorhanden.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if is_paginated %}
+<div class="flex justify-center mt-6">
+  <div class="join">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="join-item btn btn-sm">Vorherige</a>
+    {% endif %}
+    <span class="join-item btn btn-sm btn-disabled">Seite {{ page_obj.number }} von {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="join-item btn btn-sm">N&auml;chste</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}
