@@ -410,3 +410,6 @@ Watching for file changes with StatReloader
 [29/Mar/2026 23:35:21] "GET /catalog/2/ HTTP/1.1" 200 13771
 [29/Mar/2026 23:35:27] "GET /orders/create/2/ HTTP/1.1" 200 10759
 [29/Mar/2026 23:35:29] "GET /orders/create/2/form/ HTTP/1.1" 200 30850
+[29/Mar/2026 23:41:34] "GET /orders/create/2/form/ HTTP/1.1" 200 33512
+[29/Mar/2026 23:41:34] "GET /static/js/chart.umd.min.js HTTP/1.1" 304 0
+[29/Mar/2026 23:41:34] "GET /static/css/output.css HTTP/1.1" 304 0
