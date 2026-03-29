@@ -120,6 +120,9 @@ document.querySelectorAll('#order-form input[required]').forEach(function(inp) {
       <h3 class="font-bold text-base">Zusammenfassung</h3>
       <p class="text-sm text-base-content/50">{{ service_template.name }} <span class="text-xs">v{{ service_template.version }}</span></p>
 
+      <!-- Live parameter values -->
+      <div id="summary-values" style="margin-top:0.5rem; font-size:0.75rem;"></div>
+
       <div class="divider text-xs my-1">Anzahl</div>
       <div class="form-control">
         <input type="number" name="quantity" value="1" min="1" max="50"
@@ -139,25 +142,73 @@ document.querySelectorAll('#order-form input[required]').forEach(function(inp) {
 </div>
 
 <script>
-// Show/hide required hint
 (function() {
   var form = document.getElementById('order-form');
   var hint = document.getElementById('required-hint');
-  if (!form || !hint) return;
-  function checkComplete() {
-    var incomplete = false;
-    form.querySelectorAll('select[required], input[required]').forEach(function(el) {
-      if (!el.value || !el.value.trim()) incomplete = true;
-    });
-    hint.style.display = incomplete ? 'block' : 'none';
-  }
-  form.addEventListener('change', checkComplete);
-  form.addEventListener('input', checkComplete);
-  checkComplete();
-})();
+  var summaryDiv = document.getElementById('summary-values');
+  if (!form) return;
 
-// Hide sidebar on mobile
-(function() {
+  function getLabel(el) {
+    // Find the label text for a form element
+    var formControl = el.closest('.form-control');
+    if (formControl) {
+      var lbl = formControl.querySelector('.label-text.font-medium');
+      if (lbl) {
+        return lbl.textContent.replace(/\s*\*\s*$/, '').trim();
+      }
+    }
+    return el.name;
+  }
+
+  function getDisplayValue(el) {
+    if (el.type === 'checkbox') {
+      return el.checked ? 'true' : 'false';
+    }
+    if (el.tagName === 'SELECT') {
+      var opt = el.options[el.selectedIndex];
+      if (opt && opt.value) return opt.text;
+      return '';
+    }
+    return el.value;
+  }
+
+  function updateSummary() {
+    var html = '';
+    var incomplete = false;
+    var fields = form.querySelectorAll('select, input[type="text"], input[type="number"], input[type="checkbox"]');
+
+    fields.forEach(function(el) {
+      if (el.name === 'csrfmiddlewaretoken' || el.name === 'quantity') return;
+
+      var label = getLabel(el);
+      var val = getDisplayValue(el);
+      var isRequired = el.required || el.hasAttribute('required');
+
+      if (isRequired && (!el.value || !el.value.trim())) {
+        incomplete = true;
+      }
+
+      if (val && val !== 'false') {
+        html += '<div style="display:flex; justify-content:space-between; padding:2px 0; border-bottom:1px solid oklch(0.869 0 0);">';
+        html += '<span style="color:oklch(0.556 0 0);">' + label + '</span>';
+        html += '<span style="font-weight:500; max-width:55%; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + val + '</span>';
+        html += '</div>';
+      }
+    });
+
+    if (summaryDiv) {
+      summaryDiv.innerHTML = html || '<span style="color:oklch(0.556 0 0);">Noch keine Werte ausgewählt</span>';
+    }
+    if (hint) {
+      hint.style.display = incomplete ? 'block' : 'none';
+    }
+  }
+
+  form.addEventListener('change', updateSummary);
+  form.addEventListener('input', updateSummary);
+  updateSummary();
+
+  // Hide sidebar on mobile
   var sb = document.getElementById('order-summary-sidebar');
   function checkWidth() {
     sb.style.display = window.innerWidth < 1024 ? 'none' : 'block';
