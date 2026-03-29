@@ -367,25 +367,6 @@ SEED_TEMPLATES = [
             },
         ]),
     },
-    {
-        "name": "PostgreSQL DB",
-        "category": "database",
-        "description": "Managed PostgreSQL Datenbank.",
-        "parameters": [
-            {"key": "version", "type": "choice", "label": "Version", "required": True,
-             "options": ["14", "15", "16", "17"], "default": "16",
-             "group": "database", "display_order": 1},
-            {"key": "storage_gb", "type": "integer", "label": "Storage (GB)", "required": True, "default": 20,
-             "group": "database", "display_order": 2},
-            {"key": "ha", "type": "boolean", "label": "High Availability", "required": False, "default": False,
-             "group": "database", "display_order": 3},
-            {"key": "backup", "type": "choice", "label": "Backup", "required": True,
-             "options": ["none", "daily", "weekly", "continuous"], "default": "daily",
-             "group": "backup", "display_order": 4},
-            {"key": "db_name", "type": "string", "label": "Datenbankname", "required": True,
-             "group": "database", "display_order": 5},
-        ],
-    },
 ]
 
 

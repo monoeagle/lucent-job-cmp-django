@@ -77,9 +77,9 @@ class TestCatalogServiceValidate:
 
 @pytest.mark.django_db
 class TestCatalogServiceSeed:
-    def test_seed_creates_three_templates(self):
-        assert CatalogService.seed_templates() == 3
-        assert ServiceTemplate.objects.count() == 3
+    def test_seed_creates_templates(self):
+        assert CatalogService.seed_templates() == 2
+        assert ServiceTemplate.objects.count() == 2
 
     def test_seed_is_idempotent(self):
         CatalogService.seed_templates()
