@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Profil{% endblock %}
+{% block content %}
+<div class="card bg-base-100 shadow-xl max-w-lg">
+  <div class="card-body">
+    <h2 class="card-title">Profil</h2>
+    <table class="table">
+      <tr><th>Benutzername</th><td>{{ user.username }}</td></tr>
+      <tr><th>E-Mail</th><td>{{ user.email|default:"—" }}</td></tr>
+      <tr><th>Rolle</th><td><span class="badge badge-primary">{{ user.role }}</span></td></tr>
+      <tr><th>Mitglied seit</th><td>{{ user.date_joined|date:"d.m.Y" }}</td></tr>
+    </table>
+  </div>
+</div>
+{% endblock %}

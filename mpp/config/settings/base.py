@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     "django_htmx",
     # Local apps
     "apps.accounts",
+    "apps.dashboard",
 ]
 
 AUTH_USER_MODEL = "accounts.User"

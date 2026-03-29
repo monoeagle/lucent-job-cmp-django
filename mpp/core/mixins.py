@@ -45,10 +45,10 @@ class _LazyLoginRequiredMixin:
     """
 
     def dispatch(self, request, *args, **kwargs):
-        from django.contrib.auth.mixins import LoginRequiredMixin
-        # Apply LoginRequiredMixin's dispatch logic
         if not request.user.is_authenticated:
-            return LoginRequiredMixin.handle_no_permission(self)
+            from django.conf import settings
+            from django.shortcuts import redirect
+            return redirect(settings.LOGIN_URL)
         return super().dispatch(request, *args, **kwargs)
 
 
