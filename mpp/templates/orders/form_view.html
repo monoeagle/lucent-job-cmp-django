@@ -1,98 +1,101 @@
 {% extends "base.html" %}
 {% load mpp_tags %}
-{% block title %}{{ service_template.name }} bestellen — Formular{% endblock %}
+{% block title %}{{ service_template.name }} bestellen{% endblock %}
 {% block content %}
 <div class="breadcrumbs text-sm mb-4">
   <ul>
     <li><a href="{% url 'catalog:list' %}">Katalog</a></li>
     <li><a href="{% url 'catalog:detail' pk=service_template.pk %}">{{ service_template.name }}</a></li>
-    <li>Bestellen (Formular)</li>
+    <li>Bestellen</li>
   </ul>
 </div>
 
 <!-- View Toggle -->
 <div class="flex items-center justify-between mb-6">
   <h1 class="text-2xl font-bold">{{ service_template.name }} bestellen</h1>
-  <div class="btn-group">
-    <a href="{% url 'orders:create' template_pk=service_template.pk %}" class="btn btn-sm btn-ghost">Wizard</a>
-    <a href="{% url 'orders:create_form' template_pk=service_template.pk %}" class="btn btn-sm btn-primary">Formular</a>
+  <div class="join">
+    <a href="{% url 'orders:create_form' template_pk=service_template.pk %}" class="btn btn-sm btn-primary join-item">Formular</a>
+    <a href="{% url 'orders:create' template_pk=service_template.pk %}" class="btn btn-sm btn-ghost join-item">Wizard</a>
   </div>
 </div>
 
-<form method="post">
+<form method="post" id="order-form">
   {% csrf_token %}
-  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-    <!-- Left: All form sections (3 cols) -->
-    <div class="lg:col-span-3 space-y-6">
+  <div class="flex flex-col lg:flex-row gap-6">
+
+    <!-- Left: All form sections — full width, fields stacked vertically -->
+    <div class="flex-1 space-y-6">
 
       <!-- Context Section -->
       <div class="card bg-base-100 shadow">
         <div class="card-body">
           <h2 class="card-title text-lg border-b border-base-300 pb-2 mb-4">Kontext</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {% for field_name in context_fields %}
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">{{ form|field_label:field_name }} <span class="text-error">*</span></span>
-              </label>
-              {{ form|field_widget:field_name }}
-              {% if form|field_errors:field_name %}
-              <label class="label"><span class="label-text-alt text-error">{{ form|field_errors:field_name }}</span></label>
-              {% endif %}
-            </div>
-            {% endfor %}
+          {% for field_name in context_fields %}
+          <div class="form-control w-full mt-3">
+            <label class="label">
+              <span class="label-text font-medium">{{ form|field_label:field_name }} <span class="text-error">*</span></span>
+            </label>
+            {{ form|field_widget:field_name }}
+            {% if form|field_errors:field_name %}
+            <label class="label"><span class="label-text-alt text-error">{{ form|field_errors:field_name }}</span></label>
+            {% endif %}
           </div>
+          {% endfor %}
         </div>
       </div>
 
-      <!-- Parameter Sections (grouped) -->
+      <!-- Parameter Sections (grouped) — all fields stacked, full width -->
       {% for group_name, params in grouped_parameters %}
       <div class="card bg-base-100 shadow">
         <div class="card-body">
-          <h2 class="card-title text-lg border-b border-base-300 pb-2 mb-4">{{ group_name|title }}</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {% for param in params %}
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">
-                  {{ param.label }}
-                  {% if param.required %}<span class="text-error">*</span>{% endif %}
-                </span>
-              </label>
-              {% with field_name=param.key %}
-              {% if param.type == "boolean" %}
-              <label class="cursor-pointer label justify-start gap-3">
-                {{ form|field_widget:field_name }}
-                <span class="label-text">{{ param.label }} aktivieren</span>
-              </label>
-              {% else %}
+          <h2 class="card-title text-lg border-b border-base-300 pb-2 mb-4">{{ group_name }}</h2>
+          {% for param in params %}
+          <div class="form-control w-full mt-3">
+            <label class="label">
+              <span class="label-text font-medium">
+                {{ param.label }}
+                {% if param.required %}<span class="text-error">*</span>{% endif %}
+              </span>
+              {% if param.description %}
+              <span class="label-text-alt text-base-content/50">{{ param.description }}</span>
+              {% endif %}
+            </label>
+            {% with field_name=param.key %}
+            {% if param.type == "boolean" %}
+            <label class="cursor-pointer label justify-start gap-3 px-0">
               {{ form|field_widget:field_name }}
-              {% endif %}
-              {% if form|field_errors:field_name %}
-              <label class="label"><span class="label-text-alt text-error">{{ form|field_errors:field_name }}</span></label>
-              {% endif %}
-              {% endwith %}
-            </div>
-            {% endfor %}
+              <span class="label-text">{{ param.label }}</span>
+            </label>
+            {% else %}
+            {{ form|field_widget:field_name }}
+            {% endif %}
+            {% if param.constraints.unit %}
+            <label class="label"><span class="label-text-alt text-base-content/40">{{ param.constraints.unit }}</span></label>
+            {% endif %}
+            {% if form|field_errors:field_name %}
+            <label class="label"><span class="label-text-alt text-error">{{ form|field_errors:field_name }}</span></label>
+            {% endif %}
+            {% endwith %}
           </div>
+          {% endfor %}
         </div>
       </div>
       {% endfor %}
 
     </div>
 
-    <!-- Right: Sticky Sidebar (1 col) -->
-    <div class="lg:col-span-1">
+    <!-- Right: Sticky Summary Sidebar -->
+    <div class="lg:w-80 flex-shrink-0">
       <div class="card bg-base-100 shadow sticky top-4">
         <div class="card-body">
           <h3 class="card-title text-base">{{ service_template.name }}</h3>
           <p class="text-sm text-base-content/50">{{ service_template.category }} · v{{ service_template.version }}</p>
-          <p class="text-xs text-base-content/50 mt-2">{{ service_template.description|truncatewords:15 }}</p>
+          <p class="text-xs text-base-content/50 mt-2">{{ service_template.description|truncatewords:20 }}</p>
 
-          <div class="divider text-xs">Anzahl</div>
+          <div class="divider text-xs my-2">Anzahl</div>
           <div class="form-control">
             {{ form.quantity }}
-            <span class="text-xs text-base-content/50 mt-1">Instanz(en)</span>
+            <span class="text-xs text-base-content/50 mt-1">Instanz(en) werden erstellt</span>
           </div>
 
           <button type="submit" class="btn btn-success btn-block mt-4">
@@ -101,6 +104,7 @@
         </div>
       </div>
     </div>
+
   </div>
 </form>
 

@@ -12,9 +12,9 @@
 <!-- View Toggle -->
 <div class="flex items-center justify-between mb-6">
   <h1 class="text-2xl font-bold">{{ service_template.name }} bestellen</h1>
-  <div class="btn-group">
-    <a href="{% url 'orders:create' template_pk=service_template.pk %}" class="btn btn-sm btn-primary">Wizard</a>
-    <a href="{% url 'orders:create_form' template_pk=service_template.pk %}" class="btn btn-sm btn-ghost">Formular</a>
+  <div class="join">
+    <a href="{% url 'orders:create_form' template_pk=service_template.pk %}" class="btn btn-sm btn-ghost join-item">Formular</a>
+    <a href="{% url 'orders:create' template_pk=service_template.pk %}" class="btn btn-sm btn-primary join-item">Wizard</a>
   </div>
 </div>
 

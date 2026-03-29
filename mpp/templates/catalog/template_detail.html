@@ -32,7 +32,7 @@
     {% endif %}
     <div class="card-actions justify-end mt-6">
       <a href="{% url 'catalog:list' %}" class="btn btn-ghost">Zurück</a>
-      <a href="{% url 'orders:create' template_pk=template.pk %}" class="btn btn-primary btn-lg">
+      <a href="{% url 'orders:create_form' template_pk=template.pk %}" class="btn btn-primary btn-lg">
         Jetzt bestellen
       </a>
     </div>

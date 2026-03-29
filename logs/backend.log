@@ -324,3 +324,89 @@ Quit the server with CONTROL-C.
 WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
 For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
 Watching for file changes with StatReloader
+[29/Mar/2026 23:27:47] "GET /catalog/ HTTP/1.1" 200 8807
+[29/Mar/2026 23:27:47] "GET /static/js/chart.umd.min.js HTTP/1.1" 304 0
+[29/Mar/2026 23:27:47] "GET /static/css/output.css HTTP/1.1" 304 0
+[29/Mar/2026 23:27:49] "GET /orders/ HTTP/1.1" 200 7432
+[29/Mar/2026 23:27:50] "GET /catalog/ HTTP/1.1" 200 8807
+[29/Mar/2026 23:27:52] "GET /catalog/1/ HTTP/1.1" 200 8964
+[29/Mar/2026 23:28:02] "GET /orders/create/1/ HTTP/1.1" 200 10272
+[29/Mar/2026 23:28:05] "GET /orders/create/1/form/ HTTP/1.1" 200 16026
+[29/Mar/2026 23:28:59] "GET /orders/ HTTP/1.1" 200 7432
+[29/Mar/2026 23:29:01] "GET / HTTP/1.1" 200 10223
+[29/Mar/2026 23:29:02] "GET /catalog/ HTTP/1.1" 200 8807
+[29/Mar/2026 23:29:04] "GET /catalog/2/ HTTP/1.1" 200 8927
+[29/Mar/2026 23:29:06] "GET /orders/create/2/ HTTP/1.1" 200 10280
+[29/Mar/2026 23:29:09] "GET /orders/create/2/form/ HTTP/1.1" 200 15947
+/home/meagle/Dokumente/CLAUDE/lucent-hub-apps/lucent-app-mpp-TDD-Django/mpp/apps/catalog/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+March 29, 2026 - 23:26:43
+Django version 6.0.3, using settings 'config.settings.development'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+/home/meagle/Dokumente/CLAUDE/lucent-hub-apps/lucent-app-mpp-TDD-Django/mpp/apps/orders/forms.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+March 29, 2026 - 23:32:34
+Django version 6.0.3, using settings 'config.settings.development'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+/home/meagle/Dokumente/CLAUDE/lucent-hub-apps/lucent-app-mpp-TDD-Django/mpp/apps/orders/forms.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+March 29, 2026 - 23:32:42
+Django version 6.0.3, using settings 'config.settings.development'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+/home/meagle/Dokumente/CLAUDE/lucent-hub-apps/lucent-app-mpp-TDD-Django/mpp/apps/orders/forms.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+March 29, 2026 - 23:32:52
+Django version 6.0.3, using settings 'config.settings.development'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+/home/meagle/Dokumente/CLAUDE/lucent-hub-apps/lucent-app-mpp-TDD-Django/mpp/core/domain/validators.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+March 29, 2026 - 23:33:01
+Django version 6.0.3, using settings 'config.settings.development'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+[29/Mar/2026 23:35:07] "GET /orders/create/2/form/ HTTP/1.1" 302 0
+[29/Mar/2026 23:35:07] "GET /accounts/login/ HTTP/1.1" 200 3327
+[29/Mar/2026 23:35:07] "GET /static/js/htmx.min.js HTTP/1.1" 304 0
+[29/Mar/2026 23:35:07] "GET /static/js/chart.umd.min.js HTTP/1.1" 304 0
+[29/Mar/2026 23:35:07] "GET /static/css/output.css HTTP/1.1" 304 0
+[29/Mar/2026 23:35:17] "POST /accounts/login/ HTTP/1.1" 302 0
+[29/Mar/2026 23:35:17] "GET / HTTP/1.1" 200 10347
+[29/Mar/2026 23:35:19] "GET /notifications/ HTTP/1.1" 200 6891
+[29/Mar/2026 23:35:20] "GET /catalog/ HTTP/1.1" 200 8887
+[29/Mar/2026 23:35:21] "GET /catalog/2/ HTTP/1.1" 200 13771
+[29/Mar/2026 23:35:27] "GET /orders/create/2/ HTTP/1.1" 200 10759
+[29/Mar/2026 23:35:29] "GET /orders/create/2/form/ HTTP/1.1" 200 30850
