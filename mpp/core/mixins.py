@@ -34,3 +34,61 @@ class RoleRequiredMixin:
         if self.required_roles and request.user.role not in self.required_roles:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
+
+
+class _LazyLoginRequiredMixin:
+    """Proxy that lazily inherits LoginRequiredMixin behavior at dispatch time.
+
+    Direct inheritance from LoginRequiredMixin at module level causes circular
+    imports (LoginRequiredMixin -> auth.views -> auth.forms -> get_user_model)
+    when models.py imports TimeStampedModel from this module.
+    """
+
+    def dispatch(self, request, *args, **kwargs):
+        from django.contrib.auth.mixins import LoginRequiredMixin
+        # Apply LoginRequiredMixin's dispatch logic
+        if not request.user.is_authenticated:
+            return LoginRequiredMixin.handle_no_permission(self)
+        return super().dispatch(request, *args, **kwargs)
+
+
+def _lazy_roles():
+    """Lazy-load UserRole to avoid importing during app loading."""
+    from core.domain.enums import UserRole
+    return UserRole
+
+
+class RequesterRequiredMixin(_LazyLoginRequiredMixin, RoleRequiredMixin):
+    """Any authenticated user (all roles can access)."""
+
+    @property
+    def required_roles(self):
+        R = _lazy_roles()
+        return [R.REQUESTER, R.APPROVER, R.ADMIN, R.SUPERADMIN]
+
+
+class ApproverRequiredMixin(_LazyLoginRequiredMixin, RoleRequiredMixin):
+    """Approver, Admin, or Superadmin."""
+
+    @property
+    def required_roles(self):
+        R = _lazy_roles()
+        return [R.APPROVER, R.ADMIN, R.SUPERADMIN]
+
+
+class AdminRequiredMixin(_LazyLoginRequiredMixin, RoleRequiredMixin):
+    """Admin or Superadmin."""
+
+    @property
+    def required_roles(self):
+        R = _lazy_roles()
+        return [R.ADMIN, R.SUPERADMIN]
+
+
+class SuperadminRequiredMixin(_LazyLoginRequiredMixin, RoleRequiredMixin):
+    """Superadmin only."""
+
+    @property
+    def required_roles(self):
+        R = _lazy_roles()
+        return [R.SUPERADMIN]
