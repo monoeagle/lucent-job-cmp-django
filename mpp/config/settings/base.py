@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "apps.cmdb",
     "apps.provisioning",
     "apps.approvals",
+    "apps.audit",
 ]
 
 AUTH_USER_MODEL = "accounts.User"
