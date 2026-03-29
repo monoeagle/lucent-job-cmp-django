@@ -2,7 +2,9 @@
 import factory
 from apps.accounts.models import User
 from apps.catalog.models import ServiceTemplate
+from apps.orders.models import Order, OrderItem
 from core.domain.enums import UserRole
+from core.domain.value_objects import OrderStatus
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -27,3 +29,20 @@ class ServiceTemplateFactory(factory.django.DjangoModelFactory):
         {"key": "cpu", "type": "integer", "label": "CPUs", "required": True, "default": 2},
         {"key": "ram_gb", "type": "integer", "label": "RAM (GB)", "required": True, "default": 4},
     ])
+
+
+class OrderFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Order
+
+    user = factory.SubFactory(UserFactory)
+    status = OrderStatus.DRAFT
+
+
+class OrderItemFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = OrderItem
+
+    order = factory.SubFactory(OrderFactory)
+    template = factory.SubFactory(ServiceTemplateFactory)
+    parameters = factory.LazyFunction(lambda: {"cpu": 2, "ram_gb": 4})
