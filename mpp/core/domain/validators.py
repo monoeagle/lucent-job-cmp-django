@@ -49,6 +49,14 @@ class TemplateValidator:
                         "key": key,
                         "message": f"Value must be one of the allowed options: {options}",
                     })
+            elif param_type == "enum":
+                options = param.get("constraints", {}).get("options", [])
+                valid_values = [o["value"] for o in options if o.get("enabled", True)]
+                if value not in valid_values:
+                    errors.append({
+                        "key": key,
+                        "message": f"Value must be one of: {valid_values}",
+                    })
             elif param_type in TYPE_CHECKS:
                 if not TYPE_CHECKS[param_type](value):
                     errors.append({

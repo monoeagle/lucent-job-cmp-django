@@ -18,10 +18,15 @@ class OrderParameterForm(forms.Form):
                 required = param.get("required", False)
                 param_type = param.get("type", "string")
 
-                if param_type == "choice":
-                    options = param.get("options", [])
+                if param_type in ("choice", "enum"):
+                    if param_type == "enum" and "constraints" in param:
+                        options = param["constraints"].get("options", [])
+                        choices = [(o["value"], o["label"]) for o in options if o.get("enabled", True)]
+                    else:
+                        options = param.get("options", [])
+                        choices = [(o, o) for o in options]
                     self.fields[key] = forms.ChoiceField(
-                        choices=[(o, o) for o in options],
+                        choices=[("", "Bitte wählen...")] + choices,
                         required=required,
                         label=label,
                         widget=forms.Select(
@@ -107,12 +112,15 @@ class ParameterGroupForm(forms.Form):
                 param_type = param.get("type", "string")
                 default = param.get("default")
 
-                if param_type == "choice":
-                    options = param.get("options", [])
+                if param_type in ("choice", "enum"):
+                    if param_type == "enum" and "constraints" in param:
+                        options = param["constraints"].get("options", [])
+                        choices = [(o["value"], o["label"]) for o in options if o.get("enabled", True)]
+                    else:
+                        options = param.get("options", [])
+                        choices = [(o, o) for o in options]
                     self.fields[key] = forms.ChoiceField(
-                        choices=[("", "Bitte wählen...")] + [
-                            (o, o) for o in options
-                        ],
+                        choices=[("", "Bitte wählen...")] + choices,
                         required=required,
                         label=label,
                         widget=forms.Select(
@@ -217,10 +225,15 @@ class FullOrderForm(forms.Form):
                 param_type = param.get("type", "string")
                 default = param.get("default")
 
-                if param_type == "choice":
-                    options = param.get("options", [])
+                if param_type in ("choice", "enum"):
+                    if param_type == "enum" and "constraints" in param:
+                        options = param["constraints"].get("options", [])
+                        choices = [(o["value"], o["label"]) for o in options if o.get("enabled", True)]
+                    else:
+                        options = param.get("options", [])
+                        choices = [(o, o) for o in options]
                     self.fields[key] = forms.ChoiceField(
-                        choices=[("", "Bitte wählen...")] + [(o, o) for o in options],
+                        choices=[("", "Bitte wählen...")] + choices,
                         required=required, label=label,
                         widget=forms.Select(attrs={"class": "select select-bordered w-full"}),
                     )
