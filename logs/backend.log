@@ -1,3 +1,1 @@
 Watching for file changes with StatReloader
-[29/Mar/2026 23:55:44] "GET /accounts/login/ HTTP/1.1" 200 3339
-[29/Mar/2026 23:55:49] "GET /orders/create/1/form/ HTTP/1.1" 200 30996

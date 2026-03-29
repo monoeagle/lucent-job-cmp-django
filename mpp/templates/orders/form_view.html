@@ -23,8 +23,8 @@
 <form method="post" id="order-form">
   {% csrf_token %}
 
-  <!-- Padding right for sidebar space on desktop -->
-  <div class="lg:mr-80">
+  <!-- Form content — right margin leaves space for sidebar on desktop -->
+  <div id="form-content" style="margin-right: 20rem;">
 
     <!-- Context Section -->
     <div class="card bg-base-100 shadow mb-6">
@@ -85,56 +85,36 @@
   </div>
 </form>
 
-<!-- Mobile fixed bottom bar -->
-<div class="fixed bottom-0 left-0 right-0 bg-base-100 border-t border-base-300 p-4 lg:hidden z-50">
-  <div class="flex items-center justify-between max-w-screen-xl mx-auto">
-    <div>
-      <div class="font-bold">{{ service_template.name }}</div>
-      <div class="text-xs text-base-content/50">{{ service_template.category }}</div>
-    </div>
-    <button type="submit" form="order-form" class="btn btn-success btn-sm">Bestellen</button>
-  </div>
-</div>
-
-<!-- Red border styling for required empty fields -->
-<style>
-  select:required:invalid,
-  input:required:placeholder-shown {
-    border-color: oklch(var(--er));
-  }
-</style>
-
-<!-- Mark required selects as invalid when "Bitte wählen..." is selected -->
+<!-- Required field validation: red borders -->
 <script>
 document.querySelectorAll('#order-form select[required]').forEach(function(sel) {
   function check() {
-    if (!sel.value) {
-      sel.classList.add('select-error');
-    } else {
-      sel.classList.remove('select-error');
-    }
+    sel.style.borderColor = !sel.value ? 'oklch(0.637 0.237 25.331)' : '';
   }
   sel.addEventListener('change', check);
   check();
 });
 document.querySelectorAll('#order-form input[required]').forEach(function(inp) {
   function check() {
-    if (!inp.value.trim()) {
-      inp.classList.add('input-error');
-    } else {
-      inp.classList.remove('input-error');
-    }
+    inp.style.borderColor = !inp.value.trim() ? 'oklch(0.637 0.237 25.331)' : '';
   }
   inp.addEventListener('input', check);
   inp.addEventListener('blur', check);
   check();
 });
 </script>
+
+<!-- Mobile: hide sidebar margin -->
+<style>
+  @media (max-width: 1023px) {
+    #form-content { margin-right: 0 !important; }
+  }
+</style>
 {% endblock %}
 
 {% block fixed_sidebar %}
-<!-- Fixed Summary Sidebar — positioned outside drawer-content scroll -->
-<div class="hidden lg:block fixed top-16 right-0 w-72 h-[calc(100vh-4rem)] z-30 p-4 overflow-y-auto">
+<!-- Summary Sidebar — fixed position, outside drawer -->
+<div id="order-summary-sidebar" style="display:block; position:fixed; top:4rem; right:0; width:19rem; height:calc(100vh - 4rem); z-index:30; padding:1rem; overflow-y:auto;">
   <div class="card bg-base-100 shadow-lg">
     <div class="card-body">
       <h3 class="font-bold text-base">Zusammenfassung</h3>
@@ -144,7 +124,7 @@ document.querySelectorAll('#order-form input[required]').forEach(function(inp) {
       <div class="form-control">
         <input type="number" name="quantity" value="1" min="1" max="50"
                form="order-form"
-               class="input input-bordered input-sm w-20">
+               class="input input-bordered input-sm" style="width:5rem;">
         <span class="text-xs text-base-content/50 mt-1">Instanz(en)</span>
       </div>
 
@@ -159,7 +139,7 @@ document.querySelectorAll('#order-form input[required]').forEach(function(inp) {
 </div>
 
 <script>
-// Show/hide required hint based on form completeness
+// Show/hide required hint
 (function() {
   var form = document.getElementById('order-form');
   var hint = document.getElementById('required-hint');
@@ -174,6 +154,16 @@ document.querySelectorAll('#order-form input[required]').forEach(function(inp) {
   form.addEventListener('change', checkComplete);
   form.addEventListener('input', checkComplete);
   checkComplete();
+})();
+
+// Hide sidebar on mobile
+(function() {
+  var sb = document.getElementById('order-summary-sidebar');
+  function checkWidth() {
+    sb.style.display = window.innerWidth < 1024 ? 'none' : 'block';
+  }
+  window.addEventListener('resize', checkWidth);
+  checkWidth();
 })();
 </script>
 {% endblock %}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="lucent">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layout Debug</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  <style>
+    .debug-box { border: 3px dashed red; padding: 8px; margin: 4px; }
+    .debug-label { background: red; color: white; font-size: 10px; padding: 2px 6px; position: absolute; top: 0; left: 0; z-index: 999; }
+  </style>
+</head>
+<body class="min-h-screen bg-base-200">
+
+  <!-- NAVBAR -->
+  <div class="navbar bg-primary text-primary-content">
+    <div class="flex-1"><a class="btn btn-ghost text-xl">MPP Debug</a></div>
+  </div>
+
+  <!-- DRAWER (same as base.html) -->
+  <div class="drawer lg:drawer-open">
+    <input id="sidebar-toggle" type="checkbox" class="drawer-toggle">
+
+    <!-- DRAWER CONTENT (this is the scrolling container) -->
+    <div class="drawer-content p-6 relative">
+      <h1 class="text-xl font-bold mb-4">Formular Debug</h1>
+
+      <!-- Simulated form with right margin for sidebar -->
+      <div class="lg:mr-80">
+        {% for i in "123456789" %}
+        <div class="card bg-base-100 shadow mb-4">
+          <div class="card-body">
+            <h2 class="card-title">Sektion {{ i }}</h2>
+            {% for j in "12345" %}
+            <div class="form-control mt-2">
+              <label class="label"><span class="label-text">Feld {{ i }}.{{ j }}</span></label>
+              <select class="select select-bordered w-full">
+                <option>Bitte wählen...</option>
+                <option>Option A</option>
+                <option>Option B</option>
+              </select>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- DRAWER SIDE (left sidebar/menu) -->
+    <div class="drawer-side">
+      <label for="sidebar-toggle" class="drawer-overlay"></label>
+      <ul class="menu p-4 w-64 min-h-full bg-base-100">
+        <li><a>Dashboard</a></li>
+        <li><a>Shop</a></li>
+        <li><a>Bestellungen</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FIXED SIDEBAR — OUTSIDE drawer completely -->
+  <div id="debug-sidebar" style="display:block; position:fixed; top:4rem; right:0; width:18rem; height:calc(100vh - 4rem); z-index:30; padding:1rem; overflow-y:auto;">
+    <div class="card bg-base-100 shadow-lg border-2 border-success">
+      <div class="card-body">
+        <h3 class="font-bold text-base">Zusammenfassung</h3>
+        <p class="text-sm text-base-content/50">Linux VM v1</p>
+        <div class="divider text-xs my-1">Anzahl</div>
+        <div class="form-control">
+          <input type="number" value="1" min="1" max="50" class="input input-bordered input-sm w-20">
+        </div>
+        <button class="btn btn-success btn-block mt-4">Zur Bestellung hinzufügen</button>
+        <p class="text-xs text-center mt-2 text-base-content/50">
+          Diese Box ist position:fixed, top:4rem, right:0, z-index:30
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Debug Info -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var sidebar = document.getElementById('debug-sidebar');
+      var rect = sidebar.getBoundingClientRect();
+      console.log('=== SIDEBAR DEBUG ===');
+      console.log('Display:', window.getComputedStyle(sidebar).display);
+      console.log('Position:', window.getComputedStyle(sidebar).position);
+      console.log('Top:', window.getComputedStyle(sidebar).top);
+      console.log('Right:', window.getComputedStyle(sidebar).right);
+      console.log('Width:', window.getComputedStyle(sidebar).width);
+      console.log('Z-Index:', window.getComputedStyle(sidebar).zIndex);
+      console.log('BoundingRect:', JSON.stringify(rect));
+      console.log('Viewport:', window.innerWidth, 'x', window.innerHeight);
+      console.log('Sidebar visible:', rect.right <= window.innerWidth && rect.left >= 0);
+
+      // Check parent overflow
+      var el = sidebar;
+      while (el && el !== document.body) {
+        var overflow = window.getComputedStyle(el).overflow;
+        if (overflow !== 'visible') {
+          console.log('OVERFLOW ISSUE on', el.tagName, el.className.substring(0, 50), '→', overflow);
+        }
+        el = el.parentElement;
+      }
+    });
+  </script>
+</body>
+</html>
