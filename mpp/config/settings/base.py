@@ -15,7 +15,11 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "django_htmx",
+    # Local apps
+    "apps.accounts",
 ]
+
+AUTH_USER_MODEL = "accounts.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

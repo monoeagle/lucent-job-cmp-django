@@ -9,6 +9,9 @@ DATABASES = {
         "PASSWORD": "mpp",
         "HOST": "localhost",
         "PORT": "5432",
+        "TEST": {
+            "NAME": "mpp_test",
+        },
     }
 }
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
