@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "apps.catalog",
     "apps.orders",
     "apps.cmdb",
+    "apps.provisioning",
 ]
 
 AUTH_USER_MODEL = "accounts.User"
