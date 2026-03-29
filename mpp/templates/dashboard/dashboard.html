@@ -8,5 +8,15 @@
     <div class="stat-value text-primary">{{ user.username }}</div>
     <div class="stat-desc">Rolle: {{ user.role }}</div>
   </div>
+  <div class="stat">
+    <div class="stat-title">Bestellungen</div>
+    <div class="stat-value">{{ order_count }}</div>
+    <div class="stat-desc">Eigene Bestellungen</div>
+  </div>
+  <div class="stat">
+    <div class="stat-title">Benachrichtigungen</div>
+    <div class="stat-value">{{ unread_notifications }}</div>
+    <div class="stat-desc">Ungelesen</div>
+  </div>
 </div>
 {% endblock %}
