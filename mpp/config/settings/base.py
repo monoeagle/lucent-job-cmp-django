@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "apps.approvals",
     "apps.audit",
     "apps.notifications",
+    "apps.subscriptions",
 ]
 
 AUTH_USER_MODEL = "accounts.User"
