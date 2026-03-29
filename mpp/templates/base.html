@@ -12,10 +12,11 @@
   {% include "includes/navbar.html" %}
   <div class="drawer lg:drawer-open">
     <input id="sidebar-toggle" type="checkbox" class="drawer-toggle">
-    <div class="drawer-content p-6">
+    <div class="drawer-content p-6 relative">
       {% include "includes/messages.html" %}
       {% block content %}{% endblock %}
     </div>
+    {% block fixed_sidebar %}{% endblock %}
     <div class="drawer-side">
       <label for="sidebar-toggle" class="drawer-overlay"></label>
       {% include "includes/sidebar.html" %}

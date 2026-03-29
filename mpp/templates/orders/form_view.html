@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load mpp_tags %}
 {% block title %}{{ service_template.name }} bestellen{% endblock %}
+
 {% block content %}
 <div class="breadcrumbs text-sm mb-4">
   <ul>
@@ -21,89 +22,65 @@
 
 <form method="post" id="order-form">
   {% csrf_token %}
-  <div class="flex flex-col lg:flex-row lg:items-start gap-6">
 
-    <!-- Left: All form sections — full width, fields stacked vertically -->
-    <div class="flex-1 min-w-0 space-y-6">
+  <!-- Padding right for sidebar space on desktop -->
+  <div class="lg:mr-80">
 
-      <!-- Context Section -->
-      <div class="card bg-base-100 shadow">
-        <div class="card-body">
-          <h2 class="card-title text-lg border-b border-base-300 pb-2 mb-4">Kontext</h2>
-          {% for field_name in context_fields %}
-          <div class="form-control w-full mt-3">
-            <label class="label">
-              <span class="label-text font-medium">{{ form|field_label:field_name }} <span class="text-error">*</span></span>
-            </label>
-            {{ form|field_widget:field_name }}
-            {% if form|field_errors:field_name %}
-            <label class="label"><span class="label-text-alt text-error">{{ form|field_errors:field_name }}</span></label>
-            {% endif %}
-          </div>
-          {% endfor %}
+    <!-- Context Section -->
+    <div class="card bg-base-100 shadow mb-6">
+      <div class="card-body">
+        <h2 class="card-title text-lg border-b border-base-300 pb-2 mb-4">Kontext</h2>
+        {% for field_name in context_fields %}
+        <div class="form-control w-full mt-3">
+          <label class="label">
+            <span class="label-text font-medium">{{ form|field_label:field_name }} <span class="text-error">*</span></span>
+          </label>
+          {{ form|field_widget:field_name }}
+          {% if form|field_errors:field_name %}
+          <label class="label"><span class="label-text-alt text-error">{{ form|field_errors:field_name }}</span></label>
+          {% endif %}
         </div>
-      </div>
-
-      <!-- Parameter Sections (grouped) — all fields stacked, full width -->
-      {% for group_name, params in grouped_parameters %}
-      <div class="card bg-base-100 shadow">
-        <div class="card-body">
-          <h2 class="card-title text-lg border-b border-base-300 pb-2 mb-4">{{ group_name }}</h2>
-          {% for param in params %}
-          <div class="form-control w-full mt-3">
-            <label class="label">
-              <span class="label-text font-medium">
-                {{ param.label }}
-                {% if param.required %}<span class="text-error">*</span>{% endif %}
-              </span>
-              {% if param.description %}
-              <span class="label-text-alt text-base-content/50">{{ param.description }}</span>
-              {% endif %}
-            </label>
-            {% with field_name=param.key %}
-            {% if param.type == "boolean" %}
-            <label class="cursor-pointer label justify-start gap-3 px-0">
-              {{ form|field_widget:field_name }}
-              <span class="label-text">{{ param.label }}</span>
-            </label>
-            {% else %}
-            {{ form|field_widget:field_name }}
-            {% endif %}
-            {% if param.constraints.unit %}
-            <label class="label"><span class="label-text-alt text-base-content/40">{{ param.constraints.unit }}</span></label>
-            {% endif %}
-            {% if form|field_errors:field_name %}
-            <label class="label"><span class="label-text-alt text-error">{{ form|field_errors:field_name }}</span></label>
-            {% endif %}
-            {% endwith %}
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-      {% endfor %}
-
-    </div>
-
-    <!-- Right: Summary Sidebar -->
-    <div class="hidden lg:block lg:w-80 flex-shrink-0" id="sidebar-wrapper">
-      <div id="sidebar-card" class="card bg-base-100 shadow-lg w-80">
-        <div class="card-body">
-          <h3 class="card-title text-base">{{ service_template.name }}</h3>
-          <p class="text-sm text-base-content/50">{{ service_template.category }} · v{{ service_template.version }}</p>
-          <p class="text-xs text-base-content/50 mt-2">{{ service_template.description|truncatewords:15 }}</p>
-
-          <div class="divider text-xs my-2">Anzahl</div>
-          <div class="form-control">
-            {{ form.quantity }}
-            <span class="text-xs text-base-content/50 mt-1">Instanz(en) werden erstellt</span>
-          </div>
-
-          <button type="submit" class="btn btn-success btn-block mt-4">
-            Zur Bestellung hinzufügen
-          </button>
-        </div>
+        {% endfor %}
       </div>
     </div>
+
+    <!-- Parameter Sections (grouped) -->
+    {% for group_name, params in grouped_parameters %}
+    <div class="card bg-base-100 shadow mb-6">
+      <div class="card-body">
+        <h2 class="card-title text-lg border-b border-base-300 pb-2 mb-4">{{ group_name }}</h2>
+        {% for param in params %}
+        <div class="form-control w-full mt-3">
+          <label class="label">
+            <span class="label-text font-medium">
+              {{ param.label }}
+              {% if param.required %}<span class="text-error">*</span>{% endif %}
+            </span>
+            {% if param.description %}
+            <span class="label-text-alt text-base-content/50">{{ param.description }}</span>
+            {% endif %}
+          </label>
+          {% with field_name=param.key %}
+          {% if param.type == "boolean" %}
+          <label class="cursor-pointer label justify-start gap-3 px-0">
+            {{ form|field_widget:field_name }}
+            <span class="label-text">{{ param.label }}</span>
+          </label>
+          {% else %}
+          {{ form|field_widget:field_name }}
+          {% endif %}
+          {% if param.constraints.unit %}
+          <label class="label"><span class="label-text-alt text-base-content/40">{{ param.constraints.unit }}</span></label>
+          {% endif %}
+          {% if form|field_errors:field_name %}
+          <label class="label"><span class="label-text-alt text-error">{{ form|field_errors:field_name }}</span></label>
+          {% endif %}
+          {% endwith %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
 
   </div>
 </form>
@@ -119,46 +96,84 @@
   </div>
 </div>
 
+<!-- Red border styling for required empty fields -->
+<style>
+  select:required:invalid,
+  input:required:placeholder-shown {
+    border-color: oklch(var(--er));
+  }
+</style>
+
+<!-- Mark required selects as invalid when "Bitte wählen..." is selected -->
 <script>
-// Make sidebar sticky within the drawer-content scroll container
-(function() {
-  const card = document.getElementById('sidebar-card');
-  const wrapper = document.getElementById('sidebar-wrapper');
-  if (!card || !wrapper) return;
-
-  // Find the scrolling container (drawer-content)
-  const scroller = card.closest('.drawer-content') || window;
-
-  function onScroll() {
-    const wrapperRect = wrapper.getBoundingClientRect();
-    const scrollerRect = scroller === window
-      ? { top: 0 }
-      : scroller.getBoundingClientRect();
-
-    // How far the wrapper top is above the visible area
-    const offset = wrapperRect.top - scrollerRect.top;
-
-    if (offset < 16) {
-      // Wrapper scrolled past top — fix the card
-      card.style.position = 'fixed';
-      card.style.top = (scrollerRect.top + 16) + 'px';
-      card.style.width = wrapper.offsetWidth + 'px';
+document.querySelectorAll('#order-form select[required]').forEach(function(sel) {
+  function check() {
+    if (!sel.value) {
+      sel.classList.add('select-error');
     } else {
-      // Wrapper still visible — card flows normally
-      card.style.position = 'static';
-      card.style.top = '';
-      card.style.width = '';
+      sel.classList.remove('select-error');
     }
   }
-
-  if (scroller === window) {
-    window.addEventListener('scroll', onScroll, { passive: true });
-  } else {
-    scroller.addEventListener('scroll', onScroll, { passive: true });
+  sel.addEventListener('change', check);
+  check();
+});
+document.querySelectorAll('#order-form input[required]').forEach(function(inp) {
+  function check() {
+    if (!inp.value.trim()) {
+      inp.classList.add('input-error');
+    } else {
+      inp.classList.remove('input-error');
+    }
   }
-  // Initial check
-  onScroll();
-  window.addEventListener('resize', onScroll, { passive: true });
+  inp.addEventListener('input', check);
+  inp.addEventListener('blur', check);
+  check();
+});
+</script>
+{% endblock %}
+
+{% block fixed_sidebar %}
+<!-- Fixed Summary Sidebar — positioned outside drawer-content scroll -->
+<div class="hidden lg:block fixed top-16 right-0 w-72 h-[calc(100vh-4rem)] z-30 p-4 overflow-y-auto">
+  <div class="card bg-base-100 shadow-lg">
+    <div class="card-body">
+      <h3 class="font-bold text-base">Zusammenfassung</h3>
+      <p class="text-sm text-base-content/50">{{ service_template.name }} <span class="text-xs">v{{ service_template.version }}</span></p>
+
+      <div class="divider text-xs my-1">Anzahl</div>
+      <div class="form-control">
+        <input type="number" name="quantity" value="1" min="1" max="50"
+               form="order-form"
+               class="input input-bordered input-sm w-20">
+        <span class="text-xs text-base-content/50 mt-1">Instanz(en)</span>
+      </div>
+
+      <button type="submit" form="order-form" class="btn btn-success btn-block mt-4">
+        Zur Bestellung hinzufügen
+      </button>
+      <p class="text-xs text-error text-center mt-1" id="required-hint">
+        Pflichtfelder noch nicht vollständig
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+// Show/hide required hint based on form completeness
+(function() {
+  var form = document.getElementById('order-form');
+  var hint = document.getElementById('required-hint');
+  if (!form || !hint) return;
+  function checkComplete() {
+    var incomplete = false;
+    form.querySelectorAll('select[required], input[required]').forEach(function(el) {
+      if (!el.value || !el.value.trim()) incomplete = true;
+    });
+    hint.style.display = incomplete ? 'block' : 'none';
+  }
+  form.addEventListener('change', checkComplete);
+  form.addEventListener('input', checkComplete);
+  checkComplete();
 })();
 </script>
 {% endblock %}
