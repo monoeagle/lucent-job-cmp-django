@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Subscription #{{ subscription.pk }}{% endblock %}
+{% block content %}
+<div class="breadcrumbs text-sm mb-4">
+  <ul><li><a href="{% url 'subscriptions:list' %}">Subscriptions</a></li><li>Subscription #{{ subscription.pk }}</li></ul>
+</div>
+<div class="card bg-base-100 shadow-xl">
+  <div class="card-body">
+    <h1 class="card-title text-2xl">Subscription #{{ subscription.pk }}
+      <span class="badge badge-primary">{{ subscription.status }}</span>
+    </h1>
+    <div class="mt-4 space-y-2">
+      <p><strong>Service:</strong> {{ subscription.order_item.template.name }}</p>
+      <p><strong>Gueltig ab:</strong> {{ subscription.valid_from|date:"d.m.Y H:i" }}</p>
+      <p><strong>Gueltig bis:</strong> {{ subscription.valid_until|date:"d.m.Y H:i"|default:"-" }}</p>
+      <p><strong>Parameter:</strong> <code>{{ subscription.order_item.parameters }}</code></p>
+    </div>
+    <div class="card-actions justify-end mt-6">
+      <a href="{% url 'subscriptions:list' %}" class="btn btn-ghost">Zurueck</a>
+      {% if subscription.status == "active" %}
+      <form method="post" action="{% url 'subscriptions:cancel' pk=subscription.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-error">Kuendigen</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

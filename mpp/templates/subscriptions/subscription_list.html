@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Subscriptions{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Meine Subscriptions</h1>
+{% if subscriptions %}
+<div class="overflow-x-auto">
+  <table class="table table-zebra">
+    <thead><tr><th>#</th><th>Service</th><th>Status</th><th>Gueltig ab</th><th>Gueltig bis</th><th></th></tr></thead>
+    <tbody>
+      {% for sub in subscriptions %}
+      <tr>
+        <td>{{ sub.pk }}</td>
+        <td>{{ sub.order_item.template.name }}</td>
+        <td><span class="badge badge-outline">{{ sub.status }}</span></td>
+        <td>{{ sub.valid_from|date:"d.m.Y H:i" }}</td>
+        <td>{{ sub.valid_until|date:"d.m.Y H:i"|default:"-" }}</td>
+        <td>
+          <a href="{% url 'subscriptions:detail' pk=sub.pk %}" class="btn btn-primary btn-sm">Details</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="text-center py-12 text-base-content/50">Keine Subscriptions vorhanden.</div>
+{% endif %}
+{% endblock %}
