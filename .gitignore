@@ -9,3 +9,6 @@ node_modules/
 mpp/static/css/output.css
 .pytest_cache/
 .ruff_cache/
+.venv-docs/
+**/site/
+logs/*.log

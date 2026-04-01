@@ -1,8 +1,0 @@
-
-> css:watch
-> tailwindcss -i mpp/static/css/input.css -o mpp/static/css/output.css --watch
-
-≈ tailwindcss v4.2.2
-
-/*! 🌼 daisyUI 5.5.19 */
-Done in 678ms
