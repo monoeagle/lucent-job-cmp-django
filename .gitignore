@@ -12,3 +12,8 @@ mpp/static/css/output.css
 .venv-docs/
 **/site/
 logs/*.log
+.tools/
+build/appimage/
+build/*.AppImage
+release/
+.wheels/
