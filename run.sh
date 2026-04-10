@@ -37,6 +37,79 @@ _ensure_appimagetool() {
   ok "appimagetool installiert unter .tools/"
 }
 
+_bundle_python_standalone() {
+  local appdir="$1"
+  local venv_dir="$2"
+
+  local py_ver
+  py_ver=$("$venv_dir/bin/python3" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+  local real_py
+  real_py="$(readlink -f "$venv_dir/bin/python3")"
+  local py_base
+  py_base=$("$venv_dir/bin/python3" -c 'import sys; print(sys.base_prefix)')
+
+  info "Python ${py_ver} standalone buendeln..."
+
+  mkdir -p "$appdir/python/bin"
+  mkdir -p "$appdir/python/lib/python${py_ver}"
+
+  cp "$real_py" "$appdir/python/bin/python3"
+  chmod +x "$appdir/python/bin/python3"
+  ln -sf python3 "$appdir/python/bin/python"
+
+  info "Python stdlib kopieren..."
+  cp -r "${py_base}/lib/python${py_ver}/"* "$appdir/python/lib/python${py_ver}/" 2>/dev/null || true
+
+  info "Site-packages kopieren..."
+  if [ -d "$venv_dir/lib/python${py_ver}/site-packages" ]; then
+    cp -r "$venv_dir/lib/python${py_ver}/site-packages" "$appdir/python/lib/python${py_ver}/"
+  fi
+
+  for pattern in \
+    "/usr/lib/x86_64-linux-gnu/libpython${py_ver}"*.so* \
+    "/usr/lib/libpython${py_ver}"*.so* \
+    "${py_base}/lib/libpython${py_ver}"*.so*; do
+    for lib in $pattern; do
+      [ -f "$lib" ] && cp -L "$lib" "$appdir/python/lib/" 2>/dev/null
+    done
+  done
+
+  info "System-Bibliotheken buendeln..."
+  for libname in libssl libcrypto libffi libz libsqlite3 libncurses libtinfo libreadline libbz2 liblzma libexpat libmpdec; do
+    for f in /usr/lib/x86_64-linux-gnu/${libname}*.so*; do
+      [ -f "$f" ] && cp -L "$f" "$appdir/python/lib/" 2>/dev/null
+    done
+  done
+
+
+  # ALL shared library dependencies (automatic ldd scan)
+  info "Shared-Library-Abhaengigkeiten scannen (ldd)..."
+  local _deplist
+  _deplist=$(find "$appdir/python" -name "*.so*" -type f -exec ldd {} 2>/dev/null \; | grep "=> /" | awk '{print $3}' | sort -u)
+  local _copied=0
+  for dep in $_deplist; do
+    [ -f "$dep" ] || continue
+    local _bn
+    _bn=$(basename "$dep")
+    # System-kritische Libs NICHT buendeln
+    case "$_bn" in
+      libc.so*|libm.so*|libdl.so*|librt.so*|libpthread.so*) continue ;;
+      ld-linux*|libgcc_s.so*|libstdc++.so*) continue ;;
+      libnss_*|libresolv.so*|libnsl.so*|libutil.so*) continue ;;
+      linux-vdso.so*) continue ;;
+    esac
+    if [ ! -f "$appdir/python/lib/$_bn" ]; then
+      cp -L "$dep" "$appdir/python/lib/" 2>/dev/null && _copied=$((_copied + 1))
+    fi
+  done
+  # Bereits faelschlich kopierte System-Libs entfernen
+  for _syslib in libc.so* libm.so* libdl.so* librt.so* libpthread.so* ld-linux* libgcc_s.so* libstdc++.so* libnss_* libresolv.so* libnsl.so* libutil.so*; do
+    rm -f "$appdir/python/lib/"$_syslib 2>/dev/null
+  done
+  info "$_copied zusaetzliche Shared Libraries gebundelt"
+  ok "Python ${py_ver} standalone gebundelt"
+}
+
 cmd_serve() {
   if [ -f "$VENV_DIR/bin/activate" ]; then
       source "$VENV_DIR/bin/activate"
@@ -69,8 +142,7 @@ cmd_appimage() {
   cp -r "$MPP_DIR" "$appdir/app/mpp"
   [ -f "$PROJECT_DIR/requirements.txt" ] && cp "$PROJECT_DIR/requirements.txt" "$appdir/app/"
 
-  info "Python venv kopieren (kann dauern)..."
-  cp -r "$VENV_DIR" "$appdir/venv"
+  _bundle_python_standalone "$appdir" "$VENV_DIR"
 
   cat > "$appdir/usr/share/icons/hicolor/256x256/apps/lucent-mpp-django.svg" << 'SVGEOF'
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
@@ -104,9 +176,35 @@ PORT=8000
 for arg in "$@"; do
   case "$arg" in --port=*) PORT="${arg#--port=}";; esac
 done
-source "${HERE}/venv/bin/activate"
+export PYTHONHOME="${HERE}/python"
+export PATH="${HERE}/python/bin:${PATH}"
+export LD_LIBRARY_PATH="${HERE}/python/lib:${LD_LIBRARY_PATH:-}"
+PY_VER=$(ls -1 "${HERE}/python/lib/" | grep "^python3\." | head -1 | sed "s/python//")
+export PYTHONPATH="${HERE}/python/lib/python${PY_VER}/site-packages"
+export DJANGO_SETTINGS_MODULE=config.settings.development
+
 cd "${HERE}/app/mpp"
-exec python manage.py runserver "$PORT"
+
+# Beim ersten Start: Migrationen + Seed
+STAMP="${HOME}/.lucent-mpp-django-seeded"
+if [ ! -f "$STAMP" ]; then
+  echo "[MPP-Django] Erststart: Datenbank initialisieren..."
+  PGPASSWORD=mpp createdb -h localhost -U mpp mpp_django_dev 2>/dev/null || true
+  echo "[MPP-Django] Migrationen..."
+  "${HERE}/python/bin/python3" manage.py migrate --noinput 2>&1 | tail -5
+  echo "[MPP-Django] Seed-Daten..."
+  "${HERE}/python/bin/python3" manage.py seed 2>&1 | tail -5
+  touch "$STAMP"
+  echo "[MPP-Django] Datenbank bereit."
+fi
+
+# Browser oeffnen (nur ohne --port)
+if [[ "$*" != *"--port="* ]]; then
+  (sleep 2 && xdg-open "http://127.0.0.1:${PORT}" 2>/dev/null) &
+fi
+
+echo "[MPP-Django] http://127.0.0.1:${PORT}"
+exec "${HERE}/python/bin/python3" manage.py runserver "$PORT"
 RUNEOF
   chmod +x "$appdir/AppRun"
 
