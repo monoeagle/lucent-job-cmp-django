@@ -4,10 +4,12 @@
 
 | Kategorie | Framework | Anzahl |
 |-----------|-----------|--------|
-| Unit | pytest | ~100 |
-| Integration | pytest-django | ~100 |
-| E2E | pytest-django | ~28 |
-| **Gesamt** | | **~228** |
+| Unit | pytest | 129 |
+| Integration | pytest-django | 97 |
+| E2E | pytest-django | 4 |
+| **Gesamt** | | **230** |
+
+> Stand v1.0.0 (2026-06-18): **230 Tests grün** (`venv/bin/python3 -m pytest`, 0 Errors).
 
 ## Test-Methodik: TDD (Test-Driven Development)
 

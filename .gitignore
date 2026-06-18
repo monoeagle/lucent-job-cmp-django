@@ -167,6 +167,15 @@ venv.bak/
 # mkdocs documentation
 /site
 
+# Docs (lucent-docs.pattern §12) — generierte/venv-Artefakte nicht tracken
+mpp-docs/.venv-docs/
+mpp-docs/site/
+mpp-docs/.cache/
+
+# Build-Tools / Artefakte (nicht versionieren)
+.tools/
+*.AppImage
+
 # mypy
 .mypy_cache/
 .dmypy.json

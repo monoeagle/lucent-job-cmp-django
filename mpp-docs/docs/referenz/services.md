@@ -2,7 +2,7 @@
 
 ## Übersicht
 
-9 Service-Klassen kapseln die Business-Logik. Alle Services sind statische Klassen ohne Zustand — sie werden nicht instanziiert, sondern direkt aufgerufen.
+10 Service-Klassen kapseln die Business-Logik. Alle Services sind statische Klassen ohne Zustand — sie werden nicht instanziiert, sondern direkt aufgerufen.
 
 **Regel:** Views rufen Services auf. Services rufen Models auf. Kein direkter Model-Zugriff aus Views.
 
@@ -105,6 +105,19 @@
 | `list_user_subscriptions(user_id)` | int | `list[Subscription]` | User-Subscriptions |
 | `get_subscription(sub_id)` | int | `Subscription` | Subscription by ID |
 | `cancel(sub_id)` | int | `None` | Kündigen |
+
+## DashboardService
+
+**Datei:** `apps/dashboard/services.py`
+
+| Methode | Parameter | Rückgabe | Beschreibung |
+|---------|-----------|----------|-------------|
+| `get_user_stats(user)` | User | `dict` | Kennzahlen eines Users (Orders, Subscriptions, …) |
+| `get_admin_stats()` | — | `dict` | Globale Kennzahlen (Admin-Dashboard) |
+| `get_orders_by_status(user=None)` | User? | `dict` | Order-Verteilung nach Status |
+| `get_orders_by_month(user=None, months=6)` | User?, int | `list` | Orders je Monat (Zeitreihe) |
+| `get_recent_orders(user=None, limit=5)` | User?, int | `list[Order]` | Letzte Bestellungen |
+| `get_popular_templates(limit=5)` | int | `list` | Häufigste Templates |
 
 ## Exceptions
 

@@ -70,7 +70,7 @@ cd mpp && python manage.py check
 
 # Tests
 python -m pytest tests/ -v
-# → 228+ passed
+# → 230 passed
 ```
 
 ## Abhängigkeiten

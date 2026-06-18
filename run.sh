@@ -262,25 +262,65 @@ DEOF
 
   cat > "$appdir/AppRun" << 'RUNEOF'
 #!/usr/bin/env bash
+# Standalone-Docs-AppImage-Laufzeit (docs-release-sync.pattern §H):
+#  --port=NNNN        fixer Port (Hub-Modus) → KEIN Browser
+#  --port-prefer=NNNN Wunschport, sonst zufaelliger Ephemeral-Port
+#  --no-browser       nur Server, kein Browser
+# Standalone: OS-vergebener Ephemeral-Port (nie Kollision) + isolierte Chromium-App-Instanz.
 SELF="$(readlink -f "${BASH_SOURCE[0]}")"
 HERE="$(dirname "$SELF")"
-PORT="${DOCS_PORT:-5063}"
+
+PORT=""; PREFER=""; NO_BROWSER=0; HUB_MODE=0
 for arg in "$@"; do
-  case "$arg" in --port=*) PORT="${arg#--port=}";; esac
+  case "$arg" in
+    --port=*)        PORT="${arg#--port=}"; HUB_MODE=1 ;;
+    --port-prefer=*) PREFER="${arg#--port-prefer=}" ;;
+    --no-browser)    NO_BROWSER=1 ;;
+  esac
 done
+
 if ! command -v python3 &>/dev/null; then
-  echo "[ERROR] python3 nicht gefunden."
-  exit 1
+  echo "[ERROR] python3 nicht gefunden."; exit 1
 fi
-cleanup() { kill "$SERVER_PID" 2>/dev/null; exit 0; }
-trap cleanup SIGTERM SIGINT
+
+pick_free_port() {
+  python3 -c 'import socket;s=socket.socket();s.bind(("127.0.0.1",0));print(s.getsockname()[1]);s.close()'
+}
+port_in_use() { (echo >"/dev/tcp/127.0.0.1/$1") >/dev/null 2>&1; }
+
+# Port waehlen: Hub=fix; sonst Wunschport (falls frei), sonst Ephemeral.
+if [ -z "$PORT" ]; then
+  if [ -n "$PREFER" ] && ! port_in_use "$PREFER"; then PORT="$PREFER"; else PORT="$(pick_free_port)"; fi
+fi
+
+PROFILE=""
+cleanup() {
+  kill "$SERVER_PID" 2>/dev/null
+  [ -n "$PROFILE" ] && rm -rf "$PROFILE" 2>/dev/null
+  exit 0
+}
+trap cleanup SIGTERM SIGINT EXIT
+
 cd "${HERE}/site"
-python3 -m http.server "$PORT" --bind 127.0.0.1 &
+python3 -m http.server "$PORT" --bind 127.0.0.1 >/dev/null 2>&1 &
 SERVER_PID=$!
-echo "[Docs] http://127.0.0.1:${PORT}"
-if [[ "$*" != *"--port="* ]]; then
+URL="http://127.0.0.1:${PORT}"
+echo "[Docs] $URL"
+
+# Browser nur im Standalone (Hub oeffnet selbst, --no-browser unterdrueckt).
+if [ "$HUB_MODE" -eq 0 ] && [ "$NO_BROWSER" -eq 0 ]; then
   sleep 0.5
-  xdg-open "http://127.0.0.1:${PORT}" 2>/dev/null || true
+  CHROME=""
+  for c in chromium chromium-browser google-chrome google-chrome-stable chrome brave-browser; do
+    if command -v "$c" &>/dev/null; then CHROME="$c"; break; fi
+  done
+  if [ -n "$CHROME" ]; then
+    PROFILE="$(mktemp -d)"
+    "$CHROME" --user-data-dir="$PROFILE" --no-first-run --no-default-browser-check \
+              --new-window --app="$URL" >/dev/null 2>&1 &
+  else
+    xdg-open "$URL" >/dev/null 2>&1 || true   # Fallback, wenn kein Chromium/Chrome
+  fi
 fi
 wait "$SERVER_PID"
 RUNEOF

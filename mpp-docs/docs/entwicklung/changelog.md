@@ -1,5 +1,45 @@
 # Changelog
 
+## Doku-TDD-Gate (docs-release-sync.pattern §G) — 2026-06-18
+
+Doku-Erstellung ist jetzt **TDD**: `verify_docs.sh` prüft 11 Regeln (R-BUILD … R-AP-SYNC),
+Exit 0 nur bei null ✗. „Fertig" = Gate grün. Dafür ergänzt/gefixt:
+
+- **R-HOME**: Startseite auf reines Home-Layout reduziert; Beschreibung/Tech-Stack →
+  `grundlagen/ueberblick.md`.
+- **R-DIAGRAMME + R-AP-SYNC**: AP-Roadmap aus B0–B9 rekonstruiert — `todo.md`/`todo-erledigt.md`
+  (Repo-Root) + `entwicklung/arbeitspakete.md` mit AP-Überblick-Flowchart + Roadmap-Gantt
+  (Spannen schematisch, Historie zu v1.0.0 gestaucht); `addRoadmapBadge()` reaktiviert.
+- **R-NO-CDN**: `theme.font = false` → kein Google-Fonts-CDN mehr (System-Fonts, offline).
+- **R-NO-PLACEHOLDER**: letzte `ADAPT:`/`__ROADMAP_GANTT__`-Reste aus `icon-rail.js` entfernt.
+- `todos.md` → `todo.md` + `todo-erledigt.md` konsolidiert (Pattern-Namensschema).
+- **§H / R-APPRUN**: Docs-AppImage-`AppRun` neu — Standalone nutzt **zufälligen Ephemeral-Port**
+  (`bind(…,0)`, nie Port-Kollision) statt fix 5063, öffnet eine **isolierte Chromium-App-Instanz**
+  (Temp-Profil) statt `xdg-open`/Default-Firefox; Flags `--port=` (Hub), `--no-browser`,
+  `--port-prefer=`. Funktional verifiziert (Port 35515, HTTP 200). 12. Gate-Regel ergänzt.
+
+## Doku-Angleichung an lucent-docs.pattern — 2026-06-18
+
+Die Doku war eine Pre-„App-Look"-Minimal-Zensical-Variante. Auf den Standard ab 2026-06 gehoben:
+
+- **JS-Suite** (lokal gebündelt, kein CDN): `icon-rail.js` (linke Icon-Leiste statt Material-Tabs),
+  `activity-heatmap.js` (Git-Aktivität + Insights), `mermaid.min.js`, `mermaid-init.js`,
+  `palette-init.js`, `lightbox.js`, `hub-stop.js` (Hub-„Doku beenden"-Button).
+- **Voll-`extra.css`** (~1980 Z., rail/home/heatmap-Styles), Akzentfarbe Lucent-Grün `#34D399`.
+- **Mermaid-Pipeline**: `tools/extract_mermaid_blocks.py` + `render_mermaid.sh`, Pipeline-`build_docs.py`;
+  Startseite als Home-Layout mit Hero-Architekturdiagramm (`mermaid-sources/index-1.mmd` → SVG via mmdc).
+- **Aktivitäts-Heatmap/Insights** aus `git log` (`tools/generate_project_activity.py` →
+  `docs/_data/project-activity.json`, `testCount` = 230 echte Tests).
+- `zensical.toml`: `extra_javascript`-Block ergänzt, `navigation.tabs`/`.tabs.sticky` entfernt.
+- `.gitignore`: `mpp-docs/{.venv-docs,site,.cache}` ergänzt; generiertes `site/` aus dem Tracking genommen.
+
+## Wartung — 2026-06-18 (Doku-Sync)
+
+- Test-Umgebung offline aus `.wheels/` ins projekt-eigene `venv` wiederhergestellt (Django 6.0.3, pytest 8.4.2).
+- Volle Suite verifiziert: **230 Tests grün** (Unit 129 · Integration 97 · E2E 4), 0 Collection-Errors.
+- Doku-Zahlen an den Ist-Stand angeglichen: Tests 228 → 230, Services 9 → 10 (`DashboardService`).
+- `todos.md` auf realen Stand gespiegelt (Backend B0–B9 + HTMX-Frontend erledigt; Docker offen).
+
 ## v1.0.0 — 2026-03-29
 
 Initiale Implementierung mit TDD (Test-Driven Development) in 10 Phasen.
@@ -74,7 +114,7 @@ Initiale Implementierung mit TDD (Test-Driven Development) in 10 Phasen.
 |--------|------|
 | Django Apps | 10 |
 | Models | 15 |
-| Services | 9 |
-| Tests | 228 |
+| Services | 10 |
+| Tests | 230 |
 | Commits | 47 |
 | TDD-Phasen | B0–B9 |

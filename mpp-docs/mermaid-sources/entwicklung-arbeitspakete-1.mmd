@@ -1,0 +1,37 @@
+flowchart LR
+    classDef done fill:#1f6f3c,stroke:#2ecc71,color:#ffffff;
+    classDef wip  fill:#7a5c00,stroke:#f1c40f,color:#ffffff;
+    classDef plan fill:#2c3550,stroke:#7c83ff,color:#cdd3e8;
+
+    subgraph SETUP["Setup & Identity"]
+        direction TB
+        AP0["AP-0 · Projekt-Setup"]:::done
+        AP1["AP-1 · Identity & Access"]:::done
+    end
+    subgraph CORE["Katalog & Bestellung"]
+        direction TB
+        AP2["AP-2 · Service-Katalog"]:::done
+        AP3["AP-3 · Order-Lifecycle"]:::done
+        AP4["AP-4 · Context & CMDB"]:::done
+    end
+    subgraph FLOW["Provisioning & Approval"]
+        direction TB
+        AP5["AP-5 · Provisioning-Engine"]:::done
+        AP6["AP-6 · Approval-Workflow"]:::done
+    end
+    subgraph CROSS["Cross-Cutting & Abschluss"]
+        direction TB
+        AP7["AP-7 · Cross-Cutting"]:::done
+        AP8["AP-8 · Subscriptions"]:::done
+        AP9["AP-9 · Integration & Polish"]:::done
+        AP10["AP-10 · Frontend HTMX/DaisyUI"]:::done
+    end
+    subgraph INFRA["Infrastruktur"]
+        direction TB
+        AP11["AP-11 · Docker-Setup"]:::plan
+    end
+
+    AP0 --> AP1 --> AP2 --> AP3 --> AP4
+    AP4 --> AP5 --> AP6
+    AP6 --> AP7 --> AP8 --> AP9 --> AP10
+    AP9 -.-> AP11

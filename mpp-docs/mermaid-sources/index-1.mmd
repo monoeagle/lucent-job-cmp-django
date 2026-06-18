@@ -1,0 +1,25 @@
+flowchart TD
+    U["👤 Browser — HTMX + DaisyUI"] --> V["Django Views (thin)"]
+    V --> F["Forms — Validierung"]
+    V --> S["Services — Business-Logik"]
+    V -.-> A["django-allauth — Session"]
+    S --> M["Models — Django ORM"]
+    M --> DB[("PostgreSQL")]
+    S --> C["Celery + Redis"]
+    C --> P["Provisioning — GitLab-Stub"]
+    S --> X["Stubs — CMDB / GitLab (YAML)"]
+    S --- Apps
+
+    subgraph Apps["10 Django-Apps"]
+        direction LR
+        AC["accounts"]
+        CA["catalog"]
+        OR["orders"]
+        AP["approvals"]
+        PR["provisioning"]
+        CM["cmdb"]
+        SU["subscriptions"]
+        AU["audit"]
+        NO["notifications"]
+        DA["dashboard"]
+    end
