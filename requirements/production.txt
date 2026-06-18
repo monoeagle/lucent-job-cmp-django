@@ -1,0 +1,4 @@
+-r base.txt
+
+# WSGI-Server für Produktion (hinter nginx-Reverse-Proxy)
+gunicorn>=23.0,<24.0

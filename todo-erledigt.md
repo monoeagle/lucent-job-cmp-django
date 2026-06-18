@@ -1,6 +1,12 @@
 # MPP Django — Todo erledigt
 
-> Fertige Arbeitspakete (newest-first). Quelle offen: `todo.md`. Stand 2026-06-18, v1.0.0, 230 Tests grün.
+> Fertige Arbeitspakete (newest-first). Quelle offen: `todo.md`. Stand 2026-06-18, v1.0.0, 238 Tests grün.
+
+## Deployment · VM-Installationsanleitung + Production-Settings ✅
+Env-basiertes `config.settings.production` (django-environ) + `.env.example`, Hardening
+(`check --deploy` ohne Warnungen), 8 neue Tests (230 → 238). Detaillierte VM-Anleitung
+(Rocky/AlmaLinux 9, Voll-Produktion: gunicorn + nginx + systemd + PostgreSQL/Redis + TLS +
+SELinux) in `docs/deployment/vm-installation.md`, im README verlinkt. AP-11 (Docker) zurückgestellt.
 
 ## AP-10 · Frontend (HTMX + DaisyUI, kein React) ✅
 Base-Layout + Navigation (Lucent-Theme), Service-Catalog-UI, Order-Wizard, Approval-Queue,

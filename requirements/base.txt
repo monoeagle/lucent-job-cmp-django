@@ -3,5 +3,6 @@ django-allauth>=65.0,<66.0
 django-htmx>=1.21,<2.0
 psycopg[binary]>=3.2,<4.0
 PyYAML>=6.0,<7.0
+django-environ>=0.11,<1.0
 celery>=5.4,<6.0
 redis>=5.0,<6.0
