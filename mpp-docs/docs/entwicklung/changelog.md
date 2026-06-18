@@ -1,5 +1,24 @@
 # Changelog
 
+## Produktions-Settings + VM-Deployment — 2026-06-19
+
+Deployment-Fähigkeit ergänzt; AP-11 (Docker) bewusst zurückgestellt.
+
+- **`config.settings.production`** (neu): env-basiert via `django-environ` —
+  `SECRET_KEY`, `ALLOWED_HOSTS`, `DATABASE_URL`, Celery-URLs aus der Umgebung.
+  Security-Hardening (HSTS, `SECURE_SSL_REDIRECT`, secure Cookies,
+  `SECURE_PROXY_SSL_HEADER`, `STATIC_ROOT`). `manage.py check --deploy`: 0 Issues.
+- **`.env.example`** als Vorlage; `requirements/production.txt` (gunicorn);
+  `django-environ` in base/pinned requirements.
+- **TDD**: 8 neue Tests (`tests/unit/test_production_settings.py`), RED→GREEN.
+  Volle Suite **230 → 238 grün** (Unit 137 · Integration 97 · E2E 4).
+- **Deployment-Doku** (`docs/deployment/`): `vm-installation.md` (Rocky/AlmaLinux 9,
+  Voll-Produktion: gunicorn + nginx + systemd + PostgreSQL 16 + Redis + TLS via
+  Let's Encrypt + SELinux/firewalld) und `vm-installation-offline.md` (air-gapped:
+  Bundle-Transport, lokales RPM-Repo, `pip --no-index`, internes/self-signed TLS).
+- **Repo-Hygiene**: App-AppImage (85 MB) + Docs-AppImage untracked, `*.AppImage`
+  + `.tools/` in `.gitignore`; Merge mit Remote-`.claude/`-Untracking.
+
 ## Doku-TDD-Gate (docs-release-sync.pattern §G) — 2026-06-18
 
 Doku-Erstellung ist jetzt **TDD**: `verify_docs.sh` prüft 11 Regeln (R-BUILD … R-AP-SYNC),

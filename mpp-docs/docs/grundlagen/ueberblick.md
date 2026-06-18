@@ -44,7 +44,7 @@ Das **Marketplace Portal** ermöglicht Benutzern, IT-Services (VMs, Datenbanken,
 | Django Apps | 10 |
 | Datenbank-Tabellen | 15 |
 | Services | 10 |
-| Tests | 230 |
+| Tests | 238 |
 | TDD-Phasen | B0–B9 |
 
 ## Schnellstart

@@ -1,10 +1,54 @@
 {
-  "generatedAt": "2026-06-18T23:25:21",
+  "generatedAt": "2026-06-19T00:26:16",
   "range": {
-    "from": "2025-06-19",
-    "to": "2026-06-18"
+    "from": "2025-06-20",
+    "to": "2026-06-19"
   },
   "byDay": {
+    "2026-06-19": {
+      "commits": 4,
+      "kinds": {
+        "docs": 1,
+        "chore": 1,
+        "other": 1,
+        "feat": 1
+      },
+      "list": [
+        {
+          "sha": "36a5704",
+          "subject": "docs: Offline/air-gapped VM-Installationsanleitung ergänzt",
+          "kind": "docs"
+        },
+        {
+          "sha": "90aec5c",
+          "subject": "chore: App-AppImage (85 MB) aus Tracking nehmen — *.AppImage ignoriert",
+          "kind": "chore"
+        },
+        {
+          "sha": "1df0e44",
+          "subject": "Merge remote-tracking branch 'origin/main'",
+          "kind": "other"
+        },
+        {
+          "sha": "ed2a887",
+          "subject": "feat: env-basierte Production-Settings + VM-Deployment-Anleitung",
+          "kind": "feat"
+        }
+      ]
+    },
+    "2026-06-18": {
+      "commits": 1,
+      "kinds": {
+        "docs": 1
+      },
+      "list": [
+        {
+          "sha": "f6a7286",
+          "subject": "docs: App-Look + TDD-Gate + Sync (verify_docs.sh grün)",
+          "kind": "docs"
+        }
+      ]
+    },
     "2026-05-11": {
       "commits": 1,
       "kinds": {
@@ -15,6 +59,24 @@
           "sha": "1f0d3a3",
           "subject": "mpp TDD Django",
           "kind": "other"
+        }
+      ]
+    },
+    "2026-05-06": {
+      "commits": 2,
+      "kinds": {
+        "chore": 2
+      },
+      "list": [
+        {
+          "sha": "65bc616",
+          "subject": "chore: untrack .claude/ user-/machine-state per gitignore",
+          "kind": "chore"
+        },
+        {
+          "sha": "719b625",
+          "subject": "chore(gitignore): einheitliches .claude/-Pattern",
+          "kind": "chore"
         }
       ]
     },
@@ -528,13 +590,13 @@
     }
   },
   "stats": {
-    "totalCommits": 90,
-    "activeDays": 8,
+    "totalCommits": 97,
+    "activeDays": 11,
     "longestStreak": 2,
     "topKinds": [
       {
         "kind": "feat",
-        "count": 54
+        "count": 55
       },
       {
         "kind": "fix",
@@ -542,22 +604,22 @@
       },
       {
         "kind": "docs",
-        "count": 10
-      },
-      {
-        "kind": "other",
-        "count": 5
+        "count": 12
       },
       {
         "kind": "chore",
-        "count": 3
+        "count": 6
+      },
+      {
+        "kind": "other",
+        "count": 6
       },
       {
         "kind": "refactor",
         "count": 1
       }
     ],
-    "testCount": 230
+    "testCount": 238
   },
   "phases": []
 }

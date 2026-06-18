@@ -1,7 +1,8 @@
 # Arbeitspakete & Roadmap
 
 Arbeitspaket-Quelle: `todo.md` (offen) / `todo-erledigt.md` (fertig) im Repo-Root.
-Status: **AP-0 … AP-10 fertig** (Backend B0–B9 + HTMX-Frontend, 230 Tests grün), **AP-11 Docker offen**.
+Status: **AP-0 … AP-10 fertig** (Backend B0–B9 + HTMX-Frontend, 238 Tests grün), **AP-11 Docker offen**.
+Zusätzlich (nicht-AP): env-basierte Produktions-Settings + VM-Deployment-Anleitungen (online + offline).
 
 ## AP-Überblick
 
