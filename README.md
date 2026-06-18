@@ -27,6 +27,8 @@ venv/bin/python -m pytest        # config.settings.testing
 
 - **VM (Produktion, Rocky/AlmaLinux 9):** Schritt-für-Schritt-Anleitung →
   [`docs/deployment/vm-installation.md`](docs/deployment/vm-installation.md)
+- **VM offline / air-gapped (ohne Internet):** Bundle-Transport-Anleitung →
+  [`docs/deployment/vm-installation-offline.md`](docs/deployment/vm-installation-offline.md)
 - Produktions-Settings: `config.settings.production` (env-basiert, django-environ).
   Vorlage der Umgebungsvariablen: [`.env.example`](.env.example)
 - Container-Setup (Docker/Compose): geplant als AP-11.

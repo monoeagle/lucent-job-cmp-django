@@ -18,6 +18,10 @@ Internet ──TLS──▶ nginx (80/443) ──HTTP──▶ gunicorn (127.0.0
 > (`config.settings.production`), gunicorn + Celery als systemd-Units, nginx als
 > TLS-terminierender Reverse-Proxy, SELinux *enforcing*, firewalld aktiv.
 
+> **Ohne Internetzugang auf der VM?** Siehe die air-gapped Variante
+> [`vm-installation-offline.md`](vm-installation-offline.md) — alle Quellen werden
+> auf einem Staging-Host eingesammelt und als Bundle auf die VM transportiert.
+
 ---
 
 ## Inhalt
