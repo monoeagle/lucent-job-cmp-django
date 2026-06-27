@@ -1,7 +1,7 @@
 # Arbeitspakete & Roadmap
 
 Arbeitspaket-Quelle: `todo.md` (offen) / `todo-erledigt.md` (fertig) im Repo-Root.
-Status: **AP-0 … AP-10 fertig** (Backend B0–B9 + HTMX-Frontend, 239 Tests grün, v1.1.0), **AP-11 Docker offen**.
+Status: **AP-0 … AP-10 fertig** (Backend B0–B9 + HTMX-Frontend, 239 Tests grün, v1.1.0), **AP-11 Container (Podman/Quadlets) offen** — Abwägung Native-vs-Container siehe [ADR-0001](../decisions/0001-deployment-native-vs-container.md).
 Zusätzlich (nicht-AP):
 
 - env-basierte Produktions-Settings + VM-Deployment-Anleitungen (online + offline)
@@ -16,6 +16,6 @@ Zusätzlich (nicht-AP):
 ## Roadmap-Gantt
 
 > Spannen **schematisch**: Die Git-Historie wurde zu v1.0.0 (2026-03-29) gestaucht — die
-> AP-**Reihenfolge** ist real, die Tagesspannen illustrieren nur den Ablauf. AP-11 (Docker) offen.
+> AP-**Reihenfolge** ist real, die Tagesspannen illustrieren nur den Ablauf. AP-11 (Container/Podman) offen.
 
 <img src="../../images/mermaid/entwicklung-arbeitspakete-2.svg" alt="Diagramm 2 aus entwicklung/arbeitspakete.md">

@@ -48,6 +48,9 @@ nav = [
     { "Stubs & Mocks"     = "betrieb/stubs-mocks.md" },
     { "Troubleshooting"   = "betrieb/troubleshooting.md" },
   ]},
+  { "Entscheidungen" = [
+    { "ADR-0001 · Deployment (Native vs. Container)" = "decisions/0001-deployment-native-vs-container.md" },
+  ]},
 ]
 
 [project.theme]
