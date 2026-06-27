@@ -1994,7 +1994,13 @@ body:has(.adb-home-layout) .md-content {
 }
 .adb-shot-compare img {
   width: 100%;
-  height: auto;
+  /* Das Bestellformular ist sehr lang — Inline nur den oberen Teil zeigen
+     (Kontext + die sich füllende Zusammenfassung). Klick öffnet das ganze Bild
+     in der Lightbox. */
+  height: 560px;
+  object-fit: cover;
+  object-position: top;
+  cursor: zoom-in;
   border: 1px solid var(--md-default-fg-color--lightest, #ddd);
   border-radius: 6px;
 }
