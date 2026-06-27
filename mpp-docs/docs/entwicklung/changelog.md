@@ -22,6 +22,17 @@ Bugfix im Bestell-Flow.
 - **Doku-Fix**: relative Bildpfade auf Tiefe-2-Seiten korrigiert
   (`../images` → `../../images`) — betraf auch die zuvor kaputten
   Roadmap-Diagramme auf der Arbeitspakete-Seite.
+- **Offline-Release für AlmaLinux 9**: gebündelte Wheels (32 cp312/manylinux),
+  `tools/build_release.py` + `deploy/install.sh` (idiotensicher), `./run.sh release`.
+  Als **GitHub-Release v1.1.0** veröffentlicht; Offline-Doku um den
+  GitHub-Release-Weg (ziehen → transferieren → `install.sh`) erweitert.
+- **ADR-0001 (Deployment: Native vs. Container)**: native systemd-Installation
+  bleibt Default für air-gapped Single-VM; AP-11 von „Docker" auf
+  **Podman/Quadlets** umgeschrieben. Entscheidung: **Python bleibt 3.12**
+  (AlmaLinux 9 paketiert kein 3.14).
+- **Startseite & Architektur** an luDBxP angeglichen (Hero = gruppierte APs,
+  Header-Badge „Architektur", `graph TB` Banded-Layer); **Heatmap-Detailliste**
+  per Klick togglebar.
 
 ## Produktions-Settings + VM-Deployment — 2026-06-19
 
