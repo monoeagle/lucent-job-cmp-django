@@ -22,6 +22,49 @@ dort offline installiert.
 
 ---
 
+## 🚀 Schnellstart mit dem Release-Bundle (empfohlen, „idiotensicher")
+
+Es gibt ein fertiges Offline-Release, das **alle Python-Pakete als Wheels
+mitbringt** — du musst dann KEINEN Staging-Host aufsetzen und nichts per
+`pip download` selbst beschaffen. Bauen (auf einem Linux-Host mit Python 3.12 +
+Internet, einmalig):
+
+```bash
+python3.12 -m pip download -r requirements/production.txt --dest wheels \
+  --only-binary=:all: --python-version 312 --implementation cp --abi cp312 \
+  --platform manylinux2014_x86_64 --platform manylinux_2_17_x86_64 --platform manylinux_2_28_x86_64
+python3.12 -m pip download pip setuptools wheel --dest wheels --only-binary=:all:
+python3 tools/build_release.py
+# → release/Lucent-MPP-Django-<version>-almalinux9-offline.zip
+```
+
+Auf der **Ziel-VM** (AlmaLinux/Rocky 9) — drei Schritte:
+
+```bash
+# 1. System-Prerequisites (einmalig; online ODER aus dem RPM-Bundle, Teil A/C)
+sudo dnf install -y python3.12 postgresql16-server postgresql16 redis nginx openssl
+sudo /usr/pgsql-16/bin/postgresql-16-setup initdb
+sudo systemctl enable --now postgresql-16 redis
+
+# 2. Bundle entpacken
+unzip Lucent-MPP-Django-<version>-almalinux9-offline.zip
+cd Lucent-MPP-Django-<version>-almalinux9-offline
+
+# 3. Installer ausführen — fragt nur FQDN + DB-Passwort, macht den Rest
+sudo ./deploy/install.sh
+```
+
+`install.sh` erledigt offline: venv + Wheels (`--no-index`), DB-Anlage, `.env`,
+Migrationen, `collectstatic`, Superuser, systemd (gunicorn + Celery), nginx +
+self-signed TLS, firewalld/SELinux. Danach: `https://<FQDN>/`.
+
+> **Voll air-gapped** (die Ziel-VM hat *gar kein* Internet, auch nicht für die
+> System-RPMs in Schritt 1): dann zusätzlich die RPMs im Bundle mitliefern —
+> dafür ist die ausführliche Anleitung unten (**Teil A–C**) da. Der `install.sh`
+> deckt den Python-/App-/Dienste-Teil ab; die RPM-Beschaffung bleibt Teil A.
+
+---
+
 ## Inhalt
 
 - **Teil A — Staging-Host (Artefakte einsammeln)**

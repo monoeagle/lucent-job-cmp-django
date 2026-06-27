@@ -336,6 +336,20 @@ RUNEOF
   ok "Kopiert nach ${BOLD}${RELEASE_DIR}/$(basename "$output")${NC}"
 }
 
+cmd_release() {
+  header "MPP Django — Offline-Release (AlmaLinux 9)"
+  local wheels_dir="$PROJECT_DIR/wheels"
+  if [ -z "$(ls "$wheels_dir"/*.whl 2>/dev/null)" ]; then
+    info "Wheelhouse leer — Wheels für AlmaLinux 9 / Py3.12 laden..."
+    "$VENV_DIR/bin/python3" -m pip download \
+      -r "$PROJECT_DIR/requirements/production.txt" --dest "$wheels_dir" \
+      --only-binary=:all: --python-version 312 --implementation cp --abi cp312 \
+      --platform manylinux2014_x86_64 --platform manylinux_2_17_x86_64 --platform manylinux_2_28_x86_64
+    "$VENV_DIR/bin/python3" -m pip download pip setuptools wheel --dest "$wheels_dir" --only-binary=:all:
+  fi
+  "$VENV_DIR/bin/python3" "$PROJECT_DIR/tools/build_release.py"
+}
+
 # ══════════════════════════════════════════════════════════════════════════════
 # CLI Dispatch
 # ══════════════════════════════════════════════════════════════════════════════
@@ -343,8 +357,9 @@ case "${1:-serve}" in
   serve)           cmd_serve ;;
   appimage-build)  cmd_appimage ;;
   docs-appimage)   cmd_docs_appimage ;;
+  release)         cmd_release ;;
   *)
-    echo "Usage: $0 [serve|appimage-build|docs-appimage]"
+    echo "Usage: $0 [serve|appimage-build|docs-appimage|release]"
     exit 1
     ;;
 esac
