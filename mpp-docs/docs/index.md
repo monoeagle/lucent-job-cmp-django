@@ -4,7 +4,7 @@
 
 <div class="adb-home-arch">
 
-<img src="images/mermaid/index-1.svg" alt="MPP Django — Architekturüberblick">
+<img src="images/mermaid/entwicklung-arbeitspakete-1.svg" alt="Arbeitspakete — thematisch gruppiert (grün = erledigt, blau = geplant)">
 
 </div>
 

@@ -1,5 +1,28 @@
 # Changelog
 
+## v1.1.0 — Oberflächen-Galerie + gh-pages — 2026-06-27
+
+Erste Doku-Veröffentlichung auf GitHub Pages plus neue Screen-Galerie und ein
+Bugfix im Bestell-Flow.
+
+- **Neue Referenz-Seite „Oberflächen"** (`referenz/oberflaeche.md`): Galerie mit
+  13 Screenshots aller Hauptscreens über die Rollen Requester / Approver /
+  Admin (Login, Dashboard, Katalog, Bestellformular, Bestelldetail,
+  Benachrichtigungen, Subscriptions, Profil, Genehmigungen, Audit-Log,
+  Django-Admin), klickbar via Lightbox. Screenshots automatisiert per Selenium
+  aus der laufenden App aufgenommen.
+- **gh-pages-Deployment**: Doku live unter
+  `https://monoeagle.github.io/lucent-job-MPP_Django/`. Wiederverwendbares
+  Deploy-Skript `mpp-docs/deploy_ghpages.sh` (worktree-basiert, `main` bleibt
+  unberührt) + `.nojekyll`. Repo dafür auf public gestellt.
+- **Bugfix Bestell-Flow**: `OrderFormView` filterte den Pflicht-Parameter
+  `location` als vermeintlichen Kontext-Key heraus → „Parameter validation
+  failed" bei jeder Linux-VM-Bestellung. Fix: Kontext-Keys, die zugleich echte
+  Template-Parameter sind, bleiben erhalten. TDD (RED→GREEN), Suite **238 → 239**.
+- **Doku-Fix**: relative Bildpfade auf Tiefe-2-Seiten korrigiert
+  (`../images` → `../../images`) — betraf auch die zuvor kaputten
+  Roadmap-Diagramme auf der Arbeitspakete-Seite.
+
 ## Produktions-Settings + VM-Deployment — 2026-06-19
 
 Deployment-Fähigkeit ergänzt; AP-11 (Docker) bewusst zurückgestellt.

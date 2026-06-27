@@ -1,25 +1,43 @@
-flowchart TD
-    U["👤 Browser — HTMX + DaisyUI"] --> V["Django Views (thin)"]
-    V --> F["Forms — Validierung"]
-    V --> S["Services — Business-Logik"]
-    V -.-> A["django-allauth — Session"]
-    S --> M["Models — Django ORM"]
-    M --> DB[("PostgreSQL")]
-    S --> C["Celery + Redis"]
-    C --> P["Provisioning — GitLab-Stub"]
-    S --> X["Stubs — CMDB / GitLab (YAML)"]
-    S --- Apps
-
-    subgraph Apps["10 Django-Apps"]
+graph TB
+    subgraph UI["UI (Browser)"]
         direction LR
-        AC["accounts"]
-        CA["catalog"]
-        OR["orders"]
-        AP["approvals"]
-        PR["provisioning"]
-        CM["cmdb"]
-        SU["subscriptions"]
-        AU["audit"]
-        NO["notifications"]
-        DA["dashboard"]
+        HX["HTMX-Seiten\n(DaisyUI · Lucent-Theme)"]
+        WS["WebSocket\n(Django Channels)"]
     end
+    subgraph WEB["Web-Layer (Django · thin Views)"]
+        direction LR
+        V["Views\n(thin)"]
+        F["Forms\n(Validierung)"]
+        AL["django-allauth\n(Session-Auth)"]
+    end
+    subgraph SVC["Service-Layer (Business-Logik)"]
+        direction LR
+        CS["CatalogService"]
+        OS["OrderService"]
+        APS["ApprovalService"]
+        PS["ProvisioningService"]
+        WS2["Notification ·\nSubscription ·\nAudit · Dashboard"]
+    end
+    subgraph DATA["Daten- & Infrastruktur-Layer"]
+        direction LR
+        M["Models\n(Django ORM)"]
+        CE["Celery + Redis\n(async Tasks)"]
+        ST["Stubs\n(CMDB · GitLab · YAML)"]
+    end
+    DB[("PostgreSQL")]
+
+    HX --> V
+    WS -. Live-Updates .-> V
+    V --> F
+    V --> AL
+    V --> CS
+    V --> OS
+    V --> APS
+    CS --> M
+    OS --> M
+    APS --> M
+    OS --> PS
+    PS --> CE
+    CS --> ST
+    PS --> ST
+    M --> DB

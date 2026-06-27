@@ -10,7 +10,7 @@ APPIMAGE_DIR="$PROJECT_DIR/build/appimage"
 RELEASE_DIR="$PROJECT_DIR/release"
 DOCS_DIR="$PROJECT_DIR/mpp-docs"
 DOCS_PORT=5063
-APP_VERSION="1.0.0"
+APP_VERSION="1.1.0"
 APPIMAGETOOL_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
 APPIMAGETOOL="$PROJECT_DIR/.tools/appimagetool"
 
