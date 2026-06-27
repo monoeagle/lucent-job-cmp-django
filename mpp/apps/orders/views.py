@@ -337,11 +337,14 @@ class OrderFormView(RequesterRequiredMixin, View):
                 "template_parameters_json": template.parameters,
             })
 
-        # Extract parameters (exclude context + quantity fields)
+        # Extract parameters (exclude context + quantity fields). A context key
+        # that is also a real template parameter (e.g. "location") must be kept,
+        # otherwise its required value is stripped and validation fails.
         context_keys = {"location", "tenant", "security_zone", "quantity"}
+        template_param_keys = {p["key"] for p in template.parameters}
         parameters = {
             k: v for k, v in form.cleaned_data.items()
-            if k not in context_keys
+            if k not in context_keys or k in template_param_keys
         }
 
         try:

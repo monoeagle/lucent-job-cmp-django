@@ -142,6 +142,44 @@ class TestOrderCreateView:
 
 
 @pytest.mark.django_db
+class TestOrderFormView:
+    def test_submit_with_location_param_creates_order(self, client):
+        """A template whose own required param is keyed 'location' must still
+        validate: the context-stripping must not drop a real template parameter.
+
+        Regression: 'location' collides with a context field key, so the view
+        stripped it before validation -> 'Parameter validation failed'.
+        """
+        user = UserFactory()
+        template = ServiceTemplateFactory(parameters=[
+            {
+                "key": "location",
+                "type": "enum",
+                "label": "Standort",
+                "required": True,
+                "constraints": {"options": [
+                    {"value": "standort2", "label": "Standort2", "enabled": True},
+                ]},
+            },
+        ])
+        client.force_login(user)
+        url = reverse("orders:create_form", kwargs={"template_pk": template.pk})
+        response = client.post(url, {
+            "tenant": "tenant-alpha",
+            "security_zone": "development",
+            "location": "standort2",
+            "quantity": "1",
+        })
+
+        assert response.status_code == 302
+        from apps.orders.models import Order
+        order = Order.objects.filter(user=user).first()
+        assert order is not None
+        assert order.items.count() == 1
+        assert order.items.first().parameters["location"] == "standort2"
+
+
+@pytest.mark.django_db
 class TestOrderSubmitView:
     def test_submit_order(self, client):
         user = UserFactory()
