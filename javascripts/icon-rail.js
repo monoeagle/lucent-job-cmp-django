@@ -23,7 +23,7 @@
   // ── Versionen ──────────────────────────────────────────────────────────
   // Hardcoded — bei Release in lucent-hub.yml UND hier nachziehen. Früh
   // deklariert, weil INFO_HTML (Modul-Level-const) darauf zugreift.
-  const APP_VERSION   = '1.0.0';                 // MPP Django (lucent-hub.yml)
+  const APP_VERSION   = '1.1.0';                 // MPP Django (lucent-hub.yml)
   const HEADER_PREFIX = `MPP Django v${APP_VERSION}`;  // MPP Django
 
   // ── Icon-Map: Titel-Schluesselwort → Emoji ─────────────────────────────
