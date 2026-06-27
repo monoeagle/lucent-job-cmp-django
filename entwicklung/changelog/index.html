@@ -1516,6 +1516,17 @@ Bugfix im Bestell-Flow.</p>
 <li><strong>Doku-Fix</strong>: relative Bildpfade auf Tiefe-2-Seiten korrigiert
   (<code>../images</code> → <code>../../images</code>) — betraf auch die zuvor kaputten
   Roadmap-Diagramme auf der Arbeitspakete-Seite.</li>
+<li><strong>Offline-Release für AlmaLinux 9</strong>: gebündelte Wheels (32 cp312/manylinux),
+  <code>tools/build_release.py</code> + <code>deploy/install.sh</code> (idiotensicher), <code>./run.sh release</code>.
+  Als <strong>GitHub-Release v1.1.0</strong> veröffentlicht; Offline-Doku um den
+  GitHub-Release-Weg (ziehen → transferieren → <code>install.sh</code>) erweitert.</li>
+<li><strong>ADR-0001 (Deployment: Native vs. Container)</strong>: native systemd-Installation
+  bleibt Default für air-gapped Single-VM; AP-11 von „Docker" auf
+  <strong>Podman/Quadlets</strong> umgeschrieben. Entscheidung: <strong>Python bleibt 3.12</strong>
+  (AlmaLinux 9 paketiert kein 3.14).</li>
+<li><strong>Startseite &amp; Architektur</strong> an luDBxP angeglichen (Hero = gruppierte APs,
+  Header-Badge „Architektur", <code>graph TB</code> Banded-Layer); <strong>Heatmap-Detailliste</strong>
+  per Klick togglebar.</li>
 </ul>
 <h2 id="produktions-settings-vm-deployment-2026-06-19">Produktions-Settings + VM-Deployment — 2026-06-19<a class="headerlink" href="#produktions-settings-vm-deployment-2026-06-19" title="Permanent link">&para;</a></h2>
 <p>Deployment-Fähigkeit ergänzt; AP-11 (Docker) bewusst zurückgestellt.</p>
