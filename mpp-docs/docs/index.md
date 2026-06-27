@@ -1,5 +1,3 @@
-# MPP Django — Marketplace Portal
-
 <div class="adb-home-layout">
 
 <div class="adb-home-arch">
@@ -23,9 +21,3 @@
 </div>
 
 <div data-adb-activity-detail></div>
-
----
-
-Self-Service-Portal für automatisiertes IT-Service-Provisioning mit Django, HTMX und DaisyUI.
-
-→ **[Überblick & Features](grundlagen/ueberblick.md)** · **[Schnellstart](grundlagen/schnellstart.md)** · **[Architektur](grundlagen/architektur.md)** · **[Arbeitspakete & Roadmap](entwicklung/arbeitspakete.md)**
