@@ -1,19 +1,43 @@
 {
-  "generatedAt": "2026-06-19T00:26:16",
+  "generatedAt": "2026-06-27T13:59:54",
   "range": {
-    "from": "2025-06-20",
-    "to": "2026-06-19"
+    "from": "2025-06-28",
+    "to": "2026-06-27"
   },
   "byDay": {
-    "2026-06-19": {
-      "commits": 4,
+    "2026-06-27": {
+      "commits": 2,
       "kinds": {
-        "docs": 1,
+        "feat": 1,
+        "fix": 1
+      },
+      "list": [
+        {
+          "sha": "67b0ae5",
+          "subject": "feat(docs): Oberflächen-Galerie + gh-pages + Architektur-Restyle (v1.1.0)",
+          "kind": "feat"
+        },
+        {
+          "sha": "71a68a8",
+          "subject": "fix(orders): Pflicht-Parameter 'location' nicht als Kontext-Key wegfiltern",
+          "kind": "fix"
+        }
+      ]
+    },
+    "2026-06-19": {
+      "commits": 5,
+      "kinds": {
+        "docs": 2,
         "chore": 1,
         "other": 1,
         "feat": 1
       },
       "list": [
+        {
+          "sha": "89eba56",
+          "subject": "docs: Testzahlen 230→238 sync + Session-2-Handoff",
+          "kind": "docs"
+        },
         {
           "sha": "36a5704",
           "subject": "docs: Offline/air-gapped VM-Installationsanleitung ergänzt",
@@ -590,21 +614,21 @@
     }
   },
   "stats": {
-    "totalCommits": 97,
-    "activeDays": 11,
+    "totalCommits": 100,
+    "activeDays": 12,
     "longestStreak": 2,
     "topKinds": [
       {
         "kind": "feat",
-        "count": 55
+        "count": 56
       },
       {
         "kind": "fix",
-        "count": 17
+        "count": 18
       },
       {
         "kind": "docs",
-        "count": 12
+        "count": 13
       },
       {
         "kind": "chore",
@@ -619,7 +643,7 @@
         "count": 1
       }
     ],
-    "testCount": 238
+    "testCount": 239
   },
   "phases": []
 }

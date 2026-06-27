@@ -1348,13 +1348,26 @@ Optionen. Beim <strong>Linux VM</strong> sind das 30 Parameter über Kontext, Ne
 und Betrieb. „Jetzt bestellen" öffnet das Bestellformular.</p>
 <hr />
 <h2 id="bestellformular-linux-vm-bestellen">Bestellformular — Linux VM bestellen<a class="headerlink" href="#bestellformular-linux-vm-bestellen" title="Permanent link">&para;</a></h2>
-<p><img src="../../images/screenshots/Screenshot_05_mpp.png"
-     alt="Bestellformular 'Linux VM bestellen': Breadcrumb Katalog › Linux VM › Bestellen, gruppierte Abschnitte Kontext (Standort, Mandant, Sicherheitszone) und Netzwerk (Systemtyp, Mandant, Sicherheitsbereich, Organisationsbereich) mit Dropdowns. Rechts eine Live-Zusammenfassung aller gewählten Werte und ein grüner Button 'Zur Bestellung hinzufügen'."></p>
+<div class="adb-shot-compare">
+  <figure>
+    <img src="../../images/screenshots/Screenshot_05_mpp.png"
+         alt="Leere Bestellmaske 'Linux VM bestellen': gruppierte Abschnitte Kontext, Netzwerk, Platzierung, Betriebssystem, VM Sizing, Server-Informationen usw. mit leeren Dropdowns/Feldern. Die Zusammenfassung rechts ist noch leer.">
+    <figcaption>Leere Maske — die Zusammenfassung rechts ist noch leer.</figcaption>
+  </figure>
+  <figure>
+    <img src="../../images/screenshots/Screenshot_05b_mpp.png"
+         alt="Dieselbe Bestellmaske vollständig ausgefüllt: alle Dropdowns gewählt, Zahlen-/Textfelder befüllt, Backup-Checkboxen aktiv. Die Zusammenfassung rechts listet nun alle Werte (Standort, Mandant, CPU Cores, RAM, Template, E-Mails, Backupstatus …) und zeigt den grünen Button 'Zur Bestellung hinzufügen'.">
+    <figcaption>Ausgefüllt — dieselbe Maske; die <strong>Zusammenfassung</strong> rechts füllt sich live mit.</figcaption>
+  </figure>
+</div>
+
 <p>Das All-in-One-Formular fasst Kontext, alle Template-Parameter und die Menge auf
-einer Seite zusammen, gruppiert nach Abschnitten (Kontext, Netzwerk, Sizing …).
-Rechts läuft eine <strong>Live-Zusammenfassung</strong> der gewählten Werte mit. Validierung
-erfolgt zweistufig: Django-Form (Feldtypen) und Service-Layer
-(<code>TemplateValidator</code> gegen das Template-Schema).</p>
+einer Seite zusammen, gruppiert nach Abschnitten (Kontext, Netzwerk, Platzierung,
+Betriebssystem, VM Sizing, Server-Informationen, Software-Management, Backup).
+Rechts läuft eine <strong>Live-Zusammenfassung</strong> der gewählten Werte mit, die sich mit
+jeder Eingabe aktualisiert — der Vergleich oben zeigt den Bereich, der sich füllt:
+links leer, rechts vollständig. Validierung erfolgt zweistufig: Django-Form
+(Feldtypen) und Service-Layer (<code>TemplateValidator</code> gegen das Template-Schema).</p>
 <hr />
 <h2 id="bestellungen-ubersicht">Bestellungen — Übersicht<a class="headerlink" href="#bestellungen-ubersicht" title="Permanent link">&para;</a></h2>
 <p><img src="../../images/screenshots/Screenshot_06_mpp.png"
