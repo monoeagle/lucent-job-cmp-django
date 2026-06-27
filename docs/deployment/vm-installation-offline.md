@@ -22,46 +22,83 @@ dort offline installiert.
 
 ---
 
-## 🚀 Schnellstart mit dem Release-Bundle (empfohlen, „idiotensicher")
+## 🚀 Schnellstart über das fertige Release (empfohlen, „idiotensicher")
 
-Es gibt ein fertiges Offline-Release, das **alle Python-Pakete als Wheels
-mitbringt** — du musst dann KEINEN Staging-Host aufsetzen und nichts per
-`pip download` selbst beschaffen. Bauen (auf einem Linux-Host mit Python 3.12 +
-Internet, einmalig):
+Das **GitHub-Release** bringt ein Offline-Bundle mit, das **alle Python-Pakete als
+Wheels** enthält — die Ziel-VM braucht für die App **kein Internet**. Der Weg für
+eine air-gapped VM in drei Schritten:
 
-```bash
-python3.12 -m pip download -r requirements/production.txt --dest wheels \
-  --only-binary=:all: --python-version 312 --implementation cp --abi cp312 \
-  --platform manylinux2014_x86_64 --platform manylinux_2_17_x86_64 --platform manylinux_2_28_x86_64
-python3.12 -m pip download pip setuptools wheel --dest wheels --only-binary=:all:
-python3 tools/build_release.py
-# → release/Lucent-MPP-Django-<version>-almalinux9-offline.zip
+```
+┌─ Internet-Rechner ─────────┐        ┌─ Ziel-VM (ohne Internet) ──────────┐
+│ 1. Release-ZIP ziehen      │  scp/  │ 3. entpacken + sudo ./install.sh    │
+│    (GitHub Releases)       │──USB──▶│    → App wird offline installiert   │
+└────────────────────────────┘        └─────────────────────────────────────┘
+              2. transferieren (scp oder USB-Stick)
 ```
 
-Auf der **Ziel-VM** (AlmaLinux/Rocky 9) — drei Schritte:
+### Schritt 1 — Release auf einem Rechner **mit** Internet ziehen
+
+Vom GitHub-Release das Offline-ZIP herunterladen — per `gh` CLI:
 
 ```bash
-# 1. System-Prerequisites (einmalig; online ODER aus dem RPM-Bundle, Teil A/C)
-sudo dnf install -y python3.12 postgresql16-server postgresql16 redis nginx openssl
-sudo /usr/pgsql-16/bin/postgresql-16-setup initdb
-sudo systemctl enable --now postgresql-16 redis
+gh release download v1.1.0 \
+  --repo monoeagle/lucent-job-MPP_Django \
+  --pattern '*-almalinux9-offline.zip'
+sha256sum *-almalinux9-offline.zip      # Prüfsumme notieren (für Schritt 2)
+```
 
-# 2. Bundle entpacken
+…oder ohne `gh` direkt von der Releases-Seite:
+`https://github.com/monoeagle/lucent-job-MPP_Django/releases` → Asset
+`Lucent-MPP-Django-<version>-almalinux9-offline.zip`.
+
+### Schritt 2 — Auf die Ziel-VM transferieren (kein Internet)
+
+```bash
+# per SSH (falls erlaubt) …
+scp Lucent-MPP-Django-*-almalinux9-offline.zip admin@mpp-vm:/var/tmp/
+# … oder per USB-Medium kopieren.
+```
+
+Auf der VM die Integrität prüfen (Prüfsumme aus Schritt 1):
+
+```bash
+cd /var/tmp && sha256sum -c <<< "<sha256> Lucent-MPP-Django-<version>-almalinux9-offline.zip"
+```
+
+### Schritt 3 — Auf der Ziel-VM entpacken + Setup ausführen
+
+```bash
 unzip Lucent-MPP-Django-<version>-almalinux9-offline.zip
 cd Lucent-MPP-Django-<version>-almalinux9-offline
-
-# 3. Installer ausführen — fragt nur FQDN + DB-Passwort, macht den Rest
-sudo ./deploy/install.sh
+sudo ./deploy/install.sh        # fragt nur FQDN + DB-Passwort
 ```
 
-`install.sh` erledigt offline: venv + Wheels (`--no-index`), DB-Anlage, `.env`,
+**Das war's — die App wird installiert.** `install.sh` erledigt offline aus dem
+Bundle: venv + Wheels (`pip --no-index`), DB-Anlage, `.env` (SECRET_KEY auto),
 Migrationen, `collectstatic`, Superuser, systemd (gunicorn + Celery), nginx +
-self-signed TLS, firewalld/SELinux. Danach: `https://<FQDN>/`.
+self-signed TLS, firewalld/SELinux. Danach erreichbar unter **`https://<FQDN>/`**.
 
-> **Voll air-gapped** (die Ziel-VM hat *gar kein* Internet, auch nicht für die
-> System-RPMs in Schritt 1): dann zusätzlich die RPMs im Bundle mitliefern —
-> dafür ist die ausführliche Anleitung unten (**Teil A–C**) da. Der `install.sh`
-> deckt den Python-/App-/Dienste-Teil ab; die RPM-Beschaffung bleibt Teil A.
+> **Voraussetzung auf der VM (einmalig):** die **System-Pakete** `python3.12`,
+> `postgresql16-server`, `redis`, `nginx`, `openssl` müssen installiert sein —
+> diese stecken **nicht** im ZIP (nur die Python-Wheels).
+> ```bash
+> sudo dnf install -y python3.12 postgresql16-server postgresql16 redis nginx openssl
+> sudo /usr/pgsql-16/bin/postgresql-16-setup initdb
+> sudo systemctl enable --now postgresql-16 redis
+> ```
+> Hat die VM **gar kein** Internet (auch nicht für diese RPMs), bring die RPMs
+> separat als Bundle mit → **Teil A–C** unten. Der `install.sh` deckt den
+> Python-/App-/Dienste-Teil ab; die RPM-Beschaffung bleibt Teil A.
+
+### Release selbst bauen (für Updates / eigene Stände)
+
+Statt das GitHub-Release zu ziehen, lässt sich das Bundle reproduzierbar bauen
+(Linux-Host mit Python 3.12 + Internet):
+
+```bash
+./run.sh release      # lädt Wheels (falls leer) + baut release/…-almalinux9-offline.zip
+# entspricht: pip download … (wheels/) + python3 tools/build_release.py
+```
 
 ---
 
