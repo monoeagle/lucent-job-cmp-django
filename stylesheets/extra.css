@@ -1993,13 +1993,10 @@ body:has(.adb-home-layout) .md-content {
   margin: 0;
 }
 .adb-shot-compare img {
+  /* Screenshots sind bereits auf den oberen, wichtigen Formularteil zugeschnitten
+     (Kontext + Zusammenfassung am Rand) — kein CSS-Crop nötig. Klick vergrößert. */
   width: 100%;
-  /* Das Bestellformular ist sehr lang — Inline nur den oberen Teil zeigen
-     (Kontext + die sich füllende Zusammenfassung). Klick öffnet das ganze Bild
-     in der Lightbox. */
-  height: 560px;
-  object-fit: cover;
-  object-position: top;
+  height: auto;
   cursor: zoom-in;
   border: 1px solid var(--md-default-fg-color--lightest, #ddd);
   border-radius: 6px;
