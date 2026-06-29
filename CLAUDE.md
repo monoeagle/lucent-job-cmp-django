@@ -8,7 +8,7 @@ Bewusstes Gegenstueck zu mpp-TDD: kein API-First, kein React, kein DRF.
 - **Auth:** django-allauth (Session-basiert), ACCOUNT_SIGNUP_ENABLED=False
 - **Admin:** Django Admin als primaeres Admin-Tool (Admin erstellt alle User)
 - **Theme:** Custom "Lucent" DaisyUI-Theme
-- **Autor:** Tobias Philipp / Lucent Trails
+- **Autor:** Tobias Philipp / LucentTools
 
 ## Architektur
 

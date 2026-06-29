@@ -1,17 +1,89 @@
 {
-  "generatedAt": "2026-06-27T13:59:54",
+  "generatedAt": "2026-06-29T10:31:54",
   "range": {
-    "from": "2025-06-28",
-    "to": "2026-06-27"
+    "from": "2025-06-30",
+    "to": "2026-06-29"
   },
   "byDay": {
     "2026-06-27": {
-      "commits": 2,
+      "commits": 16,
       "kinds": {
-        "feat": 1,
+        "docs": 10,
+        "feat": 3,
+        "chore": 2,
         "fix": 1
       },
       "list": [
+        {
+          "sha": "8dd0085",
+          "subject": "docs: Session-3-Handoff (16:44, Forts.) + KPI-Zeile aktualisiert",
+          "kind": "docs"
+        },
+        {
+          "sha": "2783f67",
+          "subject": "docs(changelog): v1.1.0-Eintrag um Offline-Release, ADR-0001, Startseite/Heatmap ergänzen",
+          "kind": "docs"
+        },
+        {
+          "sha": "c164159",
+          "subject": "docs(offline): Schnellstart über GitHub-Release (ziehen → transferieren → install.sh)",
+          "kind": "docs"
+        },
+        {
+          "sha": "b1ad642",
+          "subject": "docs(oberflaechen): Bestellformular-Bilder gleich groß, volle Zusammenfassung sichtbar",
+          "kind": "docs"
+        },
+        {
+          "sha": "6c05d1f",
+          "subject": "docs(oberflaechen): Bestellformular-Bilder als lesbare Viewport-Shots neu",
+          "kind": "docs"
+        },
+        {
+          "sha": "377273f",
+          "subject": "docs(adr): ADR-0001 Deployment (Native vs. Container) + AP-11 auf Podman/Quadlets",
+          "kind": "docs"
+        },
+        {
+          "sha": "1a60bfd",
+          "subject": "docs(roadmap): Status auf 239 Tests / v1.1.0 + Session-3-Arbeit als nicht-AP",
+          "kind": "docs"
+        },
+        {
+          "sha": "c5f8205",
+          "subject": "docs: Session-3-Handoff + Insight + KPI-Matrix-Zeile (v1.1.0)",
+          "kind": "docs"
+        },
+        {
+          "sha": "67960a8",
+          "subject": "docs(oberflaechen): Bestellformular-Bilder inline auf 560px beschneiden",
+          "kind": "docs"
+        },
+        {
+          "sha": "7b02643",
+          "subject": "feat(release): Offline-Release-Bundle für AlmaLinux 9 (gebündelte Wheels + Installer)",
+          "kind": "feat"
+        },
+        {
+          "sha": "b0f9b5e",
+          "subject": "docs(home): Startseite auf reines Home-Layout reduzieren",
+          "kind": "docs"
+        },
+        {
+          "sha": "df74c39",
+          "subject": "feat(docs): Heatmap-Detailliste per Klick togglen + Architektur-Header-Badge",
+          "kind": "feat"
+        },
+        {
+          "sha": "2d712b0",
+          "subject": "chore(docs): Roadmap-Gantt-SVG re-render",
+          "kind": "chore"
+        },
+        {
+          "sha": "67f8440",
+          "subject": "chore(docs): Activity-Heatmap-Daten + Architektur-SVG aktualisieren",
+          "kind": "chore"
+        },
         {
           "sha": "67b0ae5",
           "subject": "feat(docs): Oberflächen-Galerie + gh-pages + Architektur-Restyle (v1.1.0)",
@@ -614,25 +686,25 @@
     }
   },
   "stats": {
-    "totalCommits": 100,
+    "totalCommits": 114,
     "activeDays": 12,
     "longestStreak": 2,
     "topKinds": [
       {
         "kind": "feat",
-        "count": 56
+        "count": 58
+      },
+      {
+        "kind": "docs",
+        "count": 23
       },
       {
         "kind": "fix",
         "count": 18
       },
       {
-        "kind": "docs",
-        "count": 13
-      },
-      {
         "kind": "chore",
-        "count": 6
+        "count": 8
       },
       {
         "kind": "other",

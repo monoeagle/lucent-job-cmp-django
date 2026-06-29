@@ -1,7 +1,7 @@
 # MPP Django Marketplace Portal — Design Specification
 
 **Datum:** 2026-03-29
-**Autor:** Tobias Philipp / Lucent Trails
+**Autor:** Tobias Philipp / LucentTools
 **Status:** Approved
 **Basis:** lucent-app-mpp-TDD (Flask) als fachliche Vorlage
 

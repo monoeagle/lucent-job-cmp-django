@@ -8,7 +8,7 @@
 - **Frontend:** Django Templates + HTMX + DaisyUI (TailwindCSS)
 - **Async:** Celery + Redis, Django Channels (WebSocket)
 - **Auth:** django-allauth (Session-basiert)
-- **Autor:** Tobias Philipp / Lucent Trails
+- **Autor:** Tobias Philipp / LucentTools
 - **Lizenz:** All Rights Reserved
 
 ---

@@ -5,8 +5,8 @@
 [project]
 site_name        = "MPP Django — Marketplace Portal"
 site_description = "IT-Service Marketplace Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.1.0"
-site_author      = "Lucent Trails"
-copyright        = "Copyright &copy; 2026 Lucent Trails"
+site_author      = "LucentTools"
+copyright        = "Copyright &copy; 2026 LucentTools"
 
 docs_dir = "docs"
 site_dir = "site"
