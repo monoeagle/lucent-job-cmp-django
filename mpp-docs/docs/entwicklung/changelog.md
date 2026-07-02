@@ -1,5 +1,20 @@
 # Changelog
 
+## Doku-Korrektur Channels + neues AP-12 — 2026-07-03
+
+Doku-Drift behoben: Die Referenz behauptete, Benachrichtigungen würden „über
+Django Channels (WebSocket) live ausgeliefert" — Channels ist aber nie gebaut
+worden (kein `channels` in den Requirements, `config/asgi.py` Django-Default,
+kein Consumer/Channel-Layer). Das Deployment (nginx + gunicorn/WSGI) passt zum
+realen Stand; die Doku war falsch, nicht das Deployment.
+
+- **Korrigiert**: `referenz/oberflaeche.md` (Benachrichtigungen aktualisieren
+  per Seitenaufruf), Stack-Zeile in `CLAUDE.md`, Architektur-Diagramm
+  (WebSocket-Knoten nun als „geplant AP-12" gestrichelt).
+- **Neu: AP-12 · Live-Updates via Django Channels** in `todo.md` — Consumer +
+  Channel-Layer (Redis), ASGI-Deployment (Uvicorn-Worker + nginx-WS-Upgrade),
+  Wheelhouse-Erweiterung, TDD. In AP-Überblick und Gantt aufgenommen.
+
 ## v1.1.0 — Oberflächen-Galerie + gh-pages — 2026-06-27
 
 Erste Doku-Veröffentlichung auf GitHub Pages plus neue Screen-Galerie und ein

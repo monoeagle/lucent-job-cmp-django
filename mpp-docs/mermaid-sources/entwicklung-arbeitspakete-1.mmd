@@ -26,12 +26,14 @@ flowchart LR
         AP9["AP-9 · Integration & Polish"]:::done
         AP10["AP-10 · Frontend HTMX/DaisyUI"]:::done
     end
-    subgraph INFRA["Infrastruktur"]
+    subgraph INFRA["Infrastruktur & Ausbau"]
         direction TB
         AP11["AP-11 · Container (Podman/Quadlets)"]:::plan
+        AP12["AP-12 · Live-Updates (Channels)"]:::plan
     end
 
     AP0 --> AP1 --> AP2 --> AP3 --> AP4
     AP4 --> AP5 --> AP6
     AP6 --> AP7 --> AP8 --> AP9 --> AP10
     AP9 -.-> AP11
+    AP10 -.-> AP12

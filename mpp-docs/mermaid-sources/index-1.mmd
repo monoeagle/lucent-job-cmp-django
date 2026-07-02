@@ -1,8 +1,9 @@
 graph TB
+    classDef plan fill:#2c3550,stroke:#7c83ff,color:#cdd3e8,stroke-dasharray:4 3;
     subgraph UI["UI (Browser)"]
         direction LR
         HX["HTMX-Seiten\n(DaisyUI · Lucent-Theme)"]
-        WS["WebSocket\n(Django Channels)"]
+        WS["WebSocket\n(Channels · geplant AP-12)"]:::plan
     end
     subgraph WEB["Web-Layer (Django · thin Views)"]
         direction LR
@@ -27,7 +28,7 @@ graph TB
     DB[("PostgreSQL")]
 
     HX --> V
-    WS -. Live-Updates .-> V
+    WS -. "Live-Updates (geplant)" .-> V
     V --> F
     V --> AL
     V --> CS

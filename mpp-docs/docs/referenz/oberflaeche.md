@@ -114,8 +114,9 @@ Genehmigung → Bereitstellung → Aktiv).
 
 Das Benachrichtigungs-Center bündelt System-Events (Bereitstellung
 abgeschlossen, Bestellung eingereicht …) mit Typ-Badges und Lesestatus.
-Einzelne Einträge oder alle auf einmal lassen sich als gelesen markieren. Updates
-werden über Django Channels (WebSocket) live ausgeliefert.
+Einzelne Einträge oder alle auf einmal lassen sich als gelesen markieren. Die
+Liste aktualisiert sich beim Seitenaufruf; Live-Auslieferung über Django
+Channels (WebSocket) ist als AP-12 geplant, aber noch nicht gebaut.
 
 ---
 
