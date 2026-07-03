@@ -836,6 +836,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#doku-korrektur-channels-neues-ap-12-2026-07-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Doku-Korrektur Channels + neues AP-12 — 2026-07-03
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v110-oberflachen-galerie-gh-pages-2026-06-27" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1287,6 +1298,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#doku-korrektur-channels-neues-ap-12-2026-07-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Doku-Korrektur Channels + neues AP-12 — 2026-07-03
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v110-oberflachen-galerie-gh-pages-2026-06-27" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1495,6 +1517,20 @@
                   
 
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h2 id="doku-korrektur-channels-neues-ap-12-2026-07-03">Doku-Korrektur Channels + neues AP-12 — 2026-07-03<a class="headerlink" href="#doku-korrektur-channels-neues-ap-12-2026-07-03" title="Permanent link">&para;</a></h2>
+<p>Doku-Drift behoben: Die Referenz behauptete, Benachrichtigungen würden „über
+Django Channels (WebSocket) live ausgeliefert" — Channels ist aber nie gebaut
+worden (kein <code>channels</code> in den Requirements, <code>config/asgi.py</code> Django-Default,
+kein Consumer/Channel-Layer). Das Deployment (nginx + gunicorn/WSGI) passt zum
+realen Stand; die Doku war falsch, nicht das Deployment.</p>
+<ul>
+<li><strong>Korrigiert</strong>: <code>referenz/oberflaeche.md</code> (Benachrichtigungen aktualisieren
+  per Seitenaufruf), Stack-Zeile in <code>CLAUDE.md</code>, Architektur-Diagramm
+  (WebSocket-Knoten nun als „geplant AP-12" gestrichelt).</li>
+<li><strong>Neu: AP-12 · Live-Updates via Django Channels</strong> in <code>todo.md</code> — Consumer +
+  Channel-Layer (Redis), ASGI-Deployment (Uvicorn-Worker + nginx-WS-Upgrade),
+  Wheelhouse-Erweiterung, TDD. In AP-Überblick und Gantt aufgenommen.</li>
+</ul>
 <h2 id="v110-oberflachen-galerie-gh-pages-2026-06-27">v1.1.0 — Oberflächen-Galerie + gh-pages — 2026-06-27<a class="headerlink" href="#v110-oberflachen-galerie-gh-pages-2026-06-27" title="Permanent link">&para;</a></h2>
 <p>Erste Doku-Veröffentlichung auf GitHub Pages plus neue Screen-Galerie und ein
 Bugfix im Bestell-Flow.</p>

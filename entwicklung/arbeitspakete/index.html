@@ -1154,7 +1154,7 @@
 
 <h1 id="arbeitspakete-roadmap">Arbeitspakete &amp; Roadmap<a class="headerlink" href="#arbeitspakete-roadmap" title="Permanent link">&para;</a></h1>
 <p>Arbeitspaket-Quelle: <code>todo.md</code> (offen) / <code>todo-erledigt.md</code> (fertig) im Repo-Root.
-Status: <strong>AP-0 … AP-10 fertig</strong> (Backend B0–B9 + HTMX-Frontend, 239 Tests grün, v1.1.0), <strong>AP-11 Container (Podman/Quadlets) offen</strong> — Abwägung Native-vs-Container siehe <a href="../../decisions/0001-deployment-native-vs-container/">ADR-0001</a>.
+Status: <strong>AP-0 … AP-10 fertig</strong> (Backend B0–B9 + HTMX-Frontend, 239 Tests grün, v1.1.0), <strong>AP-11 Container (Podman/Quadlets) offen</strong> — Abwägung Native-vs-Container siehe <a href="../../decisions/0001-deployment-native-vs-container/">ADR-0001</a> —, <strong>AP-12 Live-Updates (Django Channels) offen</strong> — Channels stand im v1-Zielbild, ist aber noch nicht gebaut (kein <code>channels</code> in den Requirements, <code>asgi.py</code> Django-Default); Benachrichtigungen aktualisieren bis dahin per Seiten-Reload.
 Zusätzlich (nicht-AP):</p>
 <ul>
 <li>env-basierte Produktions-Settings + VM-Deployment-Anleitungen (online + offline)</li>
@@ -1167,7 +1167,8 @@ Zusätzlich (nicht-AP):</p>
 <h2 id="roadmap-gantt">Roadmap-Gantt<a class="headerlink" href="#roadmap-gantt" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Spannen <strong>schematisch</strong>: Die Git-Historie wurde zu v1.0.0 (2026-03-29) gestaucht — die
-AP-<strong>Reihenfolge</strong> ist real, die Tagesspannen illustrieren nur den Ablauf. AP-11 (Container/Podman) offen.</p>
+AP-<strong>Reihenfolge</strong> ist real, die Tagesspannen illustrieren nur den Ablauf.
+AP-11 (Container/Podman) und AP-12 (Live-Updates/Channels) offen.</p>
 </blockquote>
 <p><img src="../../images/mermaid/entwicklung-arbeitspakete-2.svg" alt="Diagramm 2 aus entwicklung/arbeitspakete.md"></p>
 
