@@ -1,10 +1,28 @@
 {
-  "generatedAt": "2026-07-03T00:24:43",
+  "generatedAt": "2026-07-03T21:58:11",
   "range": {
     "from": "2025-07-04",
     "to": "2026-07-03"
   },
   "byDay": {
+    "2026-07-03": {
+      "commits": 2,
+      "kinds": {
+        "docs": 2
+      },
+      "list": [
+        {
+          "sha": "d88fce7",
+          "subject": "docs: Session-4-Handoff (Channels→AP-12) + Insight + KPI-Zeile",
+          "kind": "docs"
+        },
+        {
+          "sha": "67e0d5e",
+          "subject": "docs: Channels-Behauptung korrigiert, AP-12 Live-Updates angelegt",
+          "kind": "docs"
+        }
+      ]
+    },
     "2026-06-29": {
       "commits": 1,
       "kinds": {
@@ -699,8 +717,8 @@
     }
   },
   "stats": {
-    "totalCommits": 115,
-    "activeDays": 13,
+    "totalCommits": 117,
+    "activeDays": 14,
     "longestStreak": 2,
     "topKinds": [
       {
@@ -709,7 +727,7 @@
       },
       {
         "kind": "docs",
-        "count": 24
+        "count": 26
       },
       {
         "kind": "fix",
