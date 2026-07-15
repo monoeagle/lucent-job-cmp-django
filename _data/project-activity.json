@@ -1,16 +1,27 @@
 {
-  "generatedAt": "2026-07-03T21:58:11",
+  "generatedAt": "2026-07-15T06:59:57",
   "range": {
-    "from": "2025-07-04",
-    "to": "2026-07-03"
+    "from": "2025-07-16",
+    "to": "2026-07-15"
   },
   "byDay": {
     "2026-07-03": {
-      "commits": 2,
+      "commits": 4,
       "kinds": {
-        "docs": 2
+        "docs": 3,
+        "chore": 1
       },
       "list": [
+        {
+          "sha": "ed64dad",
+          "subject": "docs: Handoff-Nachtrag (Heatmap/--no-activity-Befund, Release-Klärung) + KPI-Zeile",
+          "kind": "docs"
+        },
+        {
+          "sha": "7b099c3",
+          "subject": "chore(docs): Activity-Heatmap-Daten aktualisieren (Session-4-Commits)",
+          "kind": "chore"
+        },
         {
           "sha": "d88fce7",
           "subject": "docs: Session-4-Handoff (Channels→AP-12) + Insight + KPI-Zeile",
@@ -717,7 +728,7 @@
     }
   },
   "stats": {
-    "totalCommits": 117,
+    "totalCommits": 119,
     "activeDays": 14,
     "longestStreak": 2,
     "topKinds": [
@@ -727,7 +738,7 @@
       },
       {
         "kind": "docs",
-        "count": 26
+        "count": 27
       },
       {
         "kind": "fix",
@@ -735,7 +746,7 @@
       },
       {
         "kind": "chore",
-        "count": 8
+        "count": 9
       },
       {
         "kind": "other",

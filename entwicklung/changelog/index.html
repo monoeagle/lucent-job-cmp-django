@@ -567,6 +567,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referenz/architektur-vergleich/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architektur-Vergleich
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -836,10 +864,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#doku-korrektur-channels-neues-ap-12-2026-07-03" class="md-nav__link">
+  <a href="#neue-referenz-seite-architektur-vergleich-ssr-vs-api-first-2026-07-15" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Doku-Korrektur Channels + neues AP-12 — 2026-07-03
+        Neue Referenz-Seite „Architektur-Vergleich" (SSR vs. API-First) — 2026-07-15
       
     </span>
   </a>
@@ -1298,10 +1326,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#doku-korrektur-channels-neues-ap-12-2026-07-03" class="md-nav__link">
+  <a href="#neue-referenz-seite-architektur-vergleich-ssr-vs-api-first-2026-07-15" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Doku-Korrektur Channels + neues AP-12 — 2026-07-03
+        Neue Referenz-Seite „Architektur-Vergleich" (SSR vs. API-First) — 2026-07-15
       
     </span>
   </a>
@@ -1517,7 +1545,21 @@
                   
 
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
-<h2 id="doku-korrektur-channels-neues-ap-12-2026-07-03">Doku-Korrektur Channels + neues AP-12 — 2026-07-03<a class="headerlink" href="#doku-korrektur-channels-neues-ap-12-2026-07-03" title="Permanent link">&para;</a></h2>
+<h2 id="neue-referenz-seite-architektur-vergleich-ssr-vs-api-first-2026-07-15">Neue Referenz-Seite „Architektur-Vergleich" (SSR vs. API-First) — 2026-07-15<a class="headerlink" href="#neue-referenz-seite-architektur-vergleich-ssr-vs-api-first-2026-07-15" title="Permanent link">&para;</a></h2>
+<p>Neue Referenz-Seite <code>referenz/architektur-vergleich.md</code>, die MPP Django (SSR,
+dieses Projekt) gegen das Schwesterprojekt <code>lucent-job-MPP</code> (API-First,
+Flask + React) stellt — das kontrollierte A/B-Experiment desselben Portals.</p>
+<ul>
+<li><strong>Neu</strong>: <code>referenz/architektur-vergleich.md</code> in der Referenz-Navigation.
+  Vergleich über Grundparadigma, SSR-/API-First-Belege, Schichtenarchitektur,
+  Auth/State/Tooling und Kern-Trade-offs.</li>
+<li><strong>Alle Kennzahlen frisch am echten Code beider Repos erhoben</strong> (<code>grep</code>/<code>find</code>),
+  nicht aus der Vorlage fortgeschrieben. Dabei korrigiert gegenüber der
+  Schwester-Doku: Django <strong>30</strong> Templates (nicht 439), <strong>13</strong> <code>render()</code>/
+  TemplateView (nicht 24), <strong>2</strong> HTMX-Templates (nicht ~7); MPP <strong>20</strong>
+  Blueprints (nicht 18), <strong>≈878</strong> Tests (771 Backend / 107 Frontend).</li>
+<li>Channels weiterhin korrekt als <strong>geplant (AP-12)</strong> ausgewiesen, nicht live.</li>
+</ul>
 <p>Doku-Drift behoben: Die Referenz behauptete, Benachrichtigungen würden „über
 Django Channels (WebSocket) live ausgeliefert" — Channels ist aber nie gebaut
 worden (kein <code>channels</code> in den Requirements, <code>config/asgi.py</code> Django-Default,
