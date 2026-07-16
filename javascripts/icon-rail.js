@@ -25,6 +25,10 @@
   // deklariert, weil INFO_HTML (Modul-Level-const) darauf zugreift.
   const APP_VERSION   = '1.1.0';                 // MPP Django (lucent-hub.yml)
   const HEADER_PREFIX = `MPP Django v${APP_VERSION}`;  // MPP Django
+  // Testzahl NUR hier pflegen — stand vorher doppelt und widersprüchlich im
+  // Code (Badge 239, Info-Tabelle 230) und driftete unbemerkt, weil R-STALE
+  // nur *.html prüft. Frisch erheben: venv/bin/python3 -m pytest -q
+  const TEST_COUNT    = 317;
 
   // ── Icon-Map: Titel-Schluesselwort → Emoji ─────────────────────────────
   // Trifft per indexOf in lowercase auf den Top-Level-Title.
@@ -291,7 +295,7 @@
           '<tr><td>Django</td><td>6.0.3</td></tr>' +
           '<tr><td>Frontend</td><td>HTMX + DaisyUI</td></tr>' +
           '<tr><td>DB</td><td>PostgreSQL</td></tr>' +
-          '<tr><td>Tests</td><td>230 grün</td></tr>' +
+          '<tr><td>Tests</td><td>' + TEST_COUNT + ' grün</td></tr>' +
           '<tr><td>Zensical</td><td>Docs</td></tr>' +
         '</table>' +
       '</section>' +
@@ -438,8 +442,8 @@
     if (document.querySelector('.adb-status-badge')) return;  // idempotent
     const badge = document.createElement('span');
     badge.className = 'adb-status-badge';
-    badge.title = `${HEADER_PREFIX} — 239 Tests grün (pytest), 0 Errors`;
-    badge.innerHTML = '<span class="adb-status-badge__dot" aria-hidden="true"></span>239 Tests';
+    badge.title = `${HEADER_PREFIX} — ${TEST_COUNT} Tests grün (pytest), 0 Errors`;
+    badge.innerHTML = '<span class="adb-status-badge__dot" aria-hidden="true"></span>' + TEST_COUNT + ' Tests';
     search.parentNode.insertBefore(badge, search);
   }
 

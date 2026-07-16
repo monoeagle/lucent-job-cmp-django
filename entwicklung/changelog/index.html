@@ -864,6 +864,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#installer-menu-mit-prufbereich-links-ports-2026-07-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installer: Menü mit Prüfbereich, Links &amp; Ports — 2026-07-16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installer-postgresql-erkennung-pgdg-appstream-with-packages-2026-07-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installer: PostgreSQL-Erkennung (PGDG + AppStream) + --with-packages — 2026-07-16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#offline-installer-idempotent-bundle-pfad-fix-2026-07-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Offline-Installer idempotent + Bundle-Pfad-Fix — 2026-07-16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#neue-referenz-seite-architektur-vergleich-ssr-vs-api-first-2026-07-15" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1326,6 +1359,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#installer-menu-mit-prufbereich-links-ports-2026-07-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installer: Menü mit Prüfbereich, Links &amp; Ports — 2026-07-16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installer-postgresql-erkennung-pgdg-appstream-with-packages-2026-07-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installer: PostgreSQL-Erkennung (PGDG + AppStream) + --with-packages — 2026-07-16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#offline-installer-idempotent-bundle-pfad-fix-2026-07-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Offline-Installer idempotent + Bundle-Pfad-Fix — 2026-07-16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#neue-referenz-seite-architektur-vergleich-ssr-vs-api-first-2026-07-15" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1545,6 +1611,86 @@
                   
 
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h2 id="installer-menu-mit-prufbereich-links-ports-2026-07-16">Installer: Menü mit Prüfbereich, Links &amp; Ports — 2026-07-16<a class="headerlink" href="#installer-menu-mit-prufbereich-links-ports-2026-07-16" title="Permanent link">&para;</a></h2>
+<p><code>install.sh</code> startet am Terminal jetzt mit einem Prüfbereich (Ist-Zustand) plus
+Links-/Ports-Übersicht und einem Aktionsmenü, statt sofort loszulaufen.
+<strong>+35 Tests</strong> (282 → 317).</p>
+<ul>
+<li><strong>Neu</strong>: <code>deploy/ui.sh</code> — Status-Erhebung und Panel-Rendering, strikt
+  getrennt: die Render-Funktion bekommt ihre Daten über stdin und weiss nicht,
+  woher sie stammen. Dadurch ist das Panel gegen erfundene Zustände testbar,
+  ohne dass etwas installiert sein muss.</li>
+<li><strong>Neu</strong>: Aktionen <code>--install</code>, <code>--check</code>, <code>--restart</code>. <code>--check</code> ändert nichts
+  und liefert <strong>Exit 0 nur, wenn alles grün ist</strong> — damit als Health-Check für
+  Monitoring/Cron nutzbar.</li>
+<li><strong>Neu</strong>: Links &amp; Ports (Portal, Admin, gunicorn :8001, PostgreSQL :5432,
+  Redis :6379). Der FQDN kommt aus <code>ALLOWED_HOSTS</code>; ohne Installation wird
+  <strong>keine URL erfunden</strong>, dort steht „noch nicht installiert".</li>
+<li><strong>Neu</strong>: <code>VERSION</code>-Datei im Release-Bundle (<code>tools/build_release.py</code>), von
+  <code>install.sh</code> mitinstalliert. Vorher stand die Version nur in
+  <code>lucent-hub.yml</code> (nicht im Bundle) und als Fließtext in <code>START-HIER.txt</code> —
+  auf der VM war sie nicht maschinenlesbar.</li>
+<li><strong>Ohne Terminal</strong> (Pipe, CI, <code>ssh host './install.sh'</code>) erscheint kein Menü,
+  es wird direkt installiert — bestehende Automatisierung bleibt gültig.</li>
+<li><strong>Behoben (durch die Tests gefunden)</strong>: <code>_mpp_ui_pad</code> hätte den Installer
+  unter <code>set -e</code> abgebrochen — <code>[ $pad -gt 0 ] &amp;&amp; printf …</code> als letzter Befehl
+  liefert bei exakt passender Breite eine 1 zurück.</li>
+<li><strong>Behoben (durch die Tests gefunden)</strong>: <code>printf %-20s</code> polstert nach Bytes,
+  nicht nach Zeichen — mit <code>✓</code>/<code>═</code> wäre die Box schief. Ohne UTF-8-Locale
+  (<code>LANG=C</code>, auf VMs üblich) gibt es jetzt einen ASCII-Fallback, sonst stünde
+  dort Buchstabensalat. <code>NO_COLOR</code> wird respektiert.</li>
+</ul>
+<h2 id="installer-postgresql-erkennung-pgdg-appstream-with-packages-2026-07-16">Installer: PostgreSQL-Erkennung (PGDG + AppStream) + <code>--with-packages</code> — 2026-07-16<a class="headerlink" href="#installer-postgresql-erkennung-pgdg-appstream-with-packages-2026-07-16" title="Permanent link">&para;</a></h2>
+<p>Der Installer verdrahtete PGDG-Annahmen hart und lief damit auf einer
+AppStream-VM ins Leere. Beide Ursprünge werden jetzt <strong>erkannt</strong>, nicht geraten.
+Neu ist ausserdem ein optionaler Online-Modus. <strong>+20 Tests</strong> (262 → 282).</p>
+<ul>
+<li><strong>Behoben</strong>: <code>install.sh</code> rief <code>psql</code> über den <strong>PATH</strong> auf — PGDG legt seine
+  Binaries aber nach <code>/usr/pgsql-16/bin/</code>. Der Preflight warnte nur folgenlos,
+  die DB-Anlage wäre danach hart gescheitert. Der Pfad wird jetzt aus der
+  erkannten Variante abgeleitet.</li>
+<li><strong>Behoben</strong>: <code>postgresql-16.service</code> war in den systemd-Units fest verdrahtet
+  (PGDG-Name); auf einer AppStream-VM (<code>postgresql.service</code>) griff das <code>After=</code>
+  stillschweigend ins Leere.</li>
+<li><strong>Behoben</strong>: Doku-Drift — die Doku forderte <code>Requires=postgresql-16.service</code>,
+  <code>install.sh</code> schrieb nur <code>After=</code>. <code>mpp-web</code> startete also auch ohne
+  laufende Datenbank. Die Units werden jetzt aus <code>lib.sh</code> gerendert (getestet).</li>
+<li><strong>Behoben</strong>: Fehlendes PostgreSQL führte zu einer folgenlosen Warnung statt
+  zum Abbruch.</li>
+<li><strong>Neu</strong>: <code>--with-packages</code> (Online-Modus, <strong>kein Default</strong>) richtet PGDG-Repo</li>
+<li>EPEL ein, deaktiviert das kollidierende AppStream-Modul, installiert die
+  System-Pakete und initialisiert den Cluster — letzteres nur, wenn noch keiner
+  existiert (<code>PG_VERSION</code>-Prüfung), damit ein Re-Run keine Daten anfasst.</li>
+<li><strong>Unverändert</strong>: Der Offline-Pfad ohne Flag bleibt der Standard; das Bundle
+  enthält weiterhin keine RPMs.</li>
+</ul>
+<h2 id="offline-installer-idempotent-bundle-pfad-fix-2026-07-16">Offline-Installer idempotent + Bundle-Pfad-Fix — 2026-07-16<a class="headerlink" href="#offline-installer-idempotent-bundle-pfad-fix-2026-07-16" title="Permanent link">&para;</a></h2>
+<p><code>deploy/install.sh</code> ist jetzt wiederholt ausführbar: Ein zweiter Lauf
+aktualisiert eine bestehende Installation, statt sie zu beschädigen oder
+stillschweigend nichts zu tun. Die Entscheidungslogik wurde nach
+<code>deploy/lib.sh</code> ausgelagert und ist unit-getestet (<strong>+23 Tests</strong>, 239 → 262).</p>
+<ul>
+<li><strong>Behoben</strong>: <code>BUNDLE_DIR</code> zeigte auf <code>deploy/</code> statt auf die Bundle-Wurzel —
+  der Installer brach sofort mit „mpp/ fehlt im Bundle" ab. Der Offline-Weg
+  war damit gar nicht lauffähig.</li>
+<li><strong>Behoben</strong>: <code>systemctl enable --now</code> startet eine laufende Unit nicht neu —
+  nach einem Upgrade lief der <strong>alte Code</strong> weiter, während das Skript Erfolg
+  meldete. Jetzt expliziter <code>restart</code>.</li>
+<li><strong>Behoben</strong>: Die DB-Anlage hing an der Existenz der <strong>Rolle</strong>. Brach Lauf 1
+  nach <code>CREATE ROLE</code> ab, legte kein Folgelauf die Datenbank je an.
+  Rolle und Datenbank werden nun getrennt geprüft.</li>
+<li><strong>Behoben</strong>: Jeder Lauf erzeugte einen neuen <code>SECRET_KEY</code> und warf alle
+  angemeldeten Nutzer raus. Ein bestehender Key wird jetzt übernommen.</li>
+<li><strong>Behoben</strong>: <code>cp -a</code> merged nur — im neuen Release gelöschte Module und alte
+  Migrationen blieben auf der VM liegen. Der App-Ordner wird jetzt gespiegelt.</li>
+<li><strong>Behoben</strong>: Die Env-Übergabe an <code>manage.py</code> war ungequotet; ein DB-Passwort
+  mit Leerzeichen zerfiel in mehrere Argumente (traf auch den Erstlauf).</li>
+<li><strong>Neu</strong>: Das TLS-Zertifikat wird gegen den FQDN geprüft statt nur auf
+  Datei-Existenz; ein CA-signiertes Zertifikat wird dabei nie überschrieben.</li>
+<li><strong>Neu</strong>: <code>createsuperuser</code> wird übersprungen, wenn schon ein Superuser da ist.</li>
+<li><strong>Unverändert</strong>: Die System-Schritte (postgres/nginx/systemd/SELinux) sind
+  weiterhin <strong>nicht</strong> auf einer echten AlmaLinux-9-VM verifiziert.</li>
+</ul>
 <h2 id="neue-referenz-seite-architektur-vergleich-ssr-vs-api-first-2026-07-15">Neue Referenz-Seite „Architektur-Vergleich" (SSR vs. API-First) — 2026-07-15<a class="headerlink" href="#neue-referenz-seite-architektur-vergleich-ssr-vs-api-first-2026-07-15" title="Permanent link">&para;</a></h2>
 <p>Neue Referenz-Seite <code>referenz/architektur-vergleich.md</code>, die MPP Django (SSR,
 dieses Projekt) gegen das Schwesterprojekt <code>lucent-job-MPP</code> (API-First,
