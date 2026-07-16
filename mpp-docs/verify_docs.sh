@@ -145,14 +145,58 @@ else
 fi
 
 # ── R-STALE ───────────────────────────────────────────────────────────────────
-rule "R-STALE — keine Alt-Version/Alt-Testzahl im site/"
-# nur Content-HTML; vendored Libs (mermaid.min.js) + Changelog/Aktivität/Suche ausgenommen
-stale=$(grep -rlE '228 Test|244 Test|Tests \| (228|244)|"testCount": (228|244)' "$SITE" --include=*.html 2>/dev/null | grep -vE 'changelog|project-activity|search' || true)
-if [ -n "$stale" ]; then
-  echo "$stale" | head -5
-  fail "Alt-Zahl (228/244) im site/"
+# Vergleicht gegen die FRISCH erhobene Testzahl (pytest), nicht gegen
+# hartkodierte Alt-Konstanten — die alte Regel suchte nach "228|244" aus einem
+# längst vergangenen Release und prüfte nur *.html. Dadurch konnte im
+# Header-Badge unbemerkt "239 Tests grün" stehen, während die Suite 317 zählte.
+rule "R-STALE — Testzahl: pytest == icon-rail.js == site/ (HTML+JS)"
+t_real=$("$PROJECT_DIR/venv/bin/python3" -m pytest --collect-only -q 2>/dev/null \
+         | grep -oE '[0-9]+ tests? collected' | grep -oE '[0-9]+' | head -1)
+t_rail=$(grep -oE 'TEST_COUNT[[:space:]]*=[[:space:]]*[0-9]+' "$JS_DIR/icon-rail.js" 2>/dev/null \
+         | grep -oE '[0-9]+' | head -1)
+echo "    pytest=${t_real:-?}  icon-rail.js=${t_rail:-?}"
+if [ -z "$t_real" ]; then
+  # Nicht still durchwinken: ohne Wahrheit kann die Regel nichts prüfen.
+  fail "Testzahl nicht ermittelbar (pytest --collect-only) — Regel konnte nicht prüfen"
+elif [ "$t_real" != "$t_rail" ]; then
+  fail "icon-rail.js sagt ${t_rail:-?} Tests, pytest zählt $t_real"
 else
-  pass "keine Alt-Zahlen"
+  pass "Testzahl konsistent ($t_real)"
+fi
+
+if [ -n "$t_real" ]; then
+  # Gebautes site/ gegen die Wahrheit prüfen — HTML *und* JS.
+  # Ausgenommen, weil dort historische Zahlen korrekt sind: Changelog,
+  # Aktivitätsdaten (Commit-Betreffs), Suchindex, Erkenntnisse; dazu vendored Libs.
+  stale=$("$PY" - "$SITE" "$t_real" <<'PYEOF'
+import re, sys, pathlib
+site, want = pathlib.Path(sys.argv[1]), sys.argv[2]
+SKIP = ('changelog', 'project-activity', 'search', 'mermaid.min',
+        'insight', 'erkenntnis')
+pat = re.compile(r'(\d+)\s+Tests?\s+(?:gr[üu]n|green)'
+                 r'|TEST_COUNT\s*=\s*(\d+)'
+                 r'|Tests</td><td>(\d+)')
+bad = []
+for p in sorted(site.rglob('*')):
+    if not p.is_file() or p.suffix not in ('.html', '.js'):
+        continue
+    rel = str(p.relative_to(site))
+    if any(s in rel.lower() for s in SKIP):
+        continue
+    for m in pat.finditer(p.read_text(errors='replace')):
+        n = next(g for g in m.groups() if g)
+        if n != want:
+            bad.append(f"{rel}: '{m.group(0).strip()[:44]}' — pytest sagt {want}")
+for b in bad[:5]:
+    print(b)
+PYEOF
+)
+  if [ -n "$stale" ]; then
+    echo "$stale" | sed 's/^/    /'
+    fail "Alt-Testzahl im site/ (HTML/JS)"
+  else
+    pass "site/ ohne Alt-Testzahlen"
+  fi
 fi
 
 # ── R-APPIMAGE ────────────────────────────────────────────────────────────────

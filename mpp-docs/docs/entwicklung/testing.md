@@ -4,13 +4,15 @@
 
 | Kategorie | Framework | Anzahl |
 |-----------|-----------|--------|
-| Unit | pytest | 137 |
-| Integration | pytest-django | 97 |
+| Unit | pytest | 215 |
+| Integration | pytest-django | 98 |
 | E2E | pytest-django | 4 |
-| **Gesamt** | | **238** |
+| **Gesamt** | | **317** |
 
-> Stand 2026-06-19: **238 Tests grün** (`venv/bin/python3 -m pytest`, 0 Errors).
-> Inkl. 8 Tests für `config.settings.production` (env-basierte Produktions-Settings).
+> Stand 2026-07-16: **317 Tests grün** (`venv/bin/python3 -m pytest`, 0 Errors).
+> Inkl. 8 Tests für `config.settings.production` (env-basierte Produktions-Settings)
+> und 78 Tests für den Offline-Installer (`deploy/lib.sh`, `deploy/ui.sh` — psql,
+> systemctl, dnf über Fakes injiziert; siehe `tests/unit/test_install_*.py`).
 
 ## Test-Methodik: TDD (Test-Driven Development)
 
