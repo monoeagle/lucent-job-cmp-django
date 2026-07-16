@@ -29,10 +29,10 @@ Wheels** enthält — die Ziel-VM braucht für die App **kein Internet**. Der We
 eine air-gapped VM in drei Schritten:
 
 ```
-┌─ Internet-Rechner ─────────┐        ┌─ Ziel-VM (ohne Internet) ──────────┐
-│ 1. Release-ZIP ziehen      │  scp/  │ 3. entpacken + sudo ./install.sh    │
-│    (GitHub Releases)       │──USB──▶│    → App wird offline installiert   │
-└────────────────────────────┘        └─────────────────────────────────────┘
+┌─ Internet-Rechner ─────────┐        ┌─ Ziel-VM (ohne Internet) ───────────────┐
+│ 1. Release-ZIP ziehen      │  scp/  │ 3. entpacken + sudo ./deploy/install.sh │
+│    (GitHub Releases)       │──USB──▶│    → App wird offline installiert       │
+└────────────────────────────┘        └─────────────────────────────────────────┘
               2. transferieren (scp oder USB-Stick)
 ```
 
@@ -70,13 +70,49 @@ cd /var/tmp && sha256sum -c <<< "<sha256> Lucent-MPP-Django-<version>-almalinux9
 ```bash
 unzip Lucent-MPP-Django-<version>-almalinux9-offline.zip
 cd Lucent-MPP-Django-<version>-almalinux9-offline
-sudo ./deploy/install.sh        # fragt nur FQDN + DB-Passwort
+sudo ./deploy/install.sh        # zeigt Prüfbereich + Menü
 ```
 
 **Das war's — die App wird installiert.** `install.sh` erledigt offline aus dem
 Bundle: venv + Wheels (`pip --no-index`), DB-Anlage, `.env` (SECRET_KEY auto),
 Migrationen, `collectstatic`, Superuser, systemd (gunicorn + Celery), nginx +
 self-signed TLS, firewalld/SELinux. Danach erreichbar unter **`https://<FQDN>/`**.
+
+Am Terminal startet das Skript mit einem **Prüfbereich** (Ist-Zustand von
+python3.12, PostgreSQL inkl. erkannter Variante, Redis, nginx, Installation,
+Datenbank, Diensten) samt **Links & Ports**, gefolgt von einem Menü:
+
+```
+╔═ MPP Django · Installer v1.1.0 ════════════╗
+║ SYSTEM                                     ║
+║   ✓ python3.12      3.12.4                 ║
+║   ✓ PostgreSQL      PGDG 16 · aktiv        ║
+║   ✓ Redis           aktiv                  ║
+║   ✗ nginx           nicht installiert      ║
+║ INSTALLATION                               ║
+║   ✓ /opt/mpp/app    v1.1.0                 ║
+║   ✓ Datenbank       mpp_prod               ║
+║   ✗ mpp-web         inaktiv                ║
+║ LINKS & PORTS                              ║
+║   Portal       https://mpp.intern/  :443   ║
+║   gunicorn     127.0.0.1:8001  :8001       ║
+╚════════════════════════════════════════════╝
+  1) Installieren / Aktualisieren
+  2) Nur prüfen (nichts ändern)
+  3) Dienste neu starten
+  q) Beenden
+```
+
+| Aufruf | Wirkung |
+|---|---|
+| `sudo ./deploy/install.sh` | Prüfbereich + Menü (nur am Terminal) |
+| `sudo ./deploy/install.sh --install` | Direkt installieren/aktualisieren, ohne Menü |
+| `sudo ./deploy/install.sh --check` | Nur prüfen, ändert nichts. **Exit 0 nur, wenn alles grün ist** — taugt als Health-Check für Monitoring/Cron |
+| `sudo ./deploy/install.sh --restart` | `mpp-web` + `mpp-celery` neu starten |
+
+**Ohne Terminal** (Pipe, CI, `ssh host './install.sh'`) erscheint kein Menü —
+dann läuft direkt die Installation, wie bisher. Bestehende Automatisierung
+bleibt damit gültig.
 
 > **Voraussetzung auf der VM (einmalig):** die **System-Pakete** `python3.12`,
 > `postgresql16-server`, `redis`, `nginx`, `openssl` müssen installiert sein —
@@ -86,9 +122,28 @@ self-signed TLS, firewalld/SELinux. Danach erreichbar unter **`https://<FQDN>/`*
 > sudo /usr/pgsql-16/bin/postgresql-16-setup initdb
 > sudo systemctl enable --now postgresql-16 redis
 > ```
+> **Hat die VM Netzzugang zu PGDG + EPEL**, nimmt `install.sh` diesen Schritt auf
+> Wunsch selbst ab:
+> ```bash
+> sudo ./deploy/install.sh --with-packages
+> ```
+> Das richtet das PGDG-Repo ein, deaktiviert das kollidierende AppStream-Modul,
+> installiert die Pakete, initialisiert den Cluster (nur falls noch keiner
+> existiert) und startet `postgresql-16` + `redis`. **Bewusst kein Default** —
+> das Bundle muss auch auf air-gapped VMs funktionieren.
+>
 > Hat die VM **gar kein** Internet (auch nicht für diese RPMs), bring die RPMs
 > separat als Bundle mit → **Teil A–C** unten. Der `install.sh` deckt den
 > Python-/App-/Dienste-Teil ab; die RPM-Beschaffung bleibt Teil A.
+>
+> **PostgreSQL-Variante:** Der Installer unterstützt **beide** Ursprünge und
+> erkennt sie selbst — er rät nicht. PGDG legt `psql` nach `/usr/pgsql-16/bin/`
+> (**nicht** im PATH) und nennt die Unit `postgresql-16.service`; das
+> AppStream-Modul nutzt `/usr/bin/psql` und `postgresql.service`. Service-Name
+> und `psql`-Pfad werden daraus abgeleitet, auch für die `Requires=`-Abhängigkeit
+> der `mpp-web`/`mpp-celery`-Units. Findet der Preflight **kein** PostgreSQL,
+> bricht er ab (statt wie früher nur zu warnen und später an der DB-Anlage zu
+> scheitern).
 
 ### Release selbst bauen (für Updates / eigene Stände)
 
@@ -549,9 +604,26 @@ exit
 
 ## 15. Offline-Updates (Re-Deploy)
 
-Pro Update auf dem Staging-Host ein **neues Bundle** bauen (Teil A) — typischer
-weise nur geänderte Wheels (`pip download` lädt nur Neues) + frisches
-`git archive`. Auf der VM:
+> **Der einfachste Weg: `install.sh` erneut ausführen.** Das Skript ist
+> **idempotent** — ein zweiter Lauf über einem neuen Bundle aktualisiert die
+> bestehende Installation, statt sie zu duplizieren:
+>
+> - der **`SECRET_KEY` bleibt erhalten** (aus `/etc/mpp/mpp.env` übernommen) —
+>   angemeldete Nutzer bleiben angemeldet;
+> - **Rolle und Datenbank** werden getrennt geprüft, vorhandene Daten bleiben;
+> - der App-Ordner wird **gespiegelt**, nicht gemerged — im neuen Release
+>   gelöschte Module und alte Migrationen verschwinden auch auf der VM;
+> - `mpp-web` und `mpp-celery` werden **neu gestartet**, laufen also mit dem
+>   neuen Code;
+> - ein vorhandenes **CA-signiertes Zertifikat** wird nie überschrieben.
+>
+> Beim Re-Run werden FQDN und DB-Passwort erneut abgefragt; ein leer gelassenes
+> DB-Passwort wird neu vergeben (Rolle und `mpp.env` bleiben dabei konsistent).
+
+Alternativ — oder wenn nur einzelne Artefakte getauscht werden sollen — der
+manuelle Weg: pro Update auf dem Staging-Host ein **neues Bundle** bauen
+(Teil A), typischerweise nur geänderte Wheels (`pip download` lädt nur Neues) +
+frisches `git archive`. Auf der VM:
 
 ```bash
 # Neue Artefakte entpacken (Teil B), dann:

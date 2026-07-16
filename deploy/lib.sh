@@ -1,0 +1,286 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# lib.sh — Hilfsfunktionen des MPP-Offline-Installers
+#
+# Wird von install.sh gesourct. Enthaelt die Logik, die darueber entscheidet,
+# ob ein zweiter Lauf dasselbe Ergebnis liefert wie der erste — bewusst
+# getrennt, damit sie ohne root/systemd/PostgreSQL testbar ist
+# (tests/unit/test_install_lib.py).
+#
+# Externe Kommandos sind ueber MPP_PSQL / MPP_SYSTEMCTL injizierbar.
+# ══════════════════════════════════════════════════════════════════════════════
+
+# mpp_bundle_dir <skript-verzeichnis>
+# install.sh liegt im Bundle unter deploy/; mpp/, wheels/ und requirements/
+# liegen eine Ebene hoeher.
+mpp_bundle_dir() {
+    (cd "$1/.." && pwd)
+}
+
+# mpp_env_get <env-datei> <schluessel>
+# Gibt den Wert aus, oder nichts, wenn Schluessel bzw. Datei fehlen.
+# Fehlende Datei ist kein Fehler: bei der Erstinstallation gibt es sie noch nicht.
+mpp_env_get() {
+    local file="$1" key="$2"
+    [ -f "$file" ] || return 0
+    sed -n "s/^${key}=//p" "$file" | head -n1
+}
+
+# mpp_env_args <env-datei>
+# Gibt jede KEY=VALUE-Zeile NUL-terminiert aus, damit der Aufrufer sie per
+# `mapfile -d ''` in ein Array liest und an `env` uebergibt. NUL statt
+# Wortzerlegung — sonst zerfaellt ein Wert mit Leerzeichen in zwei Argumente.
+mpp_env_args() {
+    local file="$1" line
+    [ -f "$file" ] || return 0
+    while IFS= read -r line || [ -n "$line" ]; do
+        case "$line" in '' | '#'*) continue ;; esac
+        [[ "$line" == *=* ]] || continue
+        printf '%s\0' "$line"
+    done <"$file"
+}
+
+# mpp_secret_key <env-datei>
+# Gibt den bestehenden SECRET_KEY zurueck, sonst einen frisch erzeugten.
+# Wiederverwendung ist Pflicht: ein neuer Key entwertet bei jedem Re-Run alle
+# Sessions und laufenden Passwort-Reset-Tokens.
+mpp_secret_key() {
+    local file="$1" existing
+    existing="$(mpp_env_get "$file" SECRET_KEY)"
+    if [ -n "$existing" ]; then
+        printf '%s\n' "$existing"
+        return 0
+    fi
+    "${MPP_PY:-python3.12}" -c 'import secrets;print(secrets.token_urlsafe(64))'
+}
+
+# mpp_sync_app <quelle> <ziel>
+# Spiegelt <quelle> nach <ziel>. Bewusst rm -rf + cp -a statt cp -a allein:
+# cp merged nur, sodass ein im neuen Release geloeschtes Modul (oder eine alte
+# Migration) auf der VM liegen bliebe. rsync waere die Alternative, ist aber
+# auf einer minimalen AlmaLinux-Installation nicht garantiert vorhanden.
+mpp_sync_app() {
+    local src="$1" dest="$2"
+    [ -n "$dest" ] || {
+        echo "mpp_sync_app: leeres Ziel" >&2
+        return 1
+    }
+    [ -d "$src" ] || {
+        echo "mpp_sync_app: Quelle fehlt: $src" >&2
+        return 1
+    }
+    rm -rf "$dest"
+    mkdir -p "$(dirname "$dest")"
+    cp -a "$src" "$dest"
+}
+
+# ── PostgreSQL-Variante ───────────────────────────────────────────────────────
+# PGDG und das AppStream-Modul unterscheiden sich in Paketname, Service-Name und
+# Binary-Pfad. Nichts davon darf hart verdrahtet sein.
+#
+#            | PGDG                    | AppStream
+#   Paket    | postgresql16-server     | postgresql-server
+#   Service  | postgresql-16.service   | postgresql.service
+#   Binaries | /usr/pgsql-16/bin/      | /usr/bin/
+#
+# MPP_PG_PREFIX verschiebt die Suche unter ein anderes Wurzelverzeichnis
+# (nur fuer Tests; im Betrieb leer).
+
+# mpp_pg_flavor  ->  "pgdg" | "appstream"; rc!=0 wenn kein PostgreSQL da ist.
+mpp_pg_flavor() {
+    local prefix="${MPP_PG_PREFIX:-}"
+    if [ -x "${prefix}/usr/pgsql-16/bin/psql" ]; then
+        echo pgdg
+    elif [ -x "${prefix}/usr/bin/psql" ]; then
+        echo appstream
+    else
+        return 1
+    fi
+}
+
+# mpp_psql_bin  ->  absoluter Pfad zu psql.
+# PGDG legt psql NICHT in den PATH — `command -v psql` findet es dort nicht.
+mpp_psql_bin() {
+    local prefix="${MPP_PG_PREFIX:-}"
+    case "$(mpp_pg_flavor)" in
+        pgdg) echo "${prefix}/usr/pgsql-16/bin/psql" ;;
+        appstream) echo "${prefix}/usr/bin/psql" ;;
+        *) return 1 ;;
+    esac
+}
+
+# mpp_pg_service  ->  Name der systemd-Unit der jeweiligen Variante.
+mpp_pg_service() {
+    case "$(mpp_pg_flavor)" in
+        pgdg) echo "postgresql-16.service" ;;
+        appstream) echo "postgresql.service" ;;
+        *) return 1 ;;
+    esac
+}
+
+# mpp_pg_datadir  ->  Datenverzeichnis des Clusters der jeweiligen Variante.
+mpp_pg_datadir() {
+    local prefix="${MPP_PG_PREFIX:-}"
+    case "$(mpp_pg_flavor)" in
+        pgdg) echo "${prefix}/var/lib/pgsql/16/data" ;;
+        appstream) echo "${prefix}/var/lib/pgsql/data" ;;
+        *) return 1 ;;
+    esac
+}
+
+# mpp_pg_initdb
+# Initialisiert den Cluster — aber nur, wenn es noch keinen gibt. Ein zweiter
+# initdb-Lauf ueber einem bestehenden Cluster scheitert und hat an vorhandenen
+# Daten ohnehin nichts verloren.
+mpp_pg_initdb() {
+    local prefix="${MPP_PG_PREFIX:-}" datadir
+    datadir="$(mpp_pg_datadir)" || return 1
+    if [ -f "$datadir/PG_VERSION" ]; then
+        return 0
+    fi
+    case "$(mpp_pg_flavor)" in
+        pgdg) "${prefix}/usr/pgsql-16/bin/postgresql-16-setup" initdb ;;
+        appstream) "${prefix}/usr/bin/postgresql-setup" --initdb ;;
+        *) return 1 ;;
+    esac
+}
+
+# mpp_install_packages
+# Nur fuer `--with-packages` (Online-Modus). Richtet das PGDG-Repo ein und
+# installiert die System-Pakete. Das AppStream-Modul muss vorher weg, sonst
+# kollidiert es mit PGDG.
+mpp_install_packages() {
+    local dnf="${MPP_DNF:-dnf}"
+    local repo_rpm="${MPP_PGDG_REPO_RPM:-https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-latest.noarch.rpm}"
+
+    $dnf -y install "$repo_rpm"
+    $dnf -y install epel-release
+    $dnf -qy module disable postgresql
+    $dnf -y install python3.12 postgresql16-server postgresql16 redis nginx openssl
+}
+
+# mpp_render_web_unit <user> <app-dir> <venv> <env-datei> <pg-service>
+mpp_render_web_unit() {
+    local user="$1" app_dir="$2" venv="$3" env_file="$4" pg_service="$5"
+    cat <<UNIT
+[Unit]
+Description=MPP Django (gunicorn)
+After=network.target ${pg_service} redis.service
+Requires=${pg_service}
+
+[Service]
+User=${user}
+Group=${user}
+WorkingDirectory=${app_dir}/mpp
+EnvironmentFile=${env_file}
+Environment=DJANGO_SETTINGS_MODULE=config.settings.production
+RuntimeDirectory=mpp
+ExecStart=${venv}/bin/gunicorn config.wsgi:application --bind 127.0.0.1:8001 --workers 3 --timeout 60 --access-logfile - --error-logfile -
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+}
+
+# mpp_render_celery_unit <user> <app-dir> <venv> <env-datei> <pg-service>
+mpp_render_celery_unit() {
+    local user="$1" app_dir="$2" venv="$3" env_file="$4" pg_service="$5"
+    cat <<UNIT
+[Unit]
+Description=MPP Django Celery Worker
+After=network.target redis.service ${pg_service}
+Requires=${pg_service}
+
+[Service]
+User=${user}
+Group=${user}
+WorkingDirectory=${app_dir}/mpp
+EnvironmentFile=${env_file}
+Environment=DJANGO_SETTINGS_MODULE=config.settings.production
+ExecStart=${venv}/bin/celery -A config worker --loglevel=info --concurrency=2
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+}
+
+# mpp_pg_ensure <rolle> <datenbank> <passwort>
+# Rolle und Datenbank werden GETRENNT geprueft. Haengt die DB-Anlage an der
+# Existenz der Rolle, legt ein Wiederanlauf nach Teilfehler (Rolle da, DB nicht)
+# die Datenbank nie an.
+mpp_pg_ensure() {
+    local role="$1" db="$2" pw="$3"
+    local psql="${MPP_PSQL:-sudo -u postgres psql}"
+
+    if $psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='${role}'" 2>/dev/null | grep -q 1; then
+        $psql -c "ALTER ROLE ${role} WITH PASSWORD '${pw}';" >/dev/null
+    else
+        $psql -c "CREATE ROLE ${role} WITH LOGIN PASSWORD '${pw}';" >/dev/null
+    fi
+
+    if ! $psql -tAc "SELECT 1 FROM pg_database WHERE datname='${db}'" 2>/dev/null | grep -q 1; then
+        $psql -c "CREATE DATABASE ${db} OWNER ${role} ENCODING 'UTF8' TEMPLATE template0;" >/dev/null
+        $psql -c "GRANT ALL PRIVILEGES ON DATABASE ${db} TO ${role};" >/dev/null
+    fi
+}
+
+# mpp_nginx_present
+# Wahr, wenn nginx installiert ist. Ohne diese Pruefung lief der Installer bis
+# zum letzten Schritt durch und starb dann am fehlenden /etc/nginx/conf.d/.
+mpp_nginx_present() {
+    command -v "${MPP_NGINX:-nginx}" >/dev/null 2>&1
+}
+
+# mpp_ensure_redis
+# Startet Redis, falls installiert und gestoppt. rc!=0 nur, wenn Redis fehlt —
+# eine blosse Warnung reichte nicht: Celery scheitert sonst spaeter am Broker.
+mpp_ensure_redis() {
+    local sc="${MPP_SYSTEMCTL:-systemctl}"
+    $sc is-active --quiet redis 2>/dev/null && return 0
+    $sc enable --now redis >/dev/null 2>&1 || return 1
+    $sc is-active --quiet redis 2>/dev/null
+}
+
+# mpp_restart_services <unit>...
+# `systemctl enable --now` startet eine bereits laufende Unit NICHT neu — nach
+# einem Upgrade liefe der alte Code weiter. Daher explizit restart.
+mpp_restart_services() {
+    local sc="${MPP_SYSTEMCTL:-systemctl}"
+    $sc daemon-reload
+    $sc enable "$@"
+    $sc restart "$@"
+}
+
+# mpp_cert_matches_fqdn <zertifikat> <fqdn>
+# Wahr, wenn das Zertifikat existiert und den FQDN als SAN fuehrt. Eine reine
+# Datei-Existenzpruefung wuerde bei geaendertem FQDN das alte Zertifikat behalten.
+mpp_cert_matches_fqdn() {
+    local crt="$1" fqdn="$2" sans
+    [ -f "$crt" ] || return 1
+    sans="$(openssl x509 -in "$crt" -noout -ext subjectAltName 2>/dev/null |
+        tr ',' '\n' | sed -n 's/.*DNS://p' | tr -d '[:space:]')" || return 1
+    printf '%s\n' "$sans" | grep -qxF "$fqdn"
+}
+
+# mpp_cert_is_self_signed <zertifikat>
+# Wahr, wenn Issuer == Subject. Nur solche Zertifikate stammen vom Installer
+# selbst und duerfen ersetzt werden — ein vom Admin eingespieltes CA-Zertifikat
+# fasst der Installer nicht an.
+mpp_cert_is_self_signed() {
+    local crt="$1" issuer subject
+    [ -f "$crt" ] || return 1
+    issuer="$(openssl x509 -in "$crt" -noout -issuer 2>/dev/null | sed 's/^issuer=//')" || return 1
+    subject="$(openssl x509 -in "$crt" -noout -subject 2>/dev/null | sed 's/^subject=//')" || return 1
+    [ -n "$issuer" ] && [ "$issuer" = "$subject" ]
+}

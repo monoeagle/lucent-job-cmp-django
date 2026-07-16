@@ -39,6 +39,16 @@ def version() -> str:
     return m.group(1) if m else "0.0.0"
 
 
+def write_version(stage, ver: str) -> None:
+    """Maschinenlesbaren Versionsmarker ins Bundle legen.
+
+    Die Version lebt in lucent-hub.yml, die nicht mitgeliefert wird; START-HIER.txt
+    nennt sie nur im Fliesstext. install.sh installiert diese Datei mit, damit der
+    Pruefbereich auf der VM die installierte Version anzeigen kann.
+    """
+    (stage / "VERSION").write_text(ver + "\n", encoding="utf-8")
+
+
 def _ignore(_dir, names):
     return [n for n in names
             if n in PRUNE_DIRS or n in PRUNE_NAMES or n.endswith(PRUNE_SUFFIXES)]
@@ -103,6 +113,7 @@ def main() -> Path:
         shutil.copy2(src, docs_dst / Path(doc).name) if src.is_file() else missing.append(doc)
 
     (stage / "START-HIER.txt").write_text(start_here(ver), encoding="utf-8")
+    write_version(stage, ver)
     # install.sh ausführbar halten
     (stage / "deploy" / "install.sh").chmod(0o755)
 
