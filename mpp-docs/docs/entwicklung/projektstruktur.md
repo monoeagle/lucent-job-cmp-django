@@ -66,9 +66,20 @@ lucent-app-mpp-TDD-Django/
 ├── tests/                            # pytest-django Tests
 │   ├── conftest.py                  # Shared Fixtures
 │   ├── factories.py                 # factory_boy Factories
-│   ├── unit/                        # Services, Domain
+│   ├── unit/                        # Services, Domain, Installer (lib.sh/ui.sh)
 │   ├── integration/                 # Views, Models
 │   └── e2e/                         # Workflow-Tests
+│
+├── deploy/                           # Offline-Installer für AlmaLinux/Rocky 9
+│   ├── install.sh                   # Orchestrierung: Preflight + 8 Schritte,
+│   │                                #   Menü/--install/--check/--restart
+│   ├── lib.sh                       # System-Logik: PostgreSQL-Erkennung
+│   │                                #   (PGDG/AppStream), DB, systemd-Units,
+│   │                                #   Zertifikat, Env — unit-getestet
+│   └── ui.sh                        # Prüfbereich + Links/Ports + Panel-Render
+│
+├── tools/
+│   └── build_release.py             # Offline-Bundle (App + Wheels + VERSION)
 │
 ├── scripts/
 │   └── run.sh                       # Dev-Launcher mit Menü
@@ -89,7 +100,8 @@ lucent-app-mpp-TDD-Django/
 │
 ├── requirements/
 │   ├── base.txt
-│   └── dev.txt
+│   ├── dev.txt
+│   └── production.txt               # gunicorn, psycopg — env-basiert
 │
 ├── pytest.ini
 ├── package.json
