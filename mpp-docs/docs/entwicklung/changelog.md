@@ -1,6 +1,23 @@
 # Changelog
 
-## Installer: Menü mit Prüfbereich, Links & Ports — 2026-07-16
+## v1.2.0 — Offline-Installer produktionsreif — 2026-07-16
+
+Der Installer war nicht wiederholbar und traf harte PGDG-Annahmen. Jetzt ist er
+idempotent, erkennt PostgreSQL in beiden Varianten und startet am Terminal mit
+einem Prüfbereich. Die Entscheidungslogik liegt in `deploy/lib.sh`, Status/Panel
+in `deploy/ui.sh` — **78 Unit-Tests** (Suite **239 → 317**). Der Portal-Code
+selbst ist unverändert; MINOR wegen der neuen Installer-Fähigkeiten.
+
+**Bundle-Inhalt geändert** (deshalb neues Release statt v1.1.0-Ersatz):
+`install.sh` neu geschrieben, `lib.sh` + `ui.sh` neu, `VERSION` mitgeliefert.
+
+> **Nicht verifiziert:** Die System-Schritte (postgres/nginx/systemd/SELinux)
+> sind weiterhin nie auf einer echten AlmaLinux-9-VM gelaufen. Die Tests
+> beweisen, dass die Logik die richtigen Kommandos in der richtigen Reihenfolge
+> wählt — nicht, dass echtes `dnf`, systemd, PGDG und SELinux mitspielen.
+> `sudo ./deploy/install.sh --check` sagt auf der VM in einem Aufruf, was fehlt.
+
+### Installer: Menü mit Prüfbereich, Links & Ports
 
 `install.sh` startet am Terminal jetzt mit einem Prüfbereich (Ist-Zustand) plus
 Links-/Ports-Übersicht und einem Aktionsmenü, statt sofort loszulaufen.
@@ -30,7 +47,7 @@ Links-/Ports-Übersicht und einem Aktionsmenü, statt sofort loszulaufen.
   (`LANG=C`, auf VMs üblich) gibt es jetzt einen ASCII-Fallback, sonst stünde
   dort Buchstabensalat. `NO_COLOR` wird respektiert.
 
-## Installer: PostgreSQL-Erkennung (PGDG + AppStream) + `--with-packages` — 2026-07-16
+### Installer: PostgreSQL-Erkennung (PGDG + AppStream) + `--with-packages`
 
 Der Installer verdrahtete PGDG-Annahmen hart und lief damit auf einer
 AppStream-VM ins Leere. Beide Ursprünge werden jetzt **erkannt**, nicht geraten.
@@ -55,7 +72,7 @@ Neu ist ausserdem ein optionaler Online-Modus. **+20 Tests** (262 → 282).
 - **Unverändert**: Der Offline-Pfad ohne Flag bleibt der Standard; das Bundle
   enthält weiterhin keine RPMs.
 
-## Offline-Installer idempotent + Bundle-Pfad-Fix — 2026-07-16
+### Offline-Installer idempotent + Bundle-Pfad-Fix
 
 `deploy/install.sh` ist jetzt wiederholt ausführbar: Ein zweiter Lauf
 aktualisiert eine bestehende Installation, statt sie zu beschädigen oder

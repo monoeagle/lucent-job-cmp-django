@@ -3,7 +3,7 @@
 name: mpp-Django
 display_name: "MPP Django"
 description: "Marketplace Portal — Self-Service IT-Provisioning (Django 6.0 + Tailwind)"
-version: "1.1.0"
+version: "1.2.0"
 
 port: 8000
 docs_port: 5063

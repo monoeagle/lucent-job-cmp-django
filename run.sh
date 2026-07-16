@@ -10,7 +10,11 @@ APPIMAGE_DIR="$PROJECT_DIR/build/appimage"
 RELEASE_DIR="$PROJECT_DIR/release"
 DOCS_DIR="$PROJECT_DIR/mpp-docs"
 DOCS_PORT=5063
-APP_VERSION="1.1.0"
+# Version NICHT hartkodieren — sie stand hier auf 1.1.0, während lucent-hub.yml
+# schon 1.2.0 sagte, und R-VERSION prüfte diese Stelle nicht. Single Source:
+# lucent-hub.yml (dieselbe Quelle wie tools/build_release.py).
+APP_VERSION="$(grep -E '^version:' "$PROJECT_DIR/lucent-hub.yml" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
+[ -n "$APP_VERSION" ] || { echo "FEHLER: Version aus lucent-hub.yml nicht lesbar" >&2; exit 1; }
 APPIMAGETOOL_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
 APPIMAGETOOL="$PROJECT_DIR/.tools/appimagetool"
 

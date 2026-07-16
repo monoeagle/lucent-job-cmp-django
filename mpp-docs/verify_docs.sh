@@ -62,12 +62,21 @@ css_lines=$(wc -l < "$DOCS_DIR/docs/stylesheets/extra.css" 2>/dev/null || echo 0
 [ "$css_lines" -gt 1000 ] && pass "extra.css Vollversion ($css_lines Z.)" || fail "extra.css zu klein ($css_lines Z., Platzhalter?)"
 
 # ── R-VERSION ─────────────────────────────────────────────────────────────────
-rule "R-VERSION — zensical.toml == lucent-hub.yml == icon-rail.js"
+# run.sh gehört dazu: die Datei hatte APP_VERSION hartkodiert und stand auf
+# 1.1.0, während lucent-hub.yml schon 1.2.0 sagte — die Regel prüfte diese
+# Stelle nicht und meldete grün. Der AppImage-Dateiname kommt von dort.
+rule "R-VERSION — zensical.toml == lucent-hub.yml == icon-rail.js == run.sh"
 v_zen=$(grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' "$DOCS_DIR/zensical.toml" | head -1 | tr -d v)
 v_hub=$(grep -E '^version:' "$HUB_YML" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
 v_rail=$(grep -oE "APP_VERSION[^']*'[0-9]+\.[0-9]+\.[0-9]+'" "$JS_DIR/icon-rail.js" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-echo "    zensical=$v_zen  hub=$v_hub  rail=$v_rail"
-if [ -n "$v_zen" ] && [ "$v_zen" = "$v_hub" ] && [ "$v_zen" = "$v_rail" ]; then
+# Hartkodierten Wert vergleichen; leitet run.sh dagegen aus lucent-hub.yml ab,
+# ist es per Konstruktion identisch (bevorzugte Form — keine vierte Stelle).
+v_run=$(grep -oE 'APP_VERSION="[0-9]+\.[0-9]+\.[0-9]+"' "$PROJECT_DIR/run.sh" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+if [ -z "$v_run" ] && grep -q 'APP_VERSION=.*lucent-hub\.yml' "$PROJECT_DIR/run.sh"; then
+  v_run="$v_hub"
+fi
+echo "    zensical=$v_zen  hub=$v_hub  rail=$v_rail  run.sh=$v_run"
+if [ -n "$v_zen" ] && [ "$v_zen" = "$v_hub" ] && [ "$v_zen" = "$v_rail" ] && [ "$v_zen" = "$v_run" ]; then
   pass "Version konsistent ($v_zen)"
 else
   fail "Versions-Divergenz"
