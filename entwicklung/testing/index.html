@@ -1438,12 +1438,12 @@
 <tr>
 <td>Unit</td>
 <td>pytest</td>
-<td>137</td>
+<td>215</td>
 </tr>
 <tr>
 <td>Integration</td>
 <td>pytest-django</td>
-<td>97</td>
+<td>98</td>
 </tr>
 <tr>
 <td>E2E</td>
@@ -1453,13 +1453,15 @@
 <tr>
 <td><strong>Gesamt</strong></td>
 <td></td>
-<td><strong>238</strong></td>
+<td><strong>317</strong></td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p>Stand 2026-06-19: <strong>238 Tests grün</strong> (<code>venv/bin/python3 -m pytest</code>, 0 Errors).
-Inkl. 8 Tests für <code>config.settings.production</code> (env-basierte Produktions-Settings).</p>
+<p>Stand 2026-07-16: <strong>317 Tests grün</strong> (<code>venv/bin/python3 -m pytest</code>, 0 Errors).
+Inkl. 8 Tests für <code>config.settings.production</code> (env-basierte Produktions-Settings)
+und 78 Tests für den Offline-Installer (<code>deploy/lib.sh</code>, <code>deploy/ui.sh</code> — psql,
+systemctl, dnf über Fakes injiziert; siehe <code>tests/unit/test_install_*.py</code>).</p>
 </blockquote>
 <h2 id="test-methodik-tdd-test-driven-development">Test-Methodik: TDD (Test-Driven Development)<a class="headerlink" href="#test-methodik-tdd-test-driven-development" title="Permanent link">&para;</a></h2>
 <ol>

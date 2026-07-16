@@ -1,17 +1,23 @@
 {
-  "generatedAt": "2026-07-16T20:06:39",
+  "generatedAt": "2026-07-16T20:14:51",
   "range": {
     "from": "2025-07-17",
     "to": "2026-07-16"
   },
   "byDay": {
     "2026-07-16": {
-      "commits": 3,
+      "commits": 4,
       "kinds": {
+        "fix": 1,
         "docs": 2,
         "feat": 1
       },
       "list": [
+        {
+          "sha": "5bc0967",
+          "subject": "fix(docs): driftende Testzahl im Header-Badge auf eine Konstante ziehen",
+          "kind": "fix"
+        },
         {
           "sha": "c47e360",
           "subject": "docs: Changelog + Kennzahlen zur Installer-Arbeit nachziehen",
@@ -752,7 +758,7 @@
     }
   },
   "stats": {
-    "totalCommits": 122,
+    "totalCommits": 123,
     "activeDays": 15,
     "longestStreak": 2,
     "topKinds": [
@@ -766,7 +772,7 @@
       },
       {
         "kind": "fix",
-        "count": 18
+        "count": 19
       },
       {
         "kind": "chore",
