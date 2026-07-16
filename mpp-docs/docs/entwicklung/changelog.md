@@ -1,6 +1,103 @@
 # Changelog
 
-## Doku-Korrektur Channels + neues AP-12 — 2026-07-03
+## Installer: Menü mit Prüfbereich, Links & Ports — 2026-07-16
+
+`install.sh` startet am Terminal jetzt mit einem Prüfbereich (Ist-Zustand) plus
+Links-/Ports-Übersicht und einem Aktionsmenü, statt sofort loszulaufen.
+**+35 Tests** (282 → 317).
+
+- **Neu**: `deploy/ui.sh` — Status-Erhebung und Panel-Rendering, strikt
+  getrennt: die Render-Funktion bekommt ihre Daten über stdin und weiss nicht,
+  woher sie stammen. Dadurch ist das Panel gegen erfundene Zustände testbar,
+  ohne dass etwas installiert sein muss.
+- **Neu**: Aktionen `--install`, `--check`, `--restart`. `--check` ändert nichts
+  und liefert **Exit 0 nur, wenn alles grün ist** — damit als Health-Check für
+  Monitoring/Cron nutzbar.
+- **Neu**: Links & Ports (Portal, Admin, gunicorn :8001, PostgreSQL :5432,
+  Redis :6379). Der FQDN kommt aus `ALLOWED_HOSTS`; ohne Installation wird
+  **keine URL erfunden**, dort steht „noch nicht installiert".
+- **Neu**: `VERSION`-Datei im Release-Bundle (`tools/build_release.py`), von
+  `install.sh` mitinstalliert. Vorher stand die Version nur in
+  `lucent-hub.yml` (nicht im Bundle) und als Fließtext in `START-HIER.txt` —
+  auf der VM war sie nicht maschinenlesbar.
+- **Ohne Terminal** (Pipe, CI, `ssh host './install.sh'`) erscheint kein Menü,
+  es wird direkt installiert — bestehende Automatisierung bleibt gültig.
+- **Behoben (durch die Tests gefunden)**: `_mpp_ui_pad` hätte den Installer
+  unter `set -e` abgebrochen — `[ $pad -gt 0 ] && printf …` als letzter Befehl
+  liefert bei exakt passender Breite eine 1 zurück.
+- **Behoben (durch die Tests gefunden)**: `printf %-20s` polstert nach Bytes,
+  nicht nach Zeichen — mit `✓`/`═` wäre die Box schief. Ohne UTF-8-Locale
+  (`LANG=C`, auf VMs üblich) gibt es jetzt einen ASCII-Fallback, sonst stünde
+  dort Buchstabensalat. `NO_COLOR` wird respektiert.
+
+## Installer: PostgreSQL-Erkennung (PGDG + AppStream) + `--with-packages` — 2026-07-16
+
+Der Installer verdrahtete PGDG-Annahmen hart und lief damit auf einer
+AppStream-VM ins Leere. Beide Ursprünge werden jetzt **erkannt**, nicht geraten.
+Neu ist ausserdem ein optionaler Online-Modus. **+20 Tests** (262 → 282).
+
+- **Behoben**: `install.sh` rief `psql` über den **PATH** auf — PGDG legt seine
+  Binaries aber nach `/usr/pgsql-16/bin/`. Der Preflight warnte nur folgenlos,
+  die DB-Anlage wäre danach hart gescheitert. Der Pfad wird jetzt aus der
+  erkannten Variante abgeleitet.
+- **Behoben**: `postgresql-16.service` war in den systemd-Units fest verdrahtet
+  (PGDG-Name); auf einer AppStream-VM (`postgresql.service`) griff das `After=`
+  stillschweigend ins Leere.
+- **Behoben**: Doku-Drift — die Doku forderte `Requires=postgresql-16.service`,
+  `install.sh` schrieb nur `After=`. `mpp-web` startete also auch ohne
+  laufende Datenbank. Die Units werden jetzt aus `lib.sh` gerendert (getestet).
+- **Behoben**: Fehlendes PostgreSQL führte zu einer folgenlosen Warnung statt
+  zum Abbruch.
+- **Neu**: `--with-packages` (Online-Modus, **kein Default**) richtet PGDG-Repo
+  + EPEL ein, deaktiviert das kollidierende AppStream-Modul, installiert die
+  System-Pakete und initialisiert den Cluster — letzteres nur, wenn noch keiner
+  existiert (`PG_VERSION`-Prüfung), damit ein Re-Run keine Daten anfasst.
+- **Unverändert**: Der Offline-Pfad ohne Flag bleibt der Standard; das Bundle
+  enthält weiterhin keine RPMs.
+
+## Offline-Installer idempotent + Bundle-Pfad-Fix — 2026-07-16
+
+`deploy/install.sh` ist jetzt wiederholt ausführbar: Ein zweiter Lauf
+aktualisiert eine bestehende Installation, statt sie zu beschädigen oder
+stillschweigend nichts zu tun. Die Entscheidungslogik wurde nach
+`deploy/lib.sh` ausgelagert und ist unit-getestet (**+23 Tests**, 239 → 262).
+
+- **Behoben**: `BUNDLE_DIR` zeigte auf `deploy/` statt auf die Bundle-Wurzel —
+  der Installer brach sofort mit „mpp/ fehlt im Bundle" ab. Der Offline-Weg
+  war damit gar nicht lauffähig.
+- **Behoben**: `systemctl enable --now` startet eine laufende Unit nicht neu —
+  nach einem Upgrade lief der **alte Code** weiter, während das Skript Erfolg
+  meldete. Jetzt expliziter `restart`.
+- **Behoben**: Die DB-Anlage hing an der Existenz der **Rolle**. Brach Lauf 1
+  nach `CREATE ROLE` ab, legte kein Folgelauf die Datenbank je an.
+  Rolle und Datenbank werden nun getrennt geprüft.
+- **Behoben**: Jeder Lauf erzeugte einen neuen `SECRET_KEY` und warf alle
+  angemeldeten Nutzer raus. Ein bestehender Key wird jetzt übernommen.
+- **Behoben**: `cp -a` merged nur — im neuen Release gelöschte Module und alte
+  Migrationen blieben auf der VM liegen. Der App-Ordner wird jetzt gespiegelt.
+- **Behoben**: Die Env-Übergabe an `manage.py` war ungequotet; ein DB-Passwort
+  mit Leerzeichen zerfiel in mehrere Argumente (traf auch den Erstlauf).
+- **Neu**: Das TLS-Zertifikat wird gegen den FQDN geprüft statt nur auf
+  Datei-Existenz; ein CA-signiertes Zertifikat wird dabei nie überschrieben.
+- **Neu**: `createsuperuser` wird übersprungen, wenn schon ein Superuser da ist.
+- **Unverändert**: Die System-Schritte (postgres/nginx/systemd/SELinux) sind
+  weiterhin **nicht** auf einer echten AlmaLinux-9-VM verifiziert.
+
+## Neue Referenz-Seite „Architektur-Vergleich" (SSR vs. API-First) — 2026-07-15
+
+Neue Referenz-Seite `referenz/architektur-vergleich.md`, die MPP Django (SSR,
+dieses Projekt) gegen das Schwesterprojekt `lucent-job-MPP` (API-First,
+Flask + React) stellt — das kontrollierte A/B-Experiment desselben Portals.
+
+- **Neu**: `referenz/architektur-vergleich.md` in der Referenz-Navigation.
+  Vergleich über Grundparadigma, SSR-/API-First-Belege, Schichtenarchitektur,
+  Auth/State/Tooling und Kern-Trade-offs.
+- **Alle Kennzahlen frisch am echten Code beider Repos erhoben** (`grep`/`find`),
+  nicht aus der Vorlage fortgeschrieben. Dabei korrigiert gegenüber der
+  Schwester-Doku: Django **30** Templates (nicht 439), **13** `render()`/
+  TemplateView (nicht 24), **2** HTMX-Templates (nicht ~7); MPP **20**
+  Blueprints (nicht 18), **≈878** Tests (771 Backend / 107 Frontend).
+- Channels weiterhin korrekt als **geplant (AP-12)** ausgewiesen, nicht live.
 
 Doku-Drift behoben: Die Referenz behauptete, Benachrichtigungen würden „über
 Django Channels (WebSocket) live ausgeliefert" — Channels ist aber nie gebaut

@@ -70,5 +70,5 @@ Container lohnen sich erst, wenn **mindestens eines** zutrifft:
 ## Folgearbeit
 
 AP-11 in `todo.md` ist entsprechend auf **„Container-Setup (Podman/Quadlets,
-optional)"** umgeschrieben (DoD: `podman-compose up` bzw. Quadlets, 239 Tests grün
+optional)"** umgeschrieben (DoD: `podman-compose up` bzw. Quadlets, 317 Tests grün
 im Container, Offline-Image-Transport).

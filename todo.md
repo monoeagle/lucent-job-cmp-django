@@ -12,7 +12,7 @@
 - [ ] Quadlet-Units **oder** `podman-compose.yml` (web + PostgreSQL + Redis + Celery-Worker), SELinux-`:Z`-Volumes
 - [ ] Entrypoint (migrate + collectstatic; seed optional)
 - [ ] Offline-Image-Transport (`podman save`/`load`, Base-Image gespiegelt) — air-gapped-tauglich
-- **DoD:** `podman-compose up` (bzw. Quadlets via `systemctl`) startet Portal lauffähig · 239 Tests grün im Container · Doku + ADR nachgezogen
+- **DoD:** `podman-compose up` (bzw. Quadlets via `systemctl`) startet Portal lauffähig · 317 Tests grün im Container · Doku + ADR nachgezogen
 
 ## AP-12 · Live-Updates via Django Channels (WebSocket)
 > Kontext: Channels stand von Anfang an im Zielbild (v1-Design: „Channels statt SSE"),
