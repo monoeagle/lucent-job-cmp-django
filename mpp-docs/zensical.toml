@@ -35,6 +35,7 @@ nav = [
     { "Datenmodell"     = "referenz/datenmodell.md" },
     { "URL-Referenz"    = "referenz/url-referenz.md" },
     { "Services"        = "referenz/services.md" },
+    { "Architektur-Vergleich" = "referenz/architektur-vergleich.md" },
   ]},
   { "Entwicklung" = [
     { "Projektstruktur" = "entwicklung/projektstruktur.md" },
