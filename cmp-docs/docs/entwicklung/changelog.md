@@ -1,5 +1,26 @@
 # Changelog
 
+## v1.3.1 — Panel-Breite + frische Oberflächen-Galerie — 2026-07-18
+
+Zwei Nachbesserungen nach dem CMP-Rename. **PATCH**: Bugfix + Doku, keine neuen
+Fähigkeiten.
+
+### Installer-Panel: Breite wächst mit dem Inhalt
+
+Das feste `CMP_UI_WIDTH=46` schnitt lange Portal-/Admin-URLs und Pfade mit „.."
+ab (auf der VM aufgefallen). Jetzt ist 46 nur das Minimum: das Panel ermittelt die
+nötige Breite aus dem längsten Inhalt (inkl. dynamischer name-Spalten) und rendert
+die Box entsprechend — nichts wird mehr gekürzt, die Box bleibt bündig (UTF-8 +
+ASCII-Fallback). **+2 Tests** (328 → 330).
+
+### Oberflächen-Galerie neu aufgenommen
+
+Der Rename hatte die Galerie-Bilder verwaist (Referenzen auf `_cmp.png`, Dateien
+noch `_mpp.png`). Statt nur umzubenennen: 14 frische Screenshots gegen das
+laufende Portal — „CloudMan Portal"-Branding, aktuelle UI (u. a. der Bestell-
+Wizard; 05/05b in der Formular-Ansicht mit befüllter Zusammenfassung).
+Reproduzierbar über das neue `tools/make_screenshots.py` (Selenium, full-page).
+
 ## v1.3.0 — CloudMan Portal (Rename) + Installer-HTTP-Modus — 2026-07-17
 
 Zwei Themen: Das Projekt heißt jetzt **CloudMan Portal (CMP)** — durchgängig von

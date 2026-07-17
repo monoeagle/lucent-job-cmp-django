@@ -1,7 +1,7 @@
 # ADR-0001 — Deployment: native systemd-Installation vs. Container
 
 - **Status:** Akzeptiert · 2026-06-27
-- **Kontext-Version:** v1.3.0
+- **Kontext-Version:** v1.3.1
 - **Betrifft:** AP-11 (Container-Setup)
 
 ## Kontext
@@ -70,5 +70,5 @@ Container lohnen sich erst, wenn **mindestens eines** zutrifft:
 ## Folgearbeit
 
 AP-11 in `todo.md` ist entsprechend auf **„Container-Setup (Podman/Quadlets,
-optional)"** umgeschrieben (DoD: `podman-compose up` bzw. Quadlets, 328 Tests grün
+optional)"** umgeschrieben (DoD: `podman-compose up` bzw. Quadlets, 330 Tests grün
 im Container, Offline-Image-Transport).

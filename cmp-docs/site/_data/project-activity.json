@@ -1,19 +1,37 @@
 {
-  "generatedAt": "2026-07-17T23:53:16",
+  "generatedAt": "2026-07-18T00:25:09",
   "range": {
-    "from": "2025-07-18",
-    "to": "2026-07-17"
+    "from": "2025-07-19",
+    "to": "2026-07-18"
   },
   "byDay": {
-    "2026-07-17": {
-      "commits": 13,
+    "2026-07-18": {
+      "commits": 1,
       "kinds": {
-        "docs": 6,
+        "fix": 1
+      },
+      "list": [
+        {
+          "sha": "824f495",
+          "subject": "fix(installer): Panel-Breite dynamisch — lange Pfade/URLs/Titel nicht mehr gekürzt",
+          "kind": "fix"
+        }
+      ]
+    },
+    "2026-07-17": {
+      "commits": 14,
+      "kinds": {
+        "docs": 7,
         "chore": 1,
         "feat": 3,
         "refactor": 3
       },
       "list": [
+        {
+          "sha": "1c267c2",
+          "subject": "docs: Oberflächen-Galerie mit frischen CloudMan-Portal-Screenshots",
+          "kind": "docs"
+        },
         {
           "sha": "00cbadd",
           "subject": "docs: site/ nach gh-pages-Deploy (v1.3.0)",
@@ -861,9 +879,9 @@
     }
   },
   "stats": {
-    "totalCommits": 141,
-    "activeDays": 16,
-    "longestStreak": 2,
+    "totalCommits": 143,
+    "activeDays": 17,
+    "longestStreak": 3,
     "topKinds": [
       {
         "kind": "feat",
@@ -871,11 +889,11 @@
       },
       {
         "kind": "docs",
-        "count": 37
+        "count": 38
       },
       {
         "kind": "fix",
-        "count": 20
+        "count": 21
       },
       {
         "kind": "chore",
@@ -890,7 +908,7 @@
         "count": 4
       }
     ],
-    "testCount": 325
+    "testCount": 327
   },
   "phases": []
 }
