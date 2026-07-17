@@ -25,6 +25,10 @@ TARGET = "almalinux9-offline"
 # Allow-list: ONLY what the VM needs to install + run the portal.
 INCLUDE_FILES = [".env.example"]
 INCLUDE_DIRS = ["cmp", "requirements", "wheels", "deploy"]
+# Optionale System-RPMs (Redis etc.) fuer den air-gapped Installer. Werden auf
+# einem AlmaLinux-Staging-Host befuellt (Doku §2) und nur mitgenommen, wenn
+# vorhanden — kein WARN, wenn das Bundle ohne sie gebaut wird.
+OPTIONAL_DIRS = ["rpms"]
 INCLUDE_DOCS = ["docs/deployment/vm-installation-offline.md",
                 "docs/deployment/vm-installation.md"]
 
@@ -106,6 +110,10 @@ def main() -> Path:
     for d in INCLUDE_DIRS:
         src = ROOT / d
         shutil.copytree(src, stage / d, ignore=_ignore) if src.is_dir() else missing.append(d + "/")
+    for d in OPTIONAL_DIRS:  # nur mitnehmen, wenn vorhanden — kein WARN
+        src = ROOT / d
+        if src.is_dir():
+            shutil.copytree(src, stage / d, ignore=_ignore)
     docs_dst = stage / "docs"
     docs_dst.mkdir(exist_ok=True)
     for doc in INCLUDE_DOCS:

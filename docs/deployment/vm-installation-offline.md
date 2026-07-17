@@ -133,6 +133,13 @@ bleibt damit gültig.
 > sudo /usr/pgsql-16/bin/postgresql-16-setup initdb
 > sudo systemctl enable --now postgresql-16 redis
 > ```
+> **Air-gapped ohne vorinstalliertes Redis:** Liegt ein `redis*.rpm` (inkl.
+> Abhängigkeiten) im Bundle-Ordner `rpms/`, installiert `install.sh` Redis
+> automatisch **offline** (`dnf install --disablerepo='*' ./rpms/redis*.rpm`),
+> statt abzubrechen. Die RPMs auf dem Staging-Host beschaffen (Teil A §2) — der
+> Release-Build (`tools/build_release.py`) nimmt einen vorhandenen `rpms/`-Ordner
+> automatisch ins Bundle auf.
+>
 > **Hat die VM Netzzugang zu PGDG + EPEL**, nimmt `install.sh` diesen Schritt auf
 > Wunsch selbst ab:
 > ```bash

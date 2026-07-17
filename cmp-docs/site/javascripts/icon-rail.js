@@ -28,7 +28,7 @@
   // Testzahl NUR hier pflegen — stand vorher doppelt und widersprüchlich im
   // Code (Badge 239, Info-Tabelle 230) und driftete unbemerkt, weil R-STALE
   // nur *.html prüft. Frisch erheben: venv/bin/python3 -m pytest -q
-  const TEST_COUNT    = 326;
+  const TEST_COUNT    = 328;
 
   // ── Icon-Map: Titel-Schluesselwort → Emoji ─────────────────────────────
   // Trifft per indexOf in lowercase auf den Top-Level-Title.

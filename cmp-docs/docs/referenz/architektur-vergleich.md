@@ -69,7 +69,7 @@ durch: Server-Session gegen stateless Token.
 | Admin-Tooling | Django Admin als primäres Tool          | eigene Admin-API + React-Views              |
 | Datenbank     | Django ORM + PostgreSQL, Celery + Redis | SQLAlchemy + Alembic                        |
 | Live-Updates  | HTMX / Seitenaufruf; Channels geplant (AP-12) | —                                     |
-| Tests         | **326**                                 | ≈ **878** (771 Backend / 107 Frontend)      |
+| Tests         | **328**                                 | ≈ **878** (771 Backend / 107 Frontend)      |
 
 ## Kern-Trade-offs
 

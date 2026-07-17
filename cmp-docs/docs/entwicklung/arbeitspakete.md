@@ -1,7 +1,7 @@
 # Arbeitspakete & Roadmap
 
 Arbeitspaket-Quelle: `todo.md` (offen) / `todo-erledigt.md` (fertig) im Repo-Root.
-Status: **AP-0 … AP-10 fertig** (Backend B0–B9 + HTMX-Frontend, 326 Tests grün, v1.1.0), **AP-11 Container (Podman/Quadlets) offen** — Abwägung Native-vs-Container siehe [ADR-0001](../decisions/0001-deployment-native-vs-container.md) —, **AP-12 Live-Updates (Django Channels) offen** — Channels stand im v1-Zielbild, ist aber noch nicht gebaut (kein `channels` in den Requirements, `asgi.py` Django-Default); Benachrichtigungen aktualisieren bis dahin per Seiten-Reload.
+Status: **AP-0 … AP-10 fertig** (Backend B0–B9 + HTMX-Frontend, 328 Tests grün, v1.1.0), **AP-11 Container (Podman/Quadlets) offen** — Abwägung Native-vs-Container siehe [ADR-0001](../decisions/0001-deployment-native-vs-container.md) —, **AP-12 Live-Updates (Django Channels) offen** — Channels stand im v1-Zielbild, ist aber noch nicht gebaut (kein `channels` in den Requirements, `asgi.py` Django-Default); Benachrichtigungen aktualisieren bis dahin per Seiten-Reload.
 Zusätzlich (nicht-AP):
 
 - env-basierte Produktions-Settings + VM-Deployment-Anleitungen (online + offline)

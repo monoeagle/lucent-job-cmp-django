@@ -242,14 +242,29 @@ cmp_nginx_present() {
     command -v "${CMP_NGINX:-nginx}" >/dev/null 2>&1
 }
 
-# cmp_ensure_redis
-# Startet Redis, falls installiert und gestoppt. rc!=0 nur, wenn Redis fehlt —
-# eine blosse Warnung reichte nicht: Celery scheitert sonst spaeter am Broker.
+# cmp_ensure_redis [bundle-rpm-dir]
+# Stellt sicher, dass Redis laeuft. Reihenfolge:
+#   1. laeuft schon           -> ok
+#   2. installiert, gestoppt  -> enable --now
+#   3. nicht installiert, aber redis-RPM im Bundle -> air-gapped nachinstallieren
+#   4. sonst                  -> rc!=0 (Celery braucht den Broker)
+# Eine blosse Warnung reichte nicht: Celery scheitert sonst spaeter am Broker.
 cmp_ensure_redis() {
-    local sc="${CMP_SYSTEMCTL:-systemctl}"
+    local rpmdir="${1:-}"
+    local sc="${CMP_SYSTEMCTL:-systemctl}" dnf="${CMP_DNF:-dnf}"
     $sc is-active --quiet redis 2>/dev/null && return 0
-    $sc enable --now redis >/dev/null 2>&1 || return 1
-    $sc is-active --quiet redis 2>/dev/null
+    if $sc enable --now redis >/dev/null 2>&1 && $sc is-active --quiet redis 2>/dev/null; then
+        return 0
+    fi
+    # Redis nicht installiert -> aus dem Bundle-RPM offline nachziehen (air-gapped),
+    # ohne Repos zu kontaktieren. Deps muessen im selben rpms/-Ordner liegen.
+    if [ -n "$rpmdir" ] && ls "$rpmdir"/redis*.rpm >/dev/null 2>&1; then
+        $dnf install -y --disablerepo='*' "$rpmdir"/redis*.rpm >/dev/null 2>&1 || return 1
+        $sc enable --now redis >/dev/null 2>&1
+        $sc is-active --quiet redis 2>/dev/null
+        return
+    fi
+    return 1
 }
 
 # cmp_restart_services <unit>...

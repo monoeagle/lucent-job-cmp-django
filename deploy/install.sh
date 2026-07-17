@@ -158,9 +158,10 @@ preflight() {
   systemctl is-active --quiet "$PG_SERVICE" 2>/dev/null \
     || die "$PG_SERVICE läuft nicht (systemctl enable --now $PG_SERVICE)"
 
-  # Redis starten statt nur bemängeln — Celery scheitert sonst später am Broker.
-  cmp_ensure_redis \
-    || die "Redis ist nicht installiert (dnf install redis) — Celery braucht den Broker"
+  # Redis starten; fehlt es, offline aus dem Bundle (rpms/) nachziehen — Celery
+  # scheitert sonst später am Broker.
+  cmp_ensure_redis "$BUNDLE_DIR/rpms" \
+    || die "Redis fehlt und kein redis-RPM im Bundle (rpms/) — Redis-RPM ins Bundle legen (Doku §2) oder --with-packages (online) nutzen"
   ok "Redis läuft"
 
   # nginx JETZT prüfen, nicht erst im letzten Schritt: sonst läuft der Installer
