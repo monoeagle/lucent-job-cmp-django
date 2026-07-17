@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.0">
+        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.1">
       
       
         <meta name="author" content="LucentTools">
@@ -864,6 +864,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v131-panel-breite-frische-oberflachen-galerie-2026-07-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.3.1 — Panel-Breite + frische Oberflächen-Galerie — 2026-07-18
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.3.1 — Panel-Breite + frische Oberflächen-Galerie — 2026-07-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installer-panel-breite-wachst-mit-dem-inhalt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installer-Panel: Breite wächst mit dem Inhalt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oberflachen-galerie-neu-aufgenommen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oberflächen-Galerie neu aufgenommen
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v130-cloudman-portal-rename-installer-http-modus-2026-07-17" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1437,6 +1476,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v131-panel-breite-frische-oberflachen-galerie-2026-07-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.3.1 — Panel-Breite + frische Oberflächen-Galerie — 2026-07-18
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.3.1 — Panel-Breite + frische Oberflächen-Galerie — 2026-07-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installer-panel-breite-wachst-mit-dem-inhalt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installer-Panel: Breite wächst mit dem Inhalt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oberflachen-galerie-neu-aufgenommen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oberflächen-Galerie neu aufgenommen
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v130-cloudman-portal-rename-installer-http-modus-2026-07-17" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1767,6 +1845,21 @@
                   
 
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h2 id="v131-panel-breite-frische-oberflachen-galerie-2026-07-18">v1.3.1 — Panel-Breite + frische Oberflächen-Galerie — 2026-07-18<a class="headerlink" href="#v131-panel-breite-frische-oberflachen-galerie-2026-07-18" title="Permanent link">&para;</a></h2>
+<p>Zwei Nachbesserungen nach dem CMP-Rename. <strong>PATCH</strong>: Bugfix + Doku, keine neuen
+Fähigkeiten.</p>
+<h3 id="installer-panel-breite-wachst-mit-dem-inhalt">Installer-Panel: Breite wächst mit dem Inhalt<a class="headerlink" href="#installer-panel-breite-wachst-mit-dem-inhalt" title="Permanent link">&para;</a></h3>
+<p>Das feste <code>CMP_UI_WIDTH=46</code> schnitt lange Portal-/Admin-URLs und Pfade mit „.."
+ab (auf der VM aufgefallen). Jetzt ist 46 nur das Minimum: das Panel ermittelt die
+nötige Breite aus dem längsten Inhalt (inkl. dynamischer name-Spalten) und rendert
+die Box entsprechend — nichts wird mehr gekürzt, die Box bleibt bündig (UTF-8 +
+ASCII-Fallback). <strong>+2 Tests</strong> (328 → 330).</p>
+<h3 id="oberflachen-galerie-neu-aufgenommen">Oberflächen-Galerie neu aufgenommen<a class="headerlink" href="#oberflachen-galerie-neu-aufgenommen" title="Permanent link">&para;</a></h3>
+<p>Der Rename hatte die Galerie-Bilder verwaist (Referenzen auf <code>_cmp.png</code>, Dateien
+noch <code>_mpp.png</code>). Statt nur umzubenennen: 14 frische Screenshots gegen das
+laufende Portal — „CloudMan Portal"-Branding, aktuelle UI (u. a. der Bestell-
+Wizard; 05/05b in der Formular-Ansicht mit befüllter Zusammenfassung).
+Reproduzierbar über das neue <code>tools/make_screenshots.py</code> (Selenium, full-page).</p>
 <h2 id="v130-cloudman-portal-rename-installer-http-modus-2026-07-17">v1.3.0 — CloudMan Portal (Rename) + Installer-HTTP-Modus — 2026-07-17<a class="headerlink" href="#v130-cloudman-portal-rename-installer-http-modus-2026-07-17" title="Permanent link">&para;</a></h2>
 <p>Zwei Themen: Das Projekt heißt jetzt <strong>CloudMan Portal (CMP)</strong> — durchgängig von
 Code über Deploy-Schicht bis Doku. Und die erste echte VM-Rückmeldung deckte drei
