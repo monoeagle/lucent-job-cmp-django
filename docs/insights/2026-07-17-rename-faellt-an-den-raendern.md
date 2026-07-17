@@ -45,3 +45,20 @@ noch stehen.
    liegengeblieben). Gefunden nur, weil die Versionierungs-Policy im Memory sie
    namentlich auflistet — das Gate hätte sie durchgewunken. Ein grünes Gate ist
    kein Beweis für vollständige Konsistenz, nur für die geprüften Regeln.
+
+## Nachtrag (v1.3.1): selbst in die Falle getappt
+
+Ironie zum Mitschreiben: Genau die oben beschriebene Ränder-Falle habe ich in
+derselben Session **selbst** ausgelöst. Der `mpp→cmp`-Sweep änderte in
+`oberflaeche.md` die Bild-**Referenzen** (`Screenshot_NN_cmp.png`), ließ aber die
+**Dateien** (`_mpp.png`) unangetastet → 14 tote Bilder in der Doku-Galerie, erst
+vom Nutzer bemerkt. Das Fazit oben („Referenz ohne referenzierte Datei") war also
+keine Theorie. **Verschärfte Lehre:** Wenn ein Text-Sweep auf **Binärdateien** zeigt
+(Bilder, Assets), reicht „kein altes Wort mehr im Text" nicht — es braucht einen
+grep der **Referenz gegen die real existierende Datei**. Der Fix war ohnehin besser
+als reines Umbenennen: die alten Screenshots trugen das Alt-Branding, also 14 neue
+per Selenium — reproduzierbar als `tools/make_screenshots.py`.
+
+Kleiner Zusatzbefund derselben Session: Das Installer-Panel hatte eine **feste**
+Breite (46) und kürzte lange Pfade/URLs mit „..". Fester Rahmen + variabler Inhalt
+= abgeschnittene Wahrheit; die Breite muss dem Inhalt folgen (Minimum statt Fixwert).
