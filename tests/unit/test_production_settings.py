@@ -13,8 +13,8 @@ import pytest
 # Vollstaendige, valide Produktions-Umgebung als Basis fuer die Tests.
 VALID_ENV = {
     "SECRET_KEY": "test-secret-from-env-not-the-default",
-    "ALLOWED_HOSTS": "mpp.example.com,www.mpp.example.com",
-    "DATABASE_URL": "postgres://mpp:s3cret@db.internal:5432/mpp_prod",
+    "ALLOWED_HOSTS": "cmp.example.com,www.cmp.example.com",
+    "DATABASE_URL": "postgres://cmp:s3cret@db.internal:5432/cmp_prod",
 }
 
 # Env-Variablen, die zwischen den Testlaeufen sauber zurueckgesetzt werden.
@@ -57,14 +57,14 @@ def test_missing_secret_key_raises(monkeypatch):
 
 def test_allowed_hosts_parsed_as_list(monkeypatch):
     mod = _load_production(monkeypatch, VALID_ENV)
-    assert mod.ALLOWED_HOSTS == ["mpp.example.com", "www.mpp.example.com"]
+    assert mod.ALLOWED_HOSTS == ["cmp.example.com", "www.cmp.example.com"]
 
 
 def test_database_read_from_url(monkeypatch):
     mod = _load_production(monkeypatch, VALID_ENV)
     db = mod.DATABASES["default"]
     assert db["ENGINE"] == "django.db.backends.postgresql"
-    assert db["NAME"] == "mpp_prod"
+    assert db["NAME"] == "cmp_prod"
     assert db["HOST"] == "db.internal"
     assert str(db["PORT"]) == "5432"
 

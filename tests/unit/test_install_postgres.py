@@ -6,7 +6,7 @@ Service-Name und Binary-Pfad. install.sh hatte `postgresql-16.service` (PGDG)
 hart verdrahtet und rief `psql` ueber den PATH auf — PGDG legt seine Binaries
 aber nach /usr/pgsql-16/bin/. Beides wird hier abgesichert.
 
-Die Erkennung liest unterhalb von MPP_PG_PREFIX, damit sie ohne echte
+Die Erkennung liest unterhalb von CMP_PG_PREFIX, damit sie ohne echte
 Installation gegen ein Fake-Wurzelverzeichnis testbar ist.
 """
 
@@ -43,17 +43,17 @@ def _fake_root(tmp_path, kind):
 
 def _env(tmp_path):
     e = dict(os.environ)
-    e["MPP_PG_PREFIX"] = str(tmp_path)
+    e["CMP_PG_PREFIX"] = str(tmp_path)
     return e
 
 
-# ── mpp_pg_flavor ─────────────────────────────────────────────────────────────
+# ── cmp_pg_flavor ─────────────────────────────────────────────────────────────
 
 
 def test_pg_flavor_erkennt_pgdg(tmp_path):
     root = _fake_root(tmp_path, "pgdg")
 
-    r = run_sh("mpp_pg_flavor", env=_env(root))
+    r = run_sh("cmp_pg_flavor", env=_env(root))
 
     assert r.returncode == 0, r.stderr
     assert r.stdout.strip() == "pgdg"
@@ -62,7 +62,7 @@ def test_pg_flavor_erkennt_pgdg(tmp_path):
 def test_pg_flavor_erkennt_appstream(tmp_path):
     root = _fake_root(tmp_path, "appstream")
 
-    r = run_sh("mpp_pg_flavor", env=_env(root))
+    r = run_sh("cmp_pg_flavor", env=_env(root))
 
     assert r.returncode == 0, r.stderr
     assert r.stdout.strip() == "appstream"
@@ -74,18 +74,18 @@ def test_pg_flavor_bevorzugt_pgdg_wenn_beide_da_sind(tmp_path):
     root = _fake_root(tmp_path, "pgdg")
     _fake_root(tmp_path, "appstream")
 
-    r = run_sh("mpp_pg_flavor", env=_env(root))
+    r = run_sh("cmp_pg_flavor", env=_env(root))
 
     assert r.stdout.strip() == "pgdg"
 
 
 def test_pg_flavor_meldet_fehler_wenn_kein_postgres_da(tmp_path):
-    r = run_sh("mpp_pg_flavor", env=_env(tmp_path))
+    r = run_sh("cmp_pg_flavor", env=_env(tmp_path))
 
     assert r.returncode != 0, "fehlendes PostgreSQL muss als Fehler durchschlagen"
 
 
-# ── mpp_psql_bin ──────────────────────────────────────────────────────────────
+# ── cmp_psql_bin ──────────────────────────────────────────────────────────────
 
 
 def test_psql_bin_pgdg_nutzt_absoluten_pfad(tmp_path):
@@ -93,7 +93,7 @@ def test_psql_bin_pgdg_nutzt_absoluten_pfad(tmp_path):
     ins Leere und die DB-Anlage schlug spaeter hart fehl."""
     root = _fake_root(tmp_path, "pgdg")
 
-    r = run_sh("mpp_psql_bin", env=_env(root))
+    r = run_sh("cmp_psql_bin", env=_env(root))
 
     assert r.returncode == 0, r.stderr
     assert r.stdout.strip() == str(root / "usr/pgsql-16/bin/psql")
@@ -102,18 +102,18 @@ def test_psql_bin_pgdg_nutzt_absoluten_pfad(tmp_path):
 def test_psql_bin_appstream(tmp_path):
     root = _fake_root(tmp_path, "appstream")
 
-    r = run_sh("mpp_psql_bin", env=_env(root))
+    r = run_sh("cmp_psql_bin", env=_env(root))
 
     assert r.stdout.strip() == str(root / "usr/bin/psql")
 
 
-# ── mpp_pg_service ────────────────────────────────────────────────────────────
+# ── cmp_pg_service ────────────────────────────────────────────────────────────
 
 
 def test_pg_service_pgdg(tmp_path):
     root = _fake_root(tmp_path, "pgdg")
 
-    r = run_sh("mpp_pg_service", env=_env(root))
+    r = run_sh("cmp_pg_service", env=_env(root))
 
     assert r.stdout.strip() == "postgresql-16.service"
 
@@ -123,7 +123,7 @@ def test_pg_service_appstream(tmp_path):
     postgresql-16.service liefe hier ins Leere."""
     root = _fake_root(tmp_path, "appstream")
 
-    r = run_sh("mpp_pg_service", env=_env(root))
+    r = run_sh("cmp_pg_service", env=_env(root))
 
     assert r.stdout.strip() == "postgresql.service"
 
@@ -133,9 +133,9 @@ def test_pg_service_appstream(tmp_path):
 
 def test_web_unit_haengt_hart_am_erkannten_pg_service(tmp_path):
     """Regression: die Doku forderte Requires=postgresql-16.service,
-    install.sh schrieb nur After= — mpp-web startete auch ohne Datenbank."""
+    install.sh schrieb nur After= — cmp-web startete auch ohne Datenbank."""
     r = run_sh(
-        'mpp_render_web_unit mpp /opt/mpp/app /opt/mpp/venv /etc/mpp/mpp.env postgresql.service'
+        'cmp_render_web_unit cmp /opt/cmp/app /opt/cmp/venv /etc/cmp/cmp.env postgresql.service'
     )
 
     assert r.returncode == 0, r.stderr
@@ -146,7 +146,7 @@ def test_web_unit_haengt_hart_am_erkannten_pg_service(tmp_path):
 
 def test_web_unit_nutzt_pgdg_service_wenn_uebergeben(tmp_path):
     r = run_sh(
-        'mpp_render_web_unit mpp /opt/mpp/app /opt/mpp/venv /etc/mpp/mpp.env postgresql-16.service'
+        'cmp_render_web_unit cmp /opt/cmp/app /opt/cmp/venv /etc/cmp/cmp.env postgresql-16.service'
     )
 
     assert "Requires=postgresql-16.service" in r.stdout
@@ -154,25 +154,25 @@ def test_web_unit_nutzt_pgdg_service_wenn_uebergeben(tmp_path):
 
 def test_web_unit_startet_gunicorn_auf_8001(tmp_path):
     r = run_sh(
-        'mpp_render_web_unit mpp /opt/mpp/app /opt/mpp/venv /etc/mpp/mpp.env postgresql.service'
+        'cmp_render_web_unit cmp /opt/cmp/app /opt/cmp/venv /etc/cmp/cmp.env postgresql.service'
     )
 
-    assert "/opt/mpp/venv/bin/gunicorn config.wsgi:application" in r.stdout
+    assert "/opt/cmp/venv/bin/gunicorn config.wsgi:application" in r.stdout
     assert "127.0.0.1:8001" in r.stdout
 
 
 def test_celery_unit_haengt_am_erkannten_pg_service(tmp_path):
     r = run_sh(
-        'mpp_render_celery_unit mpp /opt/mpp/app /opt/mpp/venv /etc/mpp/mpp.env postgresql.service'
+        'cmp_render_celery_unit cmp /opt/cmp/app /opt/cmp/venv /etc/cmp/cmp.env postgresql.service'
     )
 
     assert r.returncode == 0, r.stderr
     assert "postgresql.service" in r.stdout
-    assert "/opt/mpp/venv/bin/celery -A config worker" in r.stdout
+    assert "/opt/cmp/venv/bin/celery -A config worker" in r.stdout
     assert "postgresql-16.service" not in r.stdout
 
 
-# ── mpp_install_packages (--with-packages) ───────────────────────────────────
+# ── cmp_install_packages (--with-packages) ───────────────────────────────────
 
 
 @pytest.fixture
@@ -182,12 +182,12 @@ def fake_dnf(tmp_path):
     script.write_text('#!/usr/bin/env bash\necho "$*" >> "$FAKE_DNF_LOG"\nexit 0\n')
     script.chmod(0o755)
     e = dict(os.environ)
-    e.update(MPP_DNF=str(script), FAKE_DNF_LOG=str(log))
+    e.update(CMP_DNF=str(script), FAKE_DNF_LOG=str(log))
     return {"env": e, "log": log}
 
 
 def test_install_packages_richtet_pgdg_repo_ein(fake_dnf):
-    r = run_sh("mpp_install_packages", env=fake_dnf["env"])
+    r = run_sh("cmp_install_packages", env=fake_dnf["env"])
 
     assert r.returncode == 0, r.stderr
     log = fake_dnf["log"].read_text()
@@ -196,7 +196,7 @@ def test_install_packages_richtet_pgdg_repo_ein(fake_dnf):
 
 def test_install_packages_deaktiviert_appstream_modul_vor_der_installation(fake_dnf):
     """Ohne 'module disable postgresql' kollidiert PGDG mit dem AppStream-Modul."""
-    r = run_sh("mpp_install_packages", env=fake_dnf["env"])
+    r = run_sh("cmp_install_packages", env=fake_dnf["env"])
 
     assert r.returncode == 0, r.stderr
     zeilen = fake_dnf["log"].read_text().splitlines()
@@ -212,20 +212,20 @@ def test_install_packages_deaktiviert_appstream_modul_vor_der_installation(fake_
 
 
 def test_install_packages_installiert_alle_systempakete(fake_dnf):
-    r = run_sh("mpp_install_packages", env=fake_dnf["env"])
+    r = run_sh("cmp_install_packages", env=fake_dnf["env"])
 
     log = fake_dnf["log"].read_text()
     for paket in ("python3.12", "postgresql16-server", "redis", "nginx", "openssl"):
         assert paket in log, f"{paket} fehlt in der Installation"
 
 
-# ── mpp_pg_datadir / mpp_pg_initdb ───────────────────────────────────────────
+# ── cmp_pg_datadir / cmp_pg_initdb ───────────────────────────────────────────
 
 
 def test_pg_datadir_pgdg(tmp_path):
     root = _fake_root(tmp_path, "pgdg")
 
-    r = run_sh("mpp_pg_datadir", env=_env(root))
+    r = run_sh("cmp_pg_datadir", env=_env(root))
 
     assert r.stdout.strip() == str(root / "var/lib/pgsql/16/data")
 
@@ -233,7 +233,7 @@ def test_pg_datadir_pgdg(tmp_path):
 def test_pg_datadir_appstream(tmp_path):
     root = _fake_root(tmp_path, "appstream")
 
-    r = run_sh("mpp_pg_datadir", env=_env(root))
+    r = run_sh("cmp_pg_datadir", env=_env(root))
 
     assert r.stdout.strip() == str(root / "var/lib/pgsql/data")
 
@@ -257,7 +257,7 @@ def test_pg_initdb_ruft_pgdg_setup_mit_initdb(tmp_path):
     e = _env(root)
     e["FAKE_SETUP_LOG"] = str(log)
 
-    r = run_sh("mpp_pg_initdb", env=e)
+    r = run_sh("cmp_pg_initdb", env=e)
 
     assert r.returncode == 0, r.stderr
     assert log.read_text().strip() == "initdb"
@@ -271,7 +271,7 @@ def test_pg_initdb_ruft_appstream_setup_mit_doppelstrich_initdb(tmp_path):
     e = _env(root)
     e["FAKE_SETUP_LOG"] = str(log)
 
-    r = run_sh("mpp_pg_initdb", env=e)
+    r = run_sh("cmp_pg_initdb", env=e)
 
     assert r.returncode == 0, r.stderr
     assert log.read_text().strip() == "--initdb"
@@ -289,7 +289,7 @@ def test_pg_initdb_laesst_initialisierten_cluster_in_ruhe(tmp_path):
     e = _env(root)
     e["FAKE_SETUP_LOG"] = str(log)
 
-    r = run_sh("mpp_pg_initdb", env=e)
+    r = run_sh("cmp_pg_initdb", env=e)
 
     assert r.returncode == 0, r.stderr
     assert not log.exists(), "initdb wurde auf bestehendem Cluster aufgerufen"

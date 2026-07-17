@@ -2,7 +2,7 @@
 
 Hintergrund: Der Preflight prüfte nginx gar nicht. Fehlte es, lief der
 Installer komplett durch (venv, DB, Migrationen, systemd) und starb erst ganz
-am Ende an `cat > /etc/nginx/conf.d/mpp.conf`, weil das Verzeichnis nicht
+am Ende an `cat > /etc/nginx/conf.d/cmp.conf`, weil das Verzeichnis nicht
 existiert — spaet und unverstaendlich.
 
 Redis wurde nur bemaengelt ("laeuft nicht"), statt es zu starten.
@@ -24,7 +24,7 @@ def run_sh(snippet, env=None):
     )
 
 
-# ── mpp_nginx_present ─────────────────────────────────────────────────────────
+# ── cmp_nginx_present ─────────────────────────────────────────────────────────
 
 
 def _fake_bin(tmp_path, name):
@@ -37,23 +37,23 @@ def _fake_bin(tmp_path, name):
 def test_nginx_present_erkennt_vorhandenes_nginx(tmp_path):
     bin_ = _fake_bin(tmp_path, "nginx")
     e = dict(os.environ)
-    e["MPP_NGINX"] = str(bin_)
+    e["CMP_NGINX"] = str(bin_)
 
-    r = run_sh("mpp_nginx_present", env=e)
+    r = run_sh("cmp_nginx_present", env=e)
 
     assert r.returncode == 0, r.stderr
 
 
 def test_nginx_present_erkennt_fehlendes_nginx(tmp_path):
     e = dict(os.environ)
-    e["MPP_NGINX"] = str(tmp_path / "gibtsnicht")
+    e["CMP_NGINX"] = str(tmp_path / "gibtsnicht")
 
-    r = run_sh("mpp_nginx_present", env=e)
+    r = run_sh("cmp_nginx_present", env=e)
 
     assert r.returncode != 0, "fehlendes nginx muss erkannt werden"
 
 
-# ── mpp_ensure_redis ──────────────────────────────────────────────────────────
+# ── cmp_ensure_redis ──────────────────────────────────────────────────────────
 
 
 @pytest.fixture
@@ -83,7 +83,7 @@ def fake_systemctl(tmp_path):
     script.chmod(0o755)
     e = dict(os.environ)
     e.update(
-        MPP_SYSTEMCTL=str(script),
+        CMP_SYSTEMCTL=str(script),
         FAKE_SC_LOG=str(log),
         FAKE_SC_STATE=str(state),
     )
@@ -93,7 +93,7 @@ def fake_systemctl(tmp_path):
 def test_ensure_redis_laesst_laufenden_redis_in_ruhe(fake_systemctl):
     (fake_systemctl["state"] / "active").touch()
 
-    r = run_sh("mpp_ensure_redis", env=fake_systemctl["env"])
+    r = run_sh("cmp_ensure_redis", env=fake_systemctl["env"])
 
     assert r.returncode == 0, r.stderr
     log = fake_systemctl["log"].read_text()
@@ -103,7 +103,7 @@ def test_ensure_redis_laesst_laufenden_redis_in_ruhe(fake_systemctl):
 def test_ensure_redis_startet_installierten_aber_gestoppten_redis(fake_systemctl):
     """Regression: frueher wurde nur gewarnt — der Installer lief weiter und
     Celery scheiterte spaeter am fehlenden Broker."""
-    r = run_sh("mpp_ensure_redis", env=fake_systemctl["env"])
+    r = run_sh("cmp_ensure_redis", env=fake_systemctl["env"])
 
     assert r.returncode == 0, r.stderr
     log = fake_systemctl["log"].read_text()
@@ -115,6 +115,6 @@ def test_ensure_redis_meldet_fehler_wenn_redis_nicht_installiert(fake_systemctl)
     e = dict(fake_systemctl["env"])
     e["FAKE_UNIT_INSTALLED"] = "0"
 
-    r = run_sh("mpp_ensure_redis", env=e)
+    r = run_sh("cmp_ensure_redis", env=e)
 
     assert r.returncode != 0, "nicht installierter Redis muss als Fehler durchschlagen"

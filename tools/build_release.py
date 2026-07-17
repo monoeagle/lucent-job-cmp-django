@@ -9,7 +9,7 @@ CLAUDE.md, caches).
 Run from anywhere:
     python3 tools/build_release.py
 Output:
-    release/Lucent-MPP-Django-<version>-almalinux9-offline.zip
+    release/Lucent-CMP-Django-<version>-almalinux9-offline.zip
 """
 from __future__ import annotations
 import re
@@ -19,12 +19,12 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PKG_BASENAME = "Lucent-MPP-Django"
+PKG_BASENAME = "Lucent-CMP-Django"
 TARGET = "almalinux9-offline"
 
 # Allow-list: ONLY what the VM needs to install + run the portal.
 INCLUDE_FILES = [".env.example"]
-INCLUDE_DIRS = ["mpp", "requirements", "wheels", "deploy"]
+INCLUDE_DIRS = ["cmp", "requirements", "wheels", "deploy"]
 INCLUDE_DOCS = ["docs/deployment/vm-installation-offline.md",
                 "docs/deployment/vm-installation.md"]
 

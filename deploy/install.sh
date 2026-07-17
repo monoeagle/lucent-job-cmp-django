@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ══════════════════════════════════════════════════════════════════════════════
-# install.sh — MPP Django OFFLINE-Installer für AlmaLinux/Rocky 9
+# install.sh — CMP Django OFFLINE-Installer für AlmaLinux/Rocky 9
 #
 # Installiert das Marketplace Portal aus diesem Release-Bundle OHNE Internet:
 # venv + Wheels (--no-index), DB-Anlage, env, Migrationen, Static, systemd,
@@ -40,12 +40,12 @@ source "$SCRIPT_DIR/lib.sh"
 # shellcheck source=ui.sh
 source "$SCRIPT_DIR/ui.sh"
 
-BUNDLE_DIR="$(mpp_bundle_dir "$SCRIPT_DIR")"
-APP_ROOT="/opt/mpp"
+BUNDLE_DIR="$(cmp_bundle_dir "$SCRIPT_DIR")"
+APP_ROOT="/opt/cmp"
 APP_DIR="$APP_ROOT/app"
 VENV="$APP_ROOT/venv"
-ENV_FILE="/etc/mpp/mpp.env"
-SVC_USER="mpp"
+ENV_FILE="/etc/cmp/cmp.env"
+SVC_USER="cmp"
 PY="python3.12"
 
 C_OK=$'\e[0;32m'; C_INFO=$'\e[0;36m'; C_WARN=$'\e[1;33m'; C_ERR=$'\e[0;31m'; C_NC=$'\e[0m'
@@ -80,42 +80,42 @@ BUNDLE_VERSION="$([ -f "$BUNDLE_DIR/VERSION" ] && head -n1 "$BUNDLE_DIR/VERSION"
 # Der Prüfbereich muss auch auf einer nackten VM etwas anzeigen können.
 PG_FLAVOR=""; PSQL_BIN=""; PG_SERVICE=""
 erkennung_weich() {
-  PG_FLAVOR="$(mpp_pg_flavor 2>/dev/null || true)"
+  PG_FLAVOR="$(cmp_pg_flavor 2>/dev/null || true)"
   if [ -n "$PG_FLAVOR" ]; then
-    PSQL_BIN="$(mpp_psql_bin)"
-    PG_SERVICE="$(mpp_pg_service)"
-    export MPP_PSQL="sudo -u postgres $PSQL_BIN"
+    PSQL_BIN="$(cmp_psql_bin)"
+    PG_SERVICE="$(cmp_pg_service)"
+    export CMP_PSQL="sudo -u postgres $PSQL_BIN"
   fi
 }
 
 # ── Prüfbereich ───────────────────────────────────────────────────────────────
 status_sammeln() {
   printf 'S|SYSTEM\n'
-  MPP_PY="$PY" mpp_status_python
-  mpp_status_postgres
-  mpp_status_redis
-  mpp_status_nginx
+  CMP_PY="$PY" cmp_status_python
+  cmp_status_postgres
+  cmp_status_redis
+  cmp_status_nginx
   printf 'S|INSTALLATION\n'
-  mpp_status_app "$APP_DIR"
-  mpp_status_database mpp mpp_prod
-  mpp_status_service mpp-web
-  mpp_status_service mpp-celery
-  mpp_status_links "$ENV_FILE"
+  cmp_status_app "$APP_DIR"
+  cmp_status_database cmp cmp_prod
+  cmp_status_service cmp-web
+  cmp_status_service cmp-celery
+  cmp_status_links "$ENV_FILE"
 }
 
 panel_zeigen() {
-  local titel="MPP Django · Installer"
-  [ -n "$BUNDLE_VERSION" ] && titel="MPP Django · Installer v${BUNDLE_VERSION}"
-  status_sammeln | mpp_ui_render "$titel"
+  local titel="CMP Django · Installer"
+  [ -n "$BUNDLE_VERSION" ] && titel="CMP Django · Installer v${BUNDLE_VERSION}"
+  status_sammeln | cmp_ui_render "$titel"
 }
 
 # ── Aktion: nur prüfen ────────────────────────────────────────────────────────
 # Exit 0 nur, wenn alles grün ist — damit taugt `--check` als Health-Check für
 # Monitoring/Cron. Jedes warn/fail/unknown ergibt Exit 1.
 aktion_pruefen() {
-  local daten titel="MPP Django · Prüfbereich"
+  local daten titel="CMP Django · Prüfbereich"
   daten="$(status_sammeln)"
-  printf '%s\n' "$daten" | mpp_ui_render "$titel"
+  printf '%s\n' "$daten" | cmp_ui_render "$titel"
   if printf '%s\n' "$daten" | grep -qE '^R\|(fail|warn|unknown)\|'; then
     return 1
   fi
@@ -125,21 +125,21 @@ aktion_pruefen() {
 # ── Aktion: Dienste neu starten ───────────────────────────────────────────────
 aktion_dienste_neustarten() {
   hdr "Dienste neu starten"
-  mpp_restart_services mpp-web mpp-celery
-  ok "mpp-web + mpp-celery neu gestartet"
+  cmp_restart_services cmp-web cmp-celery
+  ok "cmp-web + cmp-celery neu gestartet"
 }
 
 # ── Preflight (hart, nur vor der Installation) ────────────────────────────────
 preflight() {
   hdr "0/8  Preflight"
-  [ -d "$BUNDLE_DIR/mpp" ]      || die "mpp/ fehlt im Bundle (falsches Verzeichnis?)"
+  [ -d "$BUNDLE_DIR/cmp" ]      || die "cmp/ fehlt im Bundle (falsches Verzeichnis?)"
   [ -d "$BUNDLE_DIR/wheels" ]   || die "wheels/ fehlt im Bundle"
   [ -f "$BUNDLE_DIR/requirements/production.txt" ] || die "requirements/production.txt fehlt"
 
   if [ "$WITH_PACKAGES" -eq 1 ]; then
     info "--with-packages: System-Pakete werden aus dem Netz installiert (PGDG + EPEL)"
-    mpp_install_packages || die "Paket-Installation fehlgeschlagen — Netzzugang/Repos prüfen"
-    mpp_pg_initdb        || die "PostgreSQL-Cluster konnte nicht initialisiert werden"
+    cmp_install_packages || die "Paket-Installation fehlgeschlagen — Netzzugang/Repos prüfen"
+    cmp_pg_initdb        || die "PostgreSQL-Cluster konnte nicht initialisiert werden"
     erkennung_weich
     systemctl enable --now "$PG_SERVICE" redis
     ok "System-Pakete installiert, PostgreSQL initialisiert"
@@ -158,7 +158,7 @@ preflight() {
     || die "$PG_SERVICE läuft nicht (systemctl enable --now $PG_SERVICE)"
 
   # Redis starten statt nur bemängeln — Celery scheitert sonst später am Broker.
-  mpp_ensure_redis \
+  cmp_ensure_redis \
     || die "Redis ist nicht installiert (dnf install redis) — Celery braucht den Broker"
   ok "Redis läuft"
 
@@ -166,7 +166,7 @@ preflight() {
   # komplett durch und stirbt am Ende an /etc/nginx/conf.d/.
   if [ "$SKIP_NGINX" -eq 1 ]; then
     info "--skip-nginx: TLS/Reverse-Proxy wird übersprungen"
-  elif ! mpp_nginx_present; then
+  elif ! cmp_nginx_present; then
     SKIP_NGINX=1
     warn "nginx nicht installiert — Schritt 8 wird übersprungen. Das Portal ist dann NUR auf 127.0.0.1:8001 erreichbar, ohne TLS. Nachinstallieren: dnf install nginx, danach install.sh erneut ausführen."
   fi
@@ -179,16 +179,16 @@ aktion_installieren() {
 
   # ── 1. Eingaben ─────────────────────────────────────────────────────────────
   hdr "1/8  Konfiguration"
-  read -rp "  FQDN der VM (z.B. mpp.internal.example.com): " FQDN
+  read -rp "  FQDN der VM (z.B. cmp.internal.example.com): " FQDN
   [ -n "$FQDN" ] || die "FQDN ist Pflicht"
-  read -rsp "  Passwort für DB-User 'mpp' (leer = zufällig): " DBPW; echo
+  read -rsp "  Passwort für DB-User 'cmp' (leer = zufällig): " DBPW; echo
   [ -n "$DBPW" ] || { DBPW="$("$PY" -c 'import secrets;print(secrets.token_urlsafe(24))')"; info "DB-Passwort generiert"; }
 
   # Bestehenden SECRET_KEY uebernehmen — ein neuer Key wuerde bei jedem Re-Run
   # alle Sessions und Passwort-Reset-Tokens entwerten.
-  export MPP_PY="$PY"
-  SECRET="$(mpp_secret_key "$ENV_FILE")"
-  if [ -n "$(mpp_env_get "$ENV_FILE" SECRET_KEY)" ]; then
+  export CMP_PY="$PY"
+  SECRET="$(cmp_secret_key "$ENV_FILE")"
+  if [ -n "$(cmp_env_get "$ENV_FILE" SECRET_KEY)" ]; then
     info "Bestehender SECRET_KEY aus $ENV_FILE übernommen"
   else
     info "SECRET_KEY generiert"
@@ -198,12 +198,12 @@ aktion_installieren() {
   # ── 2. Service-User + App-Code ──────────────────────────────────────────────
   hdr "2/8  Service-User + App-Code"
   id "$SVC_USER" &>/dev/null || useradd --system --create-home --home-dir "$APP_ROOT" --shell /usr/sbin/nologin "$SVC_USER"
-  mkdir -p "$APP_DIR" /etc/mpp
+  mkdir -p "$APP_DIR" /etc/cmp
   # Spiegeln statt mergen: cp -a allein liesse im neuen Release geloeschte Module
   # und alte Migrationen auf der VM zurueck.
-  mpp_sync_app "$BUNDLE_DIR/mpp"          "$APP_DIR/mpp"
-  mpp_sync_app "$BUNDLE_DIR/requirements" "$APP_DIR/requirements"
-  mpp_sync_app "$BUNDLE_DIR/wheels"       "$APP_ROOT/wheels"
+  cmp_sync_app "$BUNDLE_DIR/cmp"          "$APP_DIR/cmp"
+  cmp_sync_app "$BUNDLE_DIR/requirements" "$APP_DIR/requirements"
+  cmp_sync_app "$BUNDLE_DIR/wheels"       "$APP_ROOT/wheels"
   # Versionsmarker mitinstallieren — sonst kann der Prüfbereich die installierte
   # Version nicht anzeigen (lucent-hub.yml ist nicht im Bundle).
   [ -f "$BUNDLE_DIR/VERSION" ] && cp "$BUNDLE_DIR/VERSION" "$APP_DIR/VERSION"
@@ -222,8 +222,8 @@ aktion_installieren() {
   hdr "4/8  PostgreSQL-Datenbank"
   # Rolle und Datenbank werden getrennt geprueft — sonst legt ein Wiederanlauf
   # nach Teilfehler (Rolle da, DB nicht) die Datenbank nie an.
-  mpp_pg_ensure mpp mpp_prod "$DBPW"
-  ok "Rolle 'mpp' + DB 'mpp_prod' vorhanden (Passwort gesetzt)"
+  cmp_pg_ensure cmp cmp_prod "$DBPW"
+  ok "Rolle 'cmp' + DB 'cmp_prod' vorhanden (Passwort gesetzt)"
 
   # ── 5. Umgebungsdatei ───────────────────────────────────────────────────────
   hdr "5/8  Umgebungsdatei $ENV_FILE"
@@ -232,7 +232,7 @@ DEBUG=False
 SECRET_KEY=${SECRET}
 ALLOWED_HOSTS=${FQDN}
 CSRF_TRUSTED_ORIGINS=https://${FQDN}
-DATABASE_URL=postgres://mpp:${DBPW}@127.0.0.1:5432/mpp_prod
+DATABASE_URL=postgres://cmp:${DBPW}@127.0.0.1:5432/cmp_prod
 CELERY_BROKER_URL=redis://localhost:6379/0
 SECURE_HSTS_SECONDS=0
 ENV
@@ -244,10 +244,10 @@ ENV
   # Env-Zeilen NUL-getrennt einlesen — die fruehere $(...)-Expansion zerlegte
   # Werte mit Leerzeichen (z.B. ein DB-Passwort) in mehrere Argumente.
   local ENV_ARGS
-  mapfile -d '' -t ENV_ARGS < <(mpp_env_args "$ENV_FILE")
+  mapfile -d '' -t ENV_ARGS < <(cmp_env_args "$ENV_FILE")
   run_mgmt() { sudo -u "$SVC_USER" env DJANGO_SETTINGS_MODULE=config.settings.production \
     "${ENV_ARGS[@]}" \
-    "$VENV/bin/python" "$APP_DIR/mpp/manage.py" "$@"; }
+    "$VENV/bin/python" "$APP_DIR/cmp/manage.py" "$@"; }
   run_mgmt check --deploy || warn "check --deploy meldete Hinweise (oben prüfen)"
   run_mgmt migrate
   run_mgmt collectstatic --noinput
@@ -265,14 +265,14 @@ sys.exit(0 if get_user_model().objects.filter(is_superuser=True).exists() else 1
   hdr "7/8  systemd (gunicorn + Celery)"
   # Units haengen per Requires= am ERKANNTEN PostgreSQL-Service — ein hart
   # verdrahtetes postgresql-16.service liefe auf einer AppStream-VM ins Leere.
-  mpp_render_web_unit    "$SVC_USER" "$APP_DIR" "$VENV" "$ENV_FILE" "$PG_SERVICE" \
-    > /etc/systemd/system/mpp-web.service
-  mpp_render_celery_unit "$SVC_USER" "$APP_DIR" "$VENV" "$ENV_FILE" "$PG_SERVICE" \
-    > /etc/systemd/system/mpp-celery.service
+  cmp_render_web_unit    "$SVC_USER" "$APP_DIR" "$VENV" "$ENV_FILE" "$PG_SERVICE" \
+    > /etc/systemd/system/cmp-web.service
+  cmp_render_celery_unit "$SVC_USER" "$APP_DIR" "$VENV" "$ENV_FILE" "$PG_SERVICE" \
+    > /etc/systemd/system/cmp-celery.service
   # restart statt `enable --now`: letzteres ist auf einer bereits laufenden Unit
   # ein No-Op — nach einem Upgrade liefe sonst der alte Code weiter.
-  mpp_restart_services mpp-web mpp-celery
-  ok "mpp-web + mpp-celery aktiv (mit aktuellem Code neu gestartet)"
+  cmp_restart_services cmp-web cmp-celery
+  ok "cmp-web + cmp-celery aktiv (mit aktuellem Code neu gestartet)"
 
   # ── 8. nginx + TLS + firewalld/SELinux ──────────────────────────────────────
   hdr "8/8  nginx + TLS"
@@ -281,26 +281,26 @@ sys.exit(0 if get_user_model().objects.filter(is_superuser=True).exists() else 1
   else
     # Nicht nur auf Datei-Existenz pruefen: bei geaendertem FQDN wuerde nginx
     # sonst weiter das Zertifikat mit dem alten CN ausliefern.
-    if mpp_cert_matches_fqdn /etc/pki/mpp/mpp.crt "$FQDN"; then
+    if cmp_cert_matches_fqdn /etc/pki/cmp/cmp.crt "$FQDN"; then
       info "Vorhandenes Zertifikat passt zu ${FQDN} — unverändert"
-    elif [ -f /etc/pki/mpp/mpp.crt ] && ! mpp_cert_is_self_signed /etc/pki/mpp/mpp.crt; then
+    elif [ -f /etc/pki/cmp/cmp.crt ] && ! cmp_cert_is_self_signed /etc/pki/cmp/cmp.crt; then
       # Fremdes (CA-signiertes) Zertifikat: nie ueberschreiben, nur melden.
-      warn "Zertifikat /etc/pki/mpp/mpp.crt passt nicht zu ${FQDN}, ist aber CA-signiert — bleibt unangetastet. Bitte manuell ein Zertifikat für ${FQDN} einspielen."
+      warn "Zertifikat /etc/pki/cmp/cmp.crt passt nicht zu ${FQDN}, ist aber CA-signiert — bleibt unangetastet. Bitte manuell ein Zertifikat für ${FQDN} einspielen."
     else
-      mkdir -p /etc/pki/mpp
+      mkdir -p /etc/pki/cmp
       openssl req -x509 -nodes -newkey rsa:2048 -days 825 \
-        -keyout /etc/pki/mpp/mpp.key -out /etc/pki/mpp/mpp.crt \
+        -keyout /etc/pki/cmp/cmp.key -out /etc/pki/cmp/cmp.crt \
         -subj "/CN=${FQDN}" -addext "subjectAltName=DNS:${FQDN}" 2>/dev/null
-      chmod 600 /etc/pki/mpp/mpp.key
+      chmod 600 /etc/pki/cmp/cmp.key
       warn "Self-signed Zertifikat für ${FQDN} erzeugt — für Produktion internes CA-Zertifikat einspielen"
     fi
-    cat > /etc/nginx/conf.d/mpp.conf <<NGINX
+    cat > /etc/nginx/conf.d/cmp.conf <<NGINX
 server { listen 80; server_name ${FQDN}; return 301 https://\$host\$request_uri; }
 server {
     listen 443 ssl; http2 on; server_name ${FQDN};
-    ssl_certificate /etc/pki/mpp/mpp.crt; ssl_certificate_key /etc/pki/mpp/mpp.key;
+    ssl_certificate /etc/pki/cmp/cmp.crt; ssl_certificate_key /etc/pki/cmp/cmp.key;
     ssl_protocols TLSv1.2 TLSv1.3; client_max_body_size 25m;
-    location /static/ { alias $APP_DIR/mpp/staticfiles/; access_log off; expires 30d; }
+    location /static/ { alias $APP_DIR/cmp/staticfiles/; access_log off; expires 30d; }
     location / {
         proxy_pass http://127.0.0.1:8001;
         proxy_set_header Host \$host; proxy_set_header X-Real-IP \$remote_addr;
@@ -312,8 +312,8 @@ NGINX
     nginx -t && systemctl enable --now nginx && systemctl reload nginx
     if command -v setsebool >/dev/null; then
       setsebool -P httpd_can_network_connect on || true
-      semanage fcontext -a -t httpd_sys_content_t "$APP_DIR/mpp/staticfiles(/.*)?" 2>/dev/null || true
-      restorecon -Rv "$APP_DIR/mpp/staticfiles" >/dev/null 2>&1 || true
+      semanage fcontext -a -t httpd_sys_content_t "$APP_DIR/cmp/staticfiles(/.*)?" 2>/dev/null || true
+      restorecon -Rv "$APP_DIR/cmp/staticfiles" >/dev/null 2>&1 || true
     fi
     if command -v firewall-cmd >/dev/null; then
       firewall-cmd --permanent --add-service=http --add-service=https >/dev/null 2>&1 || true

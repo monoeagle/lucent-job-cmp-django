@@ -10,7 +10,7 @@ class TestConfig:
         assert settings.DEBUG is False
 
     def test_database_is_test_db(self):
-        assert settings.DATABASES["default"]["NAME"] == "mpp_django_test"
+        assert settings.DATABASES["default"]["NAME"] == "cmp_django_test"
 
     def test_allauth_signup_disabled(self):
         assert settings.ACCOUNT_SIGNUP_ENABLED is False

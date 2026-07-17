@@ -7,7 +7,7 @@ deshalb nur auf einer echten VM als Ganzes pruefbar. Die Entscheidungslogik
 Dienste neu starten, Zertifikat gegen FQDN pruefen) laesst sich dagegen
 isoliert testen — genau dort sitzen die Idempotenz-Fehler.
 
-Externe Kommandos (psql, systemctl) werden ueber MPP_PSQL / MPP_SYSTEMCTL
+Externe Kommandos (psql, systemctl) werden ueber CMP_PSQL / CMP_SYSTEMCTL
 injiziert und durch Fakes ersetzt.
 """
 
@@ -31,24 +31,24 @@ def run_sh(snippet, cwd=None, env=None):
     )
 
 
-# ── mpp_env_get ───────────────────────────────────────────────────────────────
+# ── cmp_env_get ───────────────────────────────────────────────────────────────
 
 
 def test_env_get_liest_wert(tmp_path):
-    envfile = tmp_path / "mpp.env"
+    envfile = tmp_path / "cmp.env"
     envfile.write_text("# kommentar\nSECRET_KEY=abc123\nDEBUG=False\n")
 
-    r = run_sh(f'mpp_env_get "{envfile}" SECRET_KEY')
+    r = run_sh(f'cmp_env_get "{envfile}" SECRET_KEY')
 
     assert r.returncode == 0, r.stderr
     assert r.stdout.strip() == "abc123"
 
 
 def test_env_get_leer_wenn_schluessel_fehlt(tmp_path):
-    envfile = tmp_path / "mpp.env"
+    envfile = tmp_path / "cmp.env"
     envfile.write_text("DEBUG=False\n")
 
-    r = run_sh(f'mpp_env_get "{envfile}" SECRET_KEY')
+    r = run_sh(f'cmp_env_get "{envfile}" SECRET_KEY')
 
     assert r.returncode == 0, r.stderr
     assert r.stdout.strip() == ""
@@ -56,7 +56,7 @@ def test_env_get_leer_wenn_schluessel_fehlt(tmp_path):
 
 def test_env_get_leer_wenn_datei_fehlt(tmp_path):
     """Erstinstallation: es gibt noch keine Env-Datei — kein Fehler, nur leer."""
-    r = run_sh(f'mpp_env_get "{tmp_path}/gibtsnicht.env" SECRET_KEY')
+    r = run_sh(f'cmp_env_get "{tmp_path}/gibtsnicht.env" SECRET_KEY')
 
     assert r.returncode == 0, r.stderr
     assert r.stdout.strip() == ""
@@ -64,67 +64,67 @@ def test_env_get_leer_wenn_datei_fehlt(tmp_path):
 
 def test_env_get_wert_mit_gleichheitszeichen_bleibt_ganz(tmp_path):
     """base64-Secrets koennen '=' als Padding enthalten."""
-    envfile = tmp_path / "mpp.env"
+    envfile = tmp_path / "cmp.env"
     envfile.write_text("SECRET_KEY=ab==cd=\n")
 
-    r = run_sh(f'mpp_env_get "{envfile}" SECRET_KEY')
+    r = run_sh(f'cmp_env_get "{envfile}" SECRET_KEY')
 
     assert r.stdout.strip() == "ab==cd="
 
 
 def test_env_get_matcht_nur_exakten_schluessel(tmp_path):
     """CELERY_BROKER_URL darf nicht als BROKER_URL durchgehen."""
-    envfile = tmp_path / "mpp.env"
+    envfile = tmp_path / "cmp.env"
     envfile.write_text("CELERY_BROKER_URL=redis://localhost:6379/0\n")
 
-    r = run_sh(f'mpp_env_get "{envfile}" BROKER_URL')
+    r = run_sh(f'cmp_env_get "{envfile}" BROKER_URL')
 
     assert r.stdout.strip() == ""
 
 
-# ── mpp_env_args ──────────────────────────────────────────────────────────────
+# ── cmp_env_args ──────────────────────────────────────────────────────────────
 
 
 def test_env_args_haelt_wert_mit_leerzeichen_zusammen(tmp_path):
     """Regression: die alte $(...)-Expansion zerlegte ein DB-Passwort mit
     Leerzeichen in zwei Argumente und schickte Muell an manage.py."""
-    envfile = tmp_path / "mpp.env"
+    envfile = tmp_path / "cmp.env"
     envfile.write_text(
         "SECRET_KEY=abc\n"
-        "DATABASE_URL=postgres://mpp:pass wort@127.0.0.1:5432/mpp_prod\n"
+        "DATABASE_URL=postgres://cmp:pass wort@127.0.0.1:5432/cmp_prod\n"
     )
 
     r = run_sh(
-        f'mapfile -d "" -t a < <(mpp_env_args "{envfile}"); '
+        f'mapfile -d "" -t a < <(cmp_env_args "{envfile}"); '
         'printf "%s\\n" "${#a[@]}" "${a[@]}"'
     )
 
     assert r.returncode == 0, r.stderr
     lines = r.stdout.splitlines()
     assert lines[0] == "2", f"erwartet 2 Argumente, bekam: {lines}"
-    assert lines[2] == "DATABASE_URL=postgres://mpp:pass wort@127.0.0.1:5432/mpp_prod"
+    assert lines[2] == "DATABASE_URL=postgres://cmp:pass wort@127.0.0.1:5432/cmp_prod"
 
 
 def test_env_args_ignoriert_kommentare_und_leerzeilen(tmp_path):
-    envfile = tmp_path / "mpp.env"
+    envfile = tmp_path / "cmp.env"
     envfile.write_text("# kommentar\n\nDEBUG=False\n\n# noch einer\nSECRET_KEY=x\n")
 
     r = run_sh(
-        f'mapfile -d "" -t a < <(mpp_env_args "{envfile}"); echo "${{#a[@]}}"'
+        f'mapfile -d "" -t a < <(cmp_env_args "{envfile}"); echo "${{#a[@]}}"'
     )
 
     assert r.stdout.strip() == "2"
 
 
-# ── mpp_bundle_dir ────────────────────────────────────────────────────────────
+# ── cmp_bundle_dir ────────────────────────────────────────────────────────────
 
 
 def test_bundle_dir_ist_eine_ebene_ueber_deploy(tmp_path):
-    """install.sh liegt im Bundle unter deploy/ — mpp/, wheels/ und
+    """install.sh liegt im Bundle unter deploy/ — cmp/, wheels/ und
     requirements/ liegen eine Ebene hoeher."""
     (tmp_path / "deploy").mkdir()
 
-    r = run_sh(f'mpp_bundle_dir "{tmp_path}/deploy"')
+    r = run_sh(f'cmp_bundle_dir "{tmp_path}/deploy"')
 
     assert r.stdout.strip() == str(tmp_path)
 

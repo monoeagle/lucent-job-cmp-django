@@ -46,7 +46,7 @@ DEMO = (
     "R|ok|PostgreSQL|PGDG 16 · aktiv\n"
     "R|fail|nginx|nicht installiert\n"
     "S|LINKS & PORTS\n"
-    "P|Portal|https://mpp.intern/  :443\n"
+    "P|Portal|https://cmp.intern/  :443\n"
 )
 
 
@@ -55,7 +55,7 @@ DEMO = (
 
 def test_alle_panel_zeilen_haben_dieselbe_breite():
     """Die UTF-8-Byte-Falle: ✓ ist 1 Zeichen, aber 3 Bytes."""
-    r = run_ui('mpp_ui_render "MPP Django · Installer"', stdin=DEMO)
+    r = run_ui('cmp_ui_render "CMP Django · Installer"', stdin=DEMO)
 
     assert r.returncode == 0, r.stderr
     breiten = set(sichtbare_breiten(r.stdout))
@@ -65,7 +65,7 @@ def test_alle_panel_zeilen_haben_dieselbe_breite():
 def test_panel_bleibt_buendig_wenn_umlaute_und_symbole_gemischt_sind():
     daten = "S|PRÜFUNG\nR|ok|Größe|übergroß · ✓ ok\nR|warn|nginx|fehlt\n"
 
-    r = run_ui('mpp_ui_render "Prüfbereich"', stdin=daten)
+    r = run_ui('cmp_ui_render "Prüfbereich"', stdin=daten)
 
     breiten = set(sichtbare_breiten(r.stdout))
     assert len(breiten) == 1, f"Breiten: {sorted(breiten)}\n{r.stdout}"
@@ -74,7 +74,7 @@ def test_panel_bleibt_buendig_wenn_umlaute_und_symbole_gemischt_sind():
 def test_zu_langer_text_sprengt_die_box_nicht():
     daten = "R|ok|einsehrlangername" + "x" * 60 + "|und ein sehr langes Detail" + "y" * 60 + "\n"
 
-    r = run_ui('mpp_ui_render "Titel"', stdin=daten)
+    r = run_ui('cmp_ui_render "Titel"', stdin=daten)
 
     assert r.returncode == 0, r.stderr
     breiten = set(sichtbare_breiten(r.stdout))
@@ -82,7 +82,7 @@ def test_zu_langer_text_sprengt_die_box_nicht():
 
 
 def test_breite_ist_konfigurierbar():
-    r = run_ui('mpp_ui_render "Titel"', stdin=DEMO, env={"MPP_UI_WIDTH": "60"})
+    r = run_ui('cmp_ui_render "Titel"', stdin=DEMO, env={"CMP_UI_WIDTH": "60"})
 
     breiten = set(sichtbare_breiten(r.stdout))
     assert breiten == {60}, f"erwartet 60, bekam {sorted(breiten)}"
@@ -95,7 +95,7 @@ def test_breite_ist_konfigurierbar():
     "state,symbol", [("ok", "✓"), ("warn", "⚠"), ("fail", "✗"), ("unknown", "?")]
 )
 def test_symbol_je_zustand(state, symbol):
-    r = run_ui(f"mpp_ui_symbol {state}")
+    r = run_ui(f"cmp_ui_symbol {state}")
 
     assert r.returncode == 0, r.stderr
     assert r.stdout.strip() == symbol
@@ -103,7 +103,7 @@ def test_symbol_je_zustand(state, symbol):
 
 def test_unbekannter_zustand_wird_nicht_als_ok_gerendert():
     """Eine fehlgeschlagene Pruefung darf nie wie ein Erfolg aussehen."""
-    r = run_ui('mpp_ui_render "Titel"', stdin="R|unknown|PostgreSQL|Prüfung fehlgeschlagen\n")
+    r = run_ui('cmp_ui_render "Titel"', stdin="R|unknown|PostgreSQL|Prüfung fehlgeschlagen\n")
 
     assert "✓" not in r.stdout
     assert "?" in r.stdout
@@ -116,7 +116,7 @@ def test_ascii_fallback_wenn_locale_kein_utf8():
     """Auf einer VM mit LANG=C wuerden ✓ und ═ als Muell erscheinen."""
     e = {"LC_ALL": "C", "LANG": "C"}
 
-    r = run_ui('mpp_ui_render "Titel"', stdin=DEMO, env=e)
+    r = run_ui('cmp_ui_render "Titel"', stdin=DEMO, env=e)
 
     assert r.returncode == 0, r.stderr
     assert "✓" not in r.stdout and "═" not in r.stdout, "UTF-8 trotz LANG=C"
@@ -126,7 +126,7 @@ def test_ascii_fallback_wenn_locale_kein_utf8():
 def test_ascii_fallback_bleibt_buendig():
     e = {"LC_ALL": "C", "LANG": "C"}
 
-    r = run_ui('mpp_ui_render "Titel"', stdin=DEMO, env=e)
+    r = run_ui('cmp_ui_render "Titel"', stdin=DEMO, env=e)
 
     breiten = set(sichtbare_breiten(r.stdout))
     assert len(breiten) == 1, f"ASCII-Box ist schief: {sorted(breiten)}"
@@ -136,23 +136,23 @@ def test_ascii_fallback_bleibt_buendig():
 
 
 def test_sektionsueberschrift_erscheint():
-    r = run_ui('mpp_ui_render "Titel"', stdin=DEMO)
+    r = run_ui('cmp_ui_render "Titel"', stdin=DEMO)
 
     assert "SYSTEM" in r.stdout
     assert "LINKS & PORTS" in r.stdout
 
 
 def test_titel_erscheint():
-    r = run_ui('mpp_ui_render "MPP Django · Installer"', stdin=DEMO)
+    r = run_ui('cmp_ui_render "CMP Django · Installer"', stdin=DEMO)
 
-    assert "MPP Django" in r.stdout
+    assert "CMP Django" in r.stdout
 
 
 def test_plain_zeile_hat_kein_statussymbol():
     """Links/Ports sind keine Pruefungen — sie brauchen kein ✓/✗."""
-    r = run_ui('mpp_ui_render "Titel"', stdin="P|Portal|https://mpp.intern/  :443\n")
+    r = run_ui('cmp_ui_render "Titel"', stdin="P|Portal|https://cmp.intern/  :443\n")
 
-    assert "https://mpp.intern/" in r.stdout
+    assert "https://cmp.intern/" in r.stdout
     for sym in ("✓", "✗", "⚠"):
         assert sym not in r.stdout, f"{sym} bei einer Plain-Zeile gerendert"
 
@@ -161,7 +161,7 @@ def test_plain_zeile_hat_kein_statussymbol():
 
 
 def test_no_color_unterdrueckt_ansi_sequenzen():
-    r = run_ui('mpp_ui_render "Titel"', stdin=DEMO, env={"NO_COLOR": "1"})
+    r = run_ui('cmp_ui_render "Titel"', stdin=DEMO, env={"NO_COLOR": "1"})
 
     assert "\x1b[" not in r.stdout, "ANSI trotz NO_COLOR"
 
@@ -169,7 +169,7 @@ def test_no_color_unterdrueckt_ansi_sequenzen():
 def test_ohne_no_color_wird_koloriert():
     e = dict(os.environ)
     e.pop("NO_COLOR", None)
-    script = f'set -euo pipefail\nsource "{UI}"\nmpp_ui_render "Titel"'
+    script = f'set -euo pipefail\nsource "{UI}"\ncmp_ui_render "Titel"'
     r = subprocess.run(
         ["bash", "-c", script], input=DEMO, capture_output=True, text=True, env=e
     )

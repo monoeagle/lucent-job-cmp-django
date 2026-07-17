@@ -2,7 +2,7 @@
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
-MPP_DIR="$PROJECT_DIR/mpp"
+CMP_DIR="$PROJECT_DIR/cmp"
 VENV_DIR="$PROJECT_DIR/venv"
 
 # ── AppImage-Variablen ────────────────────────────────────────────────────────
@@ -121,12 +121,12 @@ cmd_serve() {
       echo "ERROR: venv not found at $VENV_DIR" >&2
       exit 1
   fi
-  cd "$MPP_DIR"
+  cd "$CMP_DIR"
   exec python manage.py runserver 8000
 }
 
 cmd_appimage() {
-  header "MPP Django — AppImage Build"
+  header "CMP Django — AppImage Build"
 
   if [ ! -d "$VENV_DIR" ]; then
     fail "venv nicht vorhanden — bitte zuerst Setup ausfuehren"
@@ -134,7 +134,7 @@ cmd_appimage() {
 
   _ensure_appimagetool
 
-  local appdir="$APPIMAGE_DIR/LucentMPPDjango.AppDir"
+  local appdir="$APPIMAGE_DIR/LucentCMPDjango.AppDir"
 
   info "AppDir vorbereiten..."
   rm -rf "$appdir"
@@ -143,34 +143,34 @@ cmd_appimage() {
   mkdir -p "$appdir/app"
 
   info "Django-Projekt kopieren..."
-  cp -r "$MPP_DIR" "$appdir/app/mpp"
+  cp -r "$CMP_DIR" "$appdir/app/cmp"
   [ -f "$PROJECT_DIR/requirements.txt" ] && cp "$PROJECT_DIR/requirements.txt" "$appdir/app/"
 
   _bundle_python_standalone "$appdir" "$VENV_DIR"
 
-  cat > "$appdir/usr/share/icons/hicolor/256x256/apps/lucent-mpp-django.svg" << 'SVGEOF'
+  cat > "$appdir/usr/share/icons/hicolor/256x256/apps/lucent-cmp-django.svg" << 'SVGEOF'
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
   <rect width="256" height="256" rx="40" fill="#041208"/>
   <rect x="58" y="58" width="140" height="100" rx="10" fill="none" stroke="#092E20" stroke-width="4"/>
-  <text x="128" y="118" text-anchor="middle" font-family="sans-serif" font-size="28" font-weight="bold" fill="#092E20">MPP</text>
+  <text x="128" y="118" text-anchor="middle" font-family="sans-serif" font-size="28" font-weight="bold" fill="#092E20">CMP</text>
   <rect x="78" y="172" width="100" height="24" rx="6" fill="none" stroke="#1B5E20" stroke-width="3"/>
   <text x="128" y="190" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#2E7D32">Django</text>
 </svg>
 SVGEOF
-  cp "$appdir/usr/share/icons/hicolor/256x256/apps/lucent-mpp-django.svg" \
-     "$appdir/lucent-mpp-django.svg"
+  cp "$appdir/usr/share/icons/hicolor/256x256/apps/lucent-cmp-django.svg" \
+     "$appdir/lucent-cmp-django.svg"
 
-  cat > "$appdir/lucent-mpp-django.desktop" << DEOF
+  cat > "$appdir/lucent-cmp-django.desktop" << DEOF
 [Desktop Entry]
 Type=Application
-Name=Lucent MPP Django
+Name=Lucent CMP Django
 Comment=Marketplace Portal — Django
 Exec=AppRun
-Icon=lucent-mpp-django
+Icon=lucent-cmp-django
 Categories=Development;Office;
 Terminal=false
 DEOF
-  cp "$appdir/lucent-mpp-django.desktop" "$appdir/usr/share/applications/"
+  cp "$appdir/lucent-cmp-django.desktop" "$appdir/usr/share/applications/"
 
   cat > "$appdir/AppRun" << 'RUNEOF'
 #!/usr/bin/env bash
@@ -187,19 +187,19 @@ PY_VER=$(ls -1 "${HERE}/python/lib/" | grep "^python3\." | head -1 | sed "s/pyth
 export PYTHONPATH="${HERE}/python/lib/python${PY_VER}/site-packages"
 export DJANGO_SETTINGS_MODULE=config.settings.development
 
-cd "${HERE}/app/mpp"
+cd "${HERE}/app/cmp"
 
 # Beim ersten Start: Migrationen + Seed
-STAMP="${HOME}/.lucent-mpp-django-seeded"
+STAMP="${HOME}/.lucent-cmp-django-seeded"
 if [ ! -f "$STAMP" ]; then
-  echo "[MPP-Django] Erststart: Datenbank initialisieren..."
-  PGPASSWORD=mpp createdb -h localhost -U mpp mpp_django_dev 2>/dev/null || true
-  echo "[MPP-Django] Migrationen..."
+  echo "[CMP-Django] Erststart: Datenbank initialisieren..."
+  PGPASSWORD=cmp createdb -h localhost -U cmp cmp_django_dev 2>/dev/null || true
+  echo "[CMP-Django] Migrationen..."
   "${HERE}/python/bin/python3" manage.py migrate --noinput 2>&1 | tail -5
-  echo "[MPP-Django] Seed-Daten..."
+  echo "[CMP-Django] Seed-Daten..."
   "${HERE}/python/bin/python3" manage.py seed 2>&1 | tail -5
   touch "$STAMP"
-  echo "[MPP-Django] Datenbank bereit."
+  echo "[CMP-Django] Datenbank bereit."
 fi
 
 # Browser oeffnen (nur ohne --port)
@@ -207,12 +207,12 @@ if [[ "$*" != *"--port="* ]]; then
   (sleep 2 && xdg-open "http://127.0.0.1:${PORT}" 2>/dev/null) &
 fi
 
-echo "[MPP-Django] http://127.0.0.1:${PORT}"
+echo "[CMP-Django] http://127.0.0.1:${PORT}"
 exec "${HERE}/python/bin/python3" manage.py runserver "$PORT"
 RUNEOF
   chmod +x "$appdir/AppRun"
 
-  local output="$PROJECT_DIR/build/Lucent-MPP-Django-${APP_VERSION}-x86_64.AppImage"
+  local output="$PROJECT_DIR/build/Lucent-CMP-Django-${APP_VERSION}-x86_64.AppImage"
   info "AppImage erzeugen..."
   ARCH=x86_64 "$APPIMAGETOOL" "$appdir" "$output" 2>&1 | tail -3
   ok "AppImage erstellt: ${BOLD}${output}${NC}"
@@ -223,7 +223,7 @@ RUNEOF
 }
 
 cmd_docs_appimage() {
-  header "MPP Django — Docs AppImage Build"
+  header "CMP Django — Docs AppImage Build"
 
   if [ ! -d "$DOCS_DIR/site" ]; then
     fail "Dokumentation nicht gebaut — bitte zuerst Docs bauen"
@@ -231,7 +231,7 @@ cmd_docs_appimage() {
 
   _ensure_appimagetool
 
-  local appdir="$APPIMAGE_DIR/LucentMPPDjangoDocs.AppDir"
+  local appdir="$APPIMAGE_DIR/LucentCMPDjangoDocs.AppDir"
 
   info "Docs AppDir vorbereiten..."
   rm -rf "$appdir"
@@ -240,7 +240,7 @@ cmd_docs_appimage() {
 
   cp -r "$DOCS_DIR/site" "$appdir/site"
 
-  cat > "$appdir/usr/share/icons/hicolor/256x256/apps/lucent-mpp-django-docs.svg" << 'SVGEOF'
+  cat > "$appdir/usr/share/icons/hicolor/256x256/apps/lucent-cmp-django-docs.svg" << 'SVGEOF'
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
   <rect width="256" height="256" rx="40" fill="#041208"/>
   <rect x="68" y="58" width="120" height="140" rx="8" fill="none" stroke="#092E20" stroke-width="4"/>
@@ -249,20 +249,20 @@ cmd_docs_appimage() {
   <line x1="92" y1="146" x2="140" y2="146" stroke="#1B5E20" stroke-width="3"/>
 </svg>
 SVGEOF
-  cp "$appdir/usr/share/icons/hicolor/256x256/apps/lucent-mpp-django-docs.svg" \
-     "$appdir/lucent-mpp-django-docs.svg"
+  cp "$appdir/usr/share/icons/hicolor/256x256/apps/lucent-cmp-django-docs.svg" \
+     "$appdir/lucent-cmp-django-docs.svg"
 
-  cat > "$appdir/lucent-mpp-django-docs.desktop" << DEOF
+  cat > "$appdir/lucent-cmp-django-docs.desktop" << DEOF
 [Desktop Entry]
 Type=Application
-Name=Lucent MPP Django Docs
-Comment=Dokumentation fuer MPP Django
+Name=Lucent CMP Django Docs
+Comment=Dokumentation fuer CMP Django
 Exec=AppRun
-Icon=lucent-mpp-django-docs
+Icon=lucent-cmp-django-docs
 Categories=Documentation;
 Terminal=false
 DEOF
-  cp "$appdir/lucent-mpp-django-docs.desktop" "$appdir/usr/share/applications/"
+  cp "$appdir/lucent-cmp-django-docs.desktop" "$appdir/usr/share/applications/"
 
   cat > "$appdir/AppRun" << 'RUNEOF'
 #!/usr/bin/env bash
@@ -330,7 +330,7 @@ wait "$SERVER_PID"
 RUNEOF
   chmod +x "$appdir/AppRun"
 
-  local output="$PROJECT_DIR/build/Lucent-MPP-Django-Docs-${APP_VERSION}-x86_64.AppImage"
+  local output="$PROJECT_DIR/build/Lucent-CMP-Django-Docs-${APP_VERSION}-x86_64.AppImage"
   info "Docs AppImage erzeugen..."
   ARCH=x86_64 "$APPIMAGETOOL" "$appdir" "$output" 2>&1 | tail -3
   ok "Docs AppImage erstellt: ${BOLD}${output}${NC}"
@@ -341,7 +341,7 @@ RUNEOF
 }
 
 cmd_release() {
-  header "MPP Django — Offline-Release (AlmaLinux 9)"
+  header "CMP Django — Offline-Release (AlmaLinux 9)"
   local wheels_dir="$PROJECT_DIR/wheels"
   if [ -z "$(ls "$wheels_dir"/*.whl 2>/dev/null)" ]; then
     info "Wheelhouse leer — Wheels für AlmaLinux 9 / Py3.12 laden..."
