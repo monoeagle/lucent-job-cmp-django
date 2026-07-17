@@ -1,7 +1,7 @@
 # ADR-0001 — Deployment: native systemd-Installation vs. Container
 
 - **Status:** Akzeptiert · 2026-06-27
-- **Kontext-Version:** v1.1.0
+- **Kontext-Version:** v1.3.0
 - **Betrifft:** AP-11 (Container-Setup)
 
 ## Kontext

@@ -1,5 +1,47 @@
 # Changelog
 
+## v1.3.0 — CloudMan Portal (Rename) + Installer-HTTP-Modus — 2026-07-17
+
+Zwei Themen: Das Projekt heißt jetzt **CloudMan Portal (CMP)** — durchgängig von
+Code über Deploy-Schicht bis Doku. Und die erste echte VM-Rückmeldung deckte drei
+Installer-Lücken auf (Portal über HTTP nicht erreichbar, Redis nicht air-gapped,
+Doku nur als Linux-AppImage), die hier behoben sind. MINOR: neue Installer-
+Fähigkeiten, Portal-Code unverändert. Suite **317 → 328**.
+
+### Rename MPP → CloudMan Portal (CMP)
+
+Container `mpp/`→`cmp/`, 31 Bash-Funktionen `cmp_*`, System-Identifier
+(`/opt/cmp`, `cmp.env`, User `cmp`, DB `cmp_prod`, Services `cmp-web`/`cmp-celery`),
+Test-/Dev-DB, templatetags, Celery-App, Branding und Doku-Site (`cmp-docs/`). Der
+Django-Applikationscode (`apps.*`, `config.*`) war importfrei von `mpp` — kein
+Import geändert. History, Repo-URLs und das Schwesterprojekt `mpp-TDD` bleiben
+unangetastet.
+
+### Installer: HTTP/HTTPS automatisch
+
+Fehlt ein zum FQDN passendes Zertifikat, läuft das Portal jetzt über **HTTP**
+statt an erzwungenem TLS zu scheitern — inklusive der nötigen Django-Settings
+(`SECURE_SSL_REDIRECT`/`SESSION_COOKIE_SECURE`/`CSRF_COOKIE_SECURE` aus, CSRF-
+Origin auf `http://`), sonst wäre der Login über reines HTTP unmöglich. Liegt ein
+Zertifikat vor, HTTPS wie bisher. Kein automatisches self-signed mehr; der
+Prüfbereich zeigt das tatsächliche Protokoll/Port.
+
+### Redis air-gapped aus dem Bundle
+
+Fehlt Redis, zieht `install.sh` es offline aus `rpms/redis*.rpm`
+(`dnf --disablerepo='*'`) statt abzubrechen; `--with-packages` installiert es
+weiterhin online mit.
+
+### Doku als HTML-ZIP (Windows-tauglich)
+
+`./run.sh docs-zip` packt die Doku-Site als statisches HTML-ZIP — entpacken,
+`index.html` im Browser öffnen, kein Server, keine Installation. Das Docs-AppImage
+bleibt optionale Linux-Variante; das Doku-Gate prüft jetzt das ZIP (R-DOCS-ZIP).
+
+> **Weiterhin nicht auf echter Hardware verifiziert:** Die Installer-Logik ist per
+> Fakes getestet (328 Tests), aber HTTP-Modus, Redis-RPM-Installation und die
+> PostgreSQL-Erkennung sind noch nicht auf einer echten AlmaLinux-9-VM gelaufen.
+
 ## v1.2.0 — Offline-Installer produktionsreif — 2026-07-16
 
 Der Installer war nicht wiederholbar und traf harte PGDG-Annahmen. Jetzt ist er

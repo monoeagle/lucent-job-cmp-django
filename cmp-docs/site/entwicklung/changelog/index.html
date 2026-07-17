@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.2.0">
+        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.0">
       
       
         <meta name="author" content="LucentTools">
@@ -864,6 +864,67 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v130-cloudman-portal-rename-installer-http-modus-2026-07-17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.3.0 — CloudMan Portal (Rename) + Installer-HTTP-Modus — 2026-07-17
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.3.0 — CloudMan Portal (Rename) + Installer-HTTP-Modus — 2026-07-17">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rename-mpp-cloudman-portal-cmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rename MPP → CloudMan Portal (CMP)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installer-httphttps-automatisch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installer: HTTP/HTTPS automatisch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis-air-gapped-aus-dem-bundle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis air-gapped aus dem Bundle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#doku-als-html-zip-windows-tauglich" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Doku als HTML-ZIP (Windows-tauglich)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v120-offline-installer-produktionsreif-2026-07-16" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1376,6 +1437,67 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v130-cloudman-portal-rename-installer-http-modus-2026-07-17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.3.0 — CloudMan Portal (Rename) + Installer-HTTP-Modus — 2026-07-17
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.3.0 — CloudMan Portal (Rename) + Installer-HTTP-Modus — 2026-07-17">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rename-mpp-cloudman-portal-cmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rename MPP → CloudMan Portal (CMP)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installer-httphttps-automatisch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installer: HTTP/HTTPS automatisch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis-air-gapped-aus-dem-bundle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis air-gapped aus dem Bundle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#doku-als-html-zip-windows-tauglich" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Doku als HTML-ZIP (Windows-tauglich)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v120-offline-installer-produktionsreif-2026-07-16" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1645,6 +1767,39 @@
                   
 
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h2 id="v130-cloudman-portal-rename-installer-http-modus-2026-07-17">v1.3.0 — CloudMan Portal (Rename) + Installer-HTTP-Modus — 2026-07-17<a class="headerlink" href="#v130-cloudman-portal-rename-installer-http-modus-2026-07-17" title="Permanent link">&para;</a></h2>
+<p>Zwei Themen: Das Projekt heißt jetzt <strong>CloudMan Portal (CMP)</strong> — durchgängig von
+Code über Deploy-Schicht bis Doku. Und die erste echte VM-Rückmeldung deckte drei
+Installer-Lücken auf (Portal über HTTP nicht erreichbar, Redis nicht air-gapped,
+Doku nur als Linux-AppImage), die hier behoben sind. MINOR: neue Installer-
+Fähigkeiten, Portal-Code unverändert. Suite <strong>317 → 328</strong>.</p>
+<h3 id="rename-mpp-cloudman-portal-cmp">Rename MPP → CloudMan Portal (CMP)<a class="headerlink" href="#rename-mpp-cloudman-portal-cmp" title="Permanent link">&para;</a></h3>
+<p>Container <code>mpp/</code>→<code>cmp/</code>, 31 Bash-Funktionen <code>cmp_*</code>, System-Identifier
+(<code>/opt/cmp</code>, <code>cmp.env</code>, User <code>cmp</code>, DB <code>cmp_prod</code>, Services <code>cmp-web</code>/<code>cmp-celery</code>),
+Test-/Dev-DB, templatetags, Celery-App, Branding und Doku-Site (<code>cmp-docs/</code>). Der
+Django-Applikationscode (<code>apps.*</code>, <code>config.*</code>) war importfrei von <code>mpp</code> — kein
+Import geändert. History, Repo-URLs und das Schwesterprojekt <code>mpp-TDD</code> bleiben
+unangetastet.</p>
+<h3 id="installer-httphttps-automatisch">Installer: HTTP/HTTPS automatisch<a class="headerlink" href="#installer-httphttps-automatisch" title="Permanent link">&para;</a></h3>
+<p>Fehlt ein zum FQDN passendes Zertifikat, läuft das Portal jetzt über <strong>HTTP</strong>
+statt an erzwungenem TLS zu scheitern — inklusive der nötigen Django-Settings
+(<code>SECURE_SSL_REDIRECT</code>/<code>SESSION_COOKIE_SECURE</code>/<code>CSRF_COOKIE_SECURE</code> aus, CSRF-
+Origin auf <code>http://</code>), sonst wäre der Login über reines HTTP unmöglich. Liegt ein
+Zertifikat vor, HTTPS wie bisher. Kein automatisches self-signed mehr; der
+Prüfbereich zeigt das tatsächliche Protokoll/Port.</p>
+<h3 id="redis-air-gapped-aus-dem-bundle">Redis air-gapped aus dem Bundle<a class="headerlink" href="#redis-air-gapped-aus-dem-bundle" title="Permanent link">&para;</a></h3>
+<p>Fehlt Redis, zieht <code>install.sh</code> es offline aus <code>rpms/redis*.rpm</code>
+(<code>dnf --disablerepo='*'</code>) statt abzubrechen; <code>--with-packages</code> installiert es
+weiterhin online mit.</p>
+<h3 id="doku-als-html-zip-windows-tauglich">Doku als HTML-ZIP (Windows-tauglich)<a class="headerlink" href="#doku-als-html-zip-windows-tauglich" title="Permanent link">&para;</a></h3>
+<p><code>./run.sh docs-zip</code> packt die Doku-Site als statisches HTML-ZIP — entpacken,
+<code>index.html</code> im Browser öffnen, kein Server, keine Installation. Das Docs-AppImage
+bleibt optionale Linux-Variante; das Doku-Gate prüft jetzt das ZIP (R-DOCS-ZIP).</p>
+<blockquote>
+<p><strong>Weiterhin nicht auf echter Hardware verifiziert:</strong> Die Installer-Logik ist per
+Fakes getestet (328 Tests), aber HTTP-Modus, Redis-RPM-Installation und die
+PostgreSQL-Erkennung sind noch nicht auf einer echten AlmaLinux-9-VM gelaufen.</p>
+</blockquote>
 <h2 id="v120-offline-installer-produktionsreif-2026-07-16">v1.2.0 — Offline-Installer produktionsreif — 2026-07-16<a class="headerlink" href="#v120-offline-installer-produktionsreif-2026-07-16" title="Permanent link">&para;</a></h2>
 <p>Der Installer war nicht wiederholbar und traf harte PGDG-Annahmen. Jetzt ist er
 idempotent, erkennt PostgreSQL in beiden Varianten und startet am Terminal mit
