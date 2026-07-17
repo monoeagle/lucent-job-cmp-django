@@ -104,11 +104,11 @@ Examples:
 
 ## Project Context
 
-**Marketplace Portal (MPP-Django)**
+**CloudMan Portal (CMP-Django)**
 - Backend: Python 3.12, Django 6.0, PostgreSQL
 - Testing: pytest-django, factory_boy
 - Fixtures: `conftest.py` with shared fixtures
-- Test DB: `postgresql://mpp:mpp@localhost:5432/mpp_test`
+- Test DB: `postgresql://cmp:cmp@localhost:5432/cmp_django_test`
 - Auth: django-allauth (Session-based)
 
 # Persistent Agent Memory

@@ -63,7 +63,7 @@ You are a Documentation Writer — an expert in technical writing for software p
 
 ## Project Context
 
-**Marketplace Portal (MPP-Django)**
+**CloudMan Portal (CMP-Django)**
 - Backend: Python 3.12, Django 6.0, PostgreSQL, Celery, Channels
 - Frontend: Django Templates + HTMX + DaisyUI (TailwindCSS)
 - Auth: django-allauth (Session-based)

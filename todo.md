@@ -1,4 +1,4 @@
-# MPP Django — Todo (offen)
+# CloudMan Portal (CMP) — Todo (offen)
 
 > AP-Quelle (offen). Fertige APs → `todo-erledigt.md`. Stand 2026-07-03.
 > Architektur: Django + HTMX + allauth (kein API-First/React/DRF). Backend B0–B9 + Frontend fertig.
@@ -23,6 +23,6 @@
 - [ ] `config/asgi.py` → ProtocolTypeRouter (http + websocket), `CHANNEL_LAYERS` (Redis) in Settings
 - [ ] NotificationConsumer + Routing (Auth via Session, Gruppe je User); Push aus den Services (`channel_layer.group_send`)
 - [ ] Frontend: Badge/Liste live aktualisieren (HTMX `ws`-Extension oder kleines Vanilla-JS)
-- [ ] Deployment nachziehen: gunicorn mit Uvicorn-Workern auf `config.asgi` (statt `config.wsgi`), nginx-`mpp.conf` um WebSocket-Upgrade (`Upgrade`/`Connection`-Header) erweitern — `deploy/install.sh` + VM-Doku
+- [ ] Deployment nachziehen: gunicorn mit Uvicorn-Workern auf `config.asgi` (statt `config.wsgi`), nginx-`cmp.conf` um WebSocket-Upgrade (`Upgrade`/`Connection`-Header) erweitern — `deploy/install.sh` + VM-Doku
 - [ ] TDD: Consumer-Tests (`channels.testing`), Service-Push-Tests, Settings-Tests
 - **DoD:** Benachrichtigungs-Badge aktualisiert ohne Reload · Tests grün (inkl. Consumer) · Offline-Install mit erweitertem Wheelhouse verifiziert · Doku (Architektur/Oberfläche/Deployment) sagt wieder die Wahrheit

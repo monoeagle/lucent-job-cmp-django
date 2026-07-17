@@ -1,5 +1,5 @@
 ---
-description: Django Konventionen fuer MPP-Django
+description: Django Konventionen fuer CMP-Django
 globs: "*.py"
 ---
 - Thin Views: Logik in Services, nicht in Views

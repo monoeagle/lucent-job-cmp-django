@@ -3,6 +3,9 @@
 # fix_databases.sh — Flask-DBs wiederherstellen + Django eigene DBs anlegen
 #
 # Dieses Script braucht sudo (für PostgreSQL-Superuser-Operationen).
+#
+# Django (CloudMan Portal / CMP): Rolle cmp, DBs cmp_django_dev / cmp_django_test
+# Flask   (mpp-TDD, Schwesterprojekt): Rolle mpp, DBs mpp_dev / mpp_test — bleibt.
 # ==============================================================================
 set -euo pipefail
 
@@ -21,16 +24,16 @@ echo -e "${CYAN}╚════════════════════�
 echo ""
 
 # ------------------------------------------------------------------
-# 1. Neue Django-DBs erstellen
+# 1. Neue Django-DBs erstellen (Rolle cmp)
 # ------------------------------------------------------------------
 echo -e "  ${CYAN}[1/4] Django-Datenbanken erstellen${NC}"
 
-for DB in mpp_django_dev mpp_django_test; do
-    if PGPASSWORD=mpp psql -h localhost -U mpp -d "$DB" -c "SELECT 1" &>/dev/null; then
+for DB in cmp_django_dev cmp_django_test; do
+    if PGPASSWORD=cmp psql -h localhost -U cmp -d "$DB" -c "SELECT 1" &>/dev/null; then
         ok "$DB existiert bereits"
     else
         info "Erstelle $DB..."
-        sudo -u postgres createdb "$DB" -O mpp
+        sudo -u postgres createdb "$DB" -O cmp
         ok "$DB erstellt"
     fi
 done
@@ -44,27 +47,27 @@ echo -e "  ${CYAN}[2/4] Django-Migrationen auf neuen DBs${NC}"
 cd "$DJANGO_PROJECT_DIR"
 source venv/bin/activate
 
-info "Migriere mpp_django_dev..."
-(cd mpp && python manage.py migrate --no-input 2>&1 | tail -1)
-ok "mpp_django_dev migriert"
+info "Migriere cmp_django_dev..."
+(cd cmp && python manage.py migrate --no-input 2>&1 | tail -1)
+ok "cmp_django_dev migriert"
 
-info "Migriere mpp_django_test..."
-(cd mpp && DJANGO_SETTINGS_MODULE=config.settings.testing python manage.py migrate --no-input 2>&1 | tail -1)
-ok "mpp_django_test migriert"
+info "Migriere cmp_django_test..."
+(cd cmp && DJANGO_SETTINGS_MODULE=config.settings.testing python manage.py migrate --no-input 2>&1 | tail -1)
+ok "cmp_django_test migriert"
 
 info "Seed-Daten laden..."
-(cd mpp && python manage.py seed)
+(cd cmp && python manage.py seed)
 ok "Seed-Daten geladen"
 
 info "Site-Konfiguration..."
-(cd mpp && python manage.py shell -c "
+(cd cmp && python manage.py shell -c "
 from django.contrib.sites.models import Site
-Site.objects.update_or_create(id=1, defaults={'domain': 'localhost:8000', 'name': 'MPP Django Dev'})
+Site.objects.update_or_create(id=1, defaults={'domain': 'localhost:8000', 'name': 'CloudMan Portal Dev'})
 " 2>/dev/null)
 ok "Site aktualisiert"
 
 # ------------------------------------------------------------------
-# 3. Flask-DBs wiederherstellen (Schema zurücksetzen + Alembic)
+# 3. Flask-DBs wiederherstellen (Schema zurücksetzen + Alembic) — Schwesterprojekt
 # ------------------------------------------------------------------
 echo ""
 echo -e "  ${CYAN}[3/4] Flask-Datenbanken wiederherstellen${NC}"
@@ -103,13 +106,15 @@ fi
 echo ""
 echo -e "  ${CYAN}[4/4] Verifizierung${NC}"
 
-for DB in mpp_dev mpp_test mpp_django_dev mpp_django_test; do
+# Flask-DBs (Rolle mpp)
+for DB in mpp_dev mpp_test; do
     COUNT=$(PGPASSWORD=mpp psql -h localhost -U mpp -d "$DB" -t -c "SELECT count(*) FROM pg_tables WHERE schemaname='public';" 2>/dev/null | tr -d ' ')
-    if [ -n "$COUNT" ] && [ "$COUNT" -gt 0 ]; then
-        ok "$DB: $COUNT Tabellen"
-    else
-        fail "$DB: keine Tabellen"
-    fi
+    if [ -n "$COUNT" ] && [ "$COUNT" -gt 0 ]; then ok "$DB: $COUNT Tabellen"; else fail "$DB: keine Tabellen"; fi
+done
+# Django-DBs (Rolle cmp)
+for DB in cmp_django_dev cmp_django_test; do
+    COUNT=$(PGPASSWORD=cmp psql -h localhost -U cmp -d "$DB" -t -c "SELECT count(*) FROM pg_tables WHERE schemaname='public';" 2>/dev/null | tr -d ' ')
+    if [ -n "$COUNT" ] && [ "$COUNT" -gt 0 ]; then ok "$DB: $COUNT Tabellen"; else fail "$DB: keine Tabellen"; fi
 done
 
 # Django Tests
@@ -134,5 +139,5 @@ echo -e "  ${GREEN}Fertig! Alle Datenbanken getrennt und funktionsfähig.${NC}"
 echo ""
 echo "  DB-Zuordnung:"
 echo "    Flask (mpp-TDD):        mpp_dev / mpp_test"
-echo "    Django (mpp-TDD-Django): mpp_django_dev / mpp_django_test"
+echo "    Django (CloudMan/CMP):  cmp_django_dev / cmp_django_test"
 echo ""

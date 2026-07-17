@@ -1,6 +1,6 @@
 ---
 name: marketplace-product-owner
-description: "Use this agent for feature specification, user stories, API contracts, validation rules, and acceptance criteria for the Marketplace Portal.\n\nExamples:\n\n- User: \"Spezifiziere das Subscription-Feature\"\n  Assistant: \"I'll launch the marketplace-product-owner agent to create the specification.\"\n  [Uses Agent tool to launch marketplace-product-owner]\n\n- User: \"Welche API-Endpoints brauchen wir für Approvals?\"\n  Assistant: \"I'll use the product-owner agent to define the API contract.\"\n  [Uses Agent tool to launch marketplace-product-owner]"
+description: "Use this agent for feature specification, user stories, API contracts, validation rules, and acceptance criteria for the CloudMan Portal.\n\nExamples:\n\n- User: \"Spezifiziere das Subscription-Feature\"\n  Assistant: \"I'll launch the marketplace-product-owner agent to create the specification.\"\n  [Uses Agent tool to launch marketplace-product-owner]\n\n- User: \"Welche API-Endpoints brauchen wir für Approvals?\"\n  Assistant: \"I'll use the product-owner agent to define the API contract.\"\n  [Uses Agent tool to launch marketplace-product-owner]"
 model: sonnet
 color: teal
 memory: project
@@ -49,7 +49,7 @@ Response 4xx: { error: string, details: [...] }
 
 ## Project Context
 
-**Marketplace Portal (MPP-Django)** — Self-service portal for IT service provisioning.
+**CloudMan Portal (CMP-Django)** — Self-service portal for IT service provisioning.
 - Backend: Python 3.12, Django 6.0, PostgreSQL, Celery, Channels
 - Frontend: Django Templates + HTMX + DaisyUI (TailwindCSS)
 - Auth: django-allauth (Session-based), stub mode for development

@@ -1,5 +1,5 @@
 ---
-description: Test-Richtlinien fuer MPP-Django
+description: Test-Richtlinien fuer CMP-Django
 globs: "test_*.py"
 ---
 - TDD ist PFLICHT

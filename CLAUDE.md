@@ -1,6 +1,6 @@
-# CLAUDE.md — MPP Django
+# CLAUDE.md — CloudMan Portal (CMP)
 
-**Marketplace Portal (MPP-Django)** — Self-Service IT-Provisioning Portal, Django Rewrite.
+**CloudMan Portal (CMP-Django)** — Self-Service IT-Provisioning Portal, Django Rewrite.
 Bewusstes Gegenstueck zu mpp-TDD: kein API-First, kein React, kein DRF.
 
 - **Port:** 8000

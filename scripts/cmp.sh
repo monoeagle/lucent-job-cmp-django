@@ -1,18 +1,18 @@
 #!/bin/bash
 # ==============================================================================
-# Marketplace Portal (Django) — Dev Launcher
+# CloudMan Portal (Django) — Dev Launcher
 # Unified menu for starting backend, CSS watch, docs, or all.
 # Oriented on the Flask MPP launcher (lucent-app-mpp-TDD/scripts/mpp.sh)
 # ==============================================================================
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-MPP_DIR="$PROJECT_DIR/mpp"
+CMP_DIR="$PROJECT_DIR/cmp"
 VENV_DIR="$PROJECT_DIR/venv"
 
-DB_NAME="mpp_django_dev"
-DB_TEST_NAME="mpp_django_test"
-DB_USER="mpp"
-DB_PASS="mpp"
+DB_NAME="cmp_django_dev"
+DB_TEST_NAME="cmp_django_test"
+DB_USER="cmp"
+DB_PASS="cmp"
 DB_HOST="localhost"
 DB_PORT="5432"
 
@@ -117,7 +117,7 @@ check_node_modules() {
 }
 
 check_docs_venv() {
-    local DOCS_VENV="$PROJECT_DIR/mpp-docs/.venv-docs"
+    local DOCS_VENV="$PROJECT_DIR/cmp-docs/.venv-docs"
     if [ -f "$DOCS_VENV/bin/activate" ]; then
         echo -e "  Docs venv:   ${GREEN}found${NC}"
         return 0
@@ -182,16 +182,16 @@ start_backend() {
     export DJANGO_SETTINGS_MODULE=config.settings.development
 
     echo "  Migrationen pruefen..."
-    (cd "$MPP_DIR" && python manage.py migrate --no-input 2>&1 | tail -3) || {
+    (cd "$CMP_DIR" && python manage.py migrate --no-input 2>&1 | tail -3) || {
         echo -e "${RED}Migration fehlgeschlagen!${NC}"
         wait_for_enter; return
     }
 
     echo "  Demo-Daten laden..."
-    (cd "$MPP_DIR" && python manage.py seed 2>&1)
+    (cd "$CMP_DIR" && python manage.py seed 2>&1)
 
     echo "  Django starten auf Port $SERVER_PORT..."
-    (cd "$MPP_DIR" && python manage.py runserver "$SERVER_PORT") > "$PROJECT_DIR/logs/backend.log" 2>&1 &
+    (cd "$CMP_DIR" && python manage.py runserver "$SERVER_PORT") > "$PROJECT_DIR/logs/backend.log" 2>&1 &
     BACKEND_PID=$!
     sleep 2
 
@@ -276,7 +276,7 @@ start_docs() {
 
     if ! check_docs_venv; then wait_for_enter; return; fi
 
-    cd mpp-docs
+    cd cmp-docs
     source .venv-docs/bin/activate
 
     echo "  Zensical starten auf Port $DOCS_PORT..."
@@ -320,9 +320,9 @@ start_all() {
         if check_venv && check_postgres; then
             source "$VENV_DIR/bin/activate"
             export DJANGO_SETTINGS_MODULE=config.settings.development
-            (cd "$MPP_DIR" && python manage.py migrate --no-input > /dev/null 2>&1)
-            (cd "$MPP_DIR" && python manage.py seed 2>/dev/null)
-            (cd "$MPP_DIR" && python manage.py runserver "$SERVER_PORT") > "$PROJECT_DIR/logs/backend.log" 2>&1 &
+            (cd "$CMP_DIR" && python manage.py migrate --no-input > /dev/null 2>&1)
+            (cd "$CMP_DIR" && python manage.py seed 2>/dev/null)
+            (cd "$CMP_DIR" && python manage.py runserver "$SERVER_PORT") > "$PROJECT_DIR/logs/backend.log" 2>&1 &
             BACKEND_PID=$!; sleep 2
             if kill -0 "$BACKEND_PID" 2>/dev/null; then
                 echo -e "  Backend:   ${GREEN}gestartet${NC} (PID $BACKEND_PID)"
@@ -353,7 +353,7 @@ start_all() {
     if [ -z "$DOCS_PID" ] || ! kill -0 "$DOCS_PID" 2>/dev/null; then
         cd "$PROJECT_DIR"
         if check_docs_venv > /dev/null 2>&1; then
-            cd mpp-docs && source .venv-docs/bin/activate
+            cd cmp-docs && source .venv-docs/bin/activate
             python -m zensical serve --dev-addr 0.0.0.0:$DOCS_PORT > "$PROJECT_DIR/logs/docs.log" 2>&1 &
             DOCS_PID=$!; sleep 2
             deactivate 2>/dev/null
@@ -460,16 +460,16 @@ reset_database() {
     }
 
     echo -e "  ${YELLOW}Migrationen ausfuehren...${NC}"
-    (cd "$MPP_DIR" && python manage.py migrate --no-input 2>&1 | tail -3)
+    (cd "$CMP_DIR" && python manage.py migrate --no-input 2>&1 | tail -3)
 
     echo -e "  ${YELLOW}Site-Konfiguration...${NC}"
-    (cd "$MPP_DIR" && python manage.py shell -c "
+    (cd "$CMP_DIR" && python manage.py shell -c "
 from django.contrib.sites.models import Site
-Site.objects.update_or_create(id=1, defaults={'domain': 'localhost:$SERVER_PORT', 'name': 'MPP Dev'})
+Site.objects.update_or_create(id=1, defaults={'domain': 'localhost:$SERVER_PORT', 'name': 'CMP Dev'})
 " 2>/dev/null)
 
     echo -e "  ${YELLOW}Demo-Daten laden...${NC}"
-    (cd "$MPP_DIR" && python manage.py seed 2>&1)
+    (cd "$CMP_DIR" && python manage.py seed 2>&1)
 
     echo ""
     echo -e "  ${GREEN}Datenbank zurueckgesetzt und neu befuellt!${NC}"
@@ -493,9 +493,9 @@ run_migrations() {
     export DJANGO_SETTINGS_MODULE=config.settings.development
 
     case $mig_choice in
-        1) (cd "$MPP_DIR" && python manage.py migrate) ;;
-        2) (cd "$MPP_DIR" && python manage.py makemigrations) ;;
-        3) (cd "$MPP_DIR" && python manage.py showmigrations) ;;
+        1) (cd "$CMP_DIR" && python manage.py migrate) ;;
+        2) (cd "$CMP_DIR" && python manage.py makemigrations) ;;
+        3) (cd "$CMP_DIR" && python manage.py showmigrations) ;;
         0) return ;;
     esac
     wait_for_enter
@@ -509,7 +509,7 @@ run_shell() {
     export DJANGO_SETTINGS_MODULE=config.settings.development
     echo -e "${DIM}exit() zum Beenden${NC}"
     echo ""
-    (cd "$MPP_DIR" && python manage.py shell)
+    (cd "$CMP_DIR" && python manage.py shell)
     wait_for_enter
 }
 
@@ -535,7 +535,7 @@ mkdir -p "$PROJECT_DIR/logs"
 while true; do
     clear
     echo -e "${BOLD}+======================================================+${NC}"
-    echo -e "${BOLD}|   Marketplace Portal (Django) — Dev Launcher          |${NC}"
+    echo -e "${BOLD}|   CloudMan Portal (Django) — Dev Launcher          |${NC}"
     echo -e "${BOLD}+======================================================+${NC}"
     echo ""
     echo -e "${CYAN}Status:${NC}"

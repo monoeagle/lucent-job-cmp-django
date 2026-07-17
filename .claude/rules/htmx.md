@@ -1,5 +1,5 @@
 ---
-description: HTMX/DaisyUI Template-Konventionen fuer MPP-Django
+description: HTMX/DaisyUI Template-Konventionen fuer CMP-Django
 globs: "*.html"
 ---
 - HTMX fuer partielle Updates statt Full-Page-Reload

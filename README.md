@@ -1,6 +1,6 @@
-# MPP Django
+# CloudMan Portal (CMP)
 
-**Marketplace Portal (MPP Django)** — Self-Service IT-Provisioning-Portal.
+**CloudMan Portal (CMP)** — Self-Service IT-Provisioning-Portal.
 Django-Rewrite, bewusst ohne API-First/React/DRF.
 
 - **Stack:** Django 6.0 · PostgreSQL · Redis · Celery · django-allauth · HTMX + DaisyUI
@@ -13,8 +13,8 @@ Django-Rewrite, bewusst ohne API-First/React/DRF.
 python3.12 -m venv venv
 venv/bin/pip install -r requirements/dev.txt
 # PostgreSQL/Redis lokal bereitstellen (siehe Settings: config/settings/development.py)
-venv/bin/python mpp/manage.py migrate
-venv/bin/python mpp/manage.py runserver   # http://127.0.0.1:8000
+venv/bin/python cmp/manage.py migrate
+venv/bin/python cmp/manage.py runserver   # http://127.0.0.1:8000
 ```
 
 Tests:
@@ -36,4 +36,4 @@ venv/bin/python -m pytest        # config.settings.testing
 ## Dokumentation
 
 Ausführliche Projekt-Doku (Architektur, Datenmodell, Services, Konventionen) in
-`mpp-docs/` (zensical/MkDocs).
+`cmp-docs/` (zensical/MkDocs).

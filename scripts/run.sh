@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# MPP Django Marketplace Portal — Dev Launcher
+# CMP Django CloudMan Portal — Dev Launcher
 # ==============================================================================
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-MPP_DIR="$PROJECT_DIR/mpp"
+CMP_DIR="$PROJECT_DIR/cmp"
 VENV_DIR="$PROJECT_DIR/venv"
 
-DB_NAME="mpp_django_dev"
-DB_TEST_NAME="mpp_django_test"
-DB_USER="mpp"
-DB_PASS="mpp"
+DB_NAME="cmp_django_dev"
+DB_TEST_NAME="cmp_django_test"
+DB_USER="cmp"
+DB_PASS="cmp"
 DB_HOST="localhost"
 DB_PORT="5432"
 
@@ -35,7 +35,7 @@ print_header() {
     clear
     echo -e "${CYAN}${BOLD}"
     echo "  ╔══════════════════════════════════════════════════════╗"
-    echo "  ║     MPP — Marketplace Portal (Django 6.0)           ║"
+    echo "  ║     CMP — CloudMan Portal (Django 6.0)           ║"
     echo "  ║     Dev Launcher                                    ║"
     echo "  ╚══════════════════════════════════════════════════════╝"
     echo -e "${NC}"
@@ -99,14 +99,14 @@ check_status() {
         print_fail "PostgreSQL nicht erreichbar"
     fi
 
-    # mpp_dev DB
+    # cmp_dev DB
     if PGPASSWORD="$DB_PASS" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -c "SELECT 1" &>/dev/null; then
         print_ok "Datenbank '$DB_NAME' verfügbar"
     else
         print_fail "Datenbank '$DB_NAME' nicht verfügbar"
     fi
 
-    # mpp_test DB
+    # cmp_test DB
     if PGPASSWORD="$DB_PASS" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_TEST_NAME" -c "SELECT 1" &>/dev/null; then
         print_ok "Test-Datenbank '$DB_TEST_NAME' verfügbar"
     else
@@ -128,16 +128,16 @@ check_status() {
     fi
 
     # Tailwind CSS output
-    if [ -f "$MPP_DIR/static/css/output.css" ]; then
+    if [ -f "$CMP_DIR/static/css/output.css" ]; then
         local css_size
-        css_size=$(wc -c < "$MPP_DIR/static/css/output.css")
+        css_size=$(wc -c < "$CMP_DIR/static/css/output.css")
         print_ok "Tailwind CSS gebaut ($(( css_size / 1024 )) KB)"
     else
         print_fail "Tailwind CSS nicht gebaut"
     fi
 
     # HTMX
-    if [ -f "$MPP_DIR/static/js/htmx.min.js" ]; then
+    if [ -f "$CMP_DIR/static/js/htmx.min.js" ]; then
         print_ok "HTMX vorhanden"
     else
         print_fail "HTMX fehlt"
@@ -226,20 +226,20 @@ do_setup() {
     # Migrate
     echo -e "\n  ${BOLD}Migrationen${NC}"
     print_info "Führe Migrationen aus..."
-    (cd "$MPP_DIR" && python manage.py migrate --no-input 2>&1 | tail -1)
+    (cd "$CMP_DIR" && python manage.py migrate --no-input 2>&1 | tail -1)
     print_ok "Migrationen angewendet"
 
     # Sites
-    (cd "$MPP_DIR" && python manage.py shell -c "
+    (cd "$CMP_DIR" && python manage.py shell -c "
 from django.contrib.sites.models import Site
-Site.objects.update_or_create(id=1, defaults={'domain': 'localhost:$SERVER_PORT', 'name': 'MPP Dev'})
+Site.objects.update_or_create(id=1, defaults={'domain': 'localhost:$SERVER_PORT', 'name': 'CMP Dev'})
 " 2>/dev/null)
     print_ok "Site-Konfiguration aktualisiert"
 
     # Seed
     echo -e "\n  ${BOLD}Demo-Daten${NC}"
     print_info "Seed-Daten laden..."
-    (cd "$MPP_DIR" && python manage.py seed)
+    (cd "$CMP_DIR" && python manage.py seed)
     print_ok "Demo-Daten geladen"
 
     echo -e "\n  ${GREEN}${BOLD}Setup abgeschlossen!${NC}"
@@ -266,7 +266,7 @@ do_start_server() {
     print_info "Admin: test-admin / test123 → http://localhost:$SERVER_PORT/admin/"
     echo -e "\n  ${DIM}Strg+C zum Beenden${NC}\n"
 
-    (cd "$MPP_DIR" && python manage.py runserver "$SERVER_PORT")
+    (cd "$CMP_DIR" && python manage.py runserver "$SERVER_PORT")
 
     wait_for_enter
 }
@@ -317,9 +317,9 @@ do_migrations() {
     read -rp "  Auswahl: " choice
 
     case "$choice" in
-        a) (cd "$MPP_DIR" && python manage.py migrate) ;;
-        b) (cd "$MPP_DIR" && python manage.py makemigrations) ;;
-        c) (cd "$MPP_DIR" && python manage.py showmigrations) ;;
+        a) (cd "$CMP_DIR" && python manage.py migrate) ;;
+        b) (cd "$CMP_DIR" && python manage.py makemigrations) ;;
+        c) (cd "$CMP_DIR" && python manage.py showmigrations) ;;
         d) return ;;
         *) print_warn "Ungültige Auswahl" ;;
     esac
@@ -336,7 +336,7 @@ do_seed() {
 
     activate_venv || return
 
-    (cd "$MPP_DIR" && python manage.py seed)
+    (cd "$CMP_DIR" && python manage.py seed)
 
     wait_for_enter
 }
@@ -352,7 +352,7 @@ do_shell() {
 
     activate_venv || return
 
-    (cd "$MPP_DIR" && python manage.py shell)
+    (cd "$CMP_DIR" && python manage.py shell)
 
     wait_for_enter
 }
@@ -366,7 +366,7 @@ do_check() {
 
     activate_venv || return
 
-    (cd "$MPP_DIR" && python manage.py check)
+    (cd "$CMP_DIR" && python manage.py check)
 
     wait_for_enter
 }

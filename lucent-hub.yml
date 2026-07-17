@@ -1,8 +1,8 @@
-# MPP Marketplace Portal (Django) — Lucent Hub App Registration
+# CloudMan Portal (Django) — Lucent Hub App Registration
 
-name: mpp-Django
-display_name: "MPP Django"
-description: "Marketplace Portal — Self-Service IT-Provisioning (Django 6.0 + Tailwind)"
+name: cmp-Django
+display_name: "CloudMan Portal"
+description: "CloudMan Portal — Self-Service IT-Provisioning (Django 6.0 + Tailwind)"
 version: "1.2.0"
 
 port: 8000

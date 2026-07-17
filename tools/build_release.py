@@ -56,7 +56,7 @@ def _ignore(_dir, names):
 
 def start_here(ver: str) -> str:
     return f"""\
-MPP Django — Marketplace Portal v{ver}  ·  OFFLINE-Release für AlmaLinux/Rocky 9
+CloudMan Portal v{ver}  ·  OFFLINE-Release für AlmaLinux/Rocky 9
 ================================================================================
 
 Dieses Bundle installiert das Portal OHNE Internet. Es bringt alle Python-Pakete

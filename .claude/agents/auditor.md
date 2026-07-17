@@ -99,7 +99,7 @@ Severity:
 
 ## Project Context
 
-**Marketplace Portal (MPP-Django)** — Self-service portal for IT service provisioning.
+**CloudMan Portal (CMP-Django)** — Self-service portal for IT service provisioning.
 - Backend: Python 3.12, Django 6.0, PostgreSQL, Celery, Channels
 - Frontend: Django Templates + HTMX + DaisyUI (TailwindCSS)
 - Architecture: Django Apps + Clean Architecture with dependency rules

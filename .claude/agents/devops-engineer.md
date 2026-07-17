@@ -1,6 +1,6 @@
 ---
 name: devops-engineer
-description: "Use this agent for CI/CD pipeline design, Docker configuration, deployment strategies, monitoring setup, and infrastructure concerns.\n\nExamples:\n\n- User: \"Create a Docker setup for the MPP Django project\"\n  Assistant: \"I'll launch the devops-engineer agent to design the containerization.\"\n  [Uses Agent tool to launch devops-engineer]\n\n- User: \"Set up a CI pipeline for testing\"\n  Assistant: \"I'll use the devops-engineer agent to design the pipeline.\"\n  [Uses Agent tool to launch devops-engineer]"
+description: "Use this agent for CI/CD pipeline design, Docker configuration, deployment strategies, monitoring setup, and infrastructure concerns.\n\nExamples:\n\n- User: \"Create a Docker setup for the CloudMan Portal project\"\n  Assistant: \"I'll launch the devops-engineer agent to design the containerization.\"\n  [Uses Agent tool to launch devops-engineer]\n\n- User: \"Set up a CI pipeline for testing\"\n  Assistant: \"I'll use the devops-engineer agent to design the pipeline.\"\n  [Uses Agent tool to launch devops-engineer]"
 model: sonnet
 color: green
 memory: project
@@ -68,11 +68,11 @@ You are a DevOps Engineer — an expert in CI/CD, containerization, deployment a
 
 ## Project Context
 
-**Marketplace Portal (MPP-Django)**
+**CloudMan Portal (CMP-Django)**
 - Backend: Python 3.12, Django 6.0, PostgreSQL, Celery, Channels, gunicorn/daphne
 - Frontend: Django Templates + HTMX + DaisyUI (TailwindCSS)
-- Dev launcher: `scripts/mpp.sh`
-- Test DB: `postgresql://mpp:mpp@localhost:5432/mpp_test`
+- Dev launcher: `scripts/cmp.sh`
+- Test DB: `postgresql://cmp:cmp@localhost:5432/cmp_django_test`
 - Stubs: Auth stub, CMDB stub, GitLab mock
 - Management commands: `seed`, custom commands
 

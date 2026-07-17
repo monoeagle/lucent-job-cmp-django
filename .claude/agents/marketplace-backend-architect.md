@@ -25,7 +25,7 @@ You are a Backend Architect — an expert in Django, Clean Architecture, and sca
 ## Reference Architecture
 
 ```
-mpp/                              # Django project root
+cmp/                              # Django project root
 ├── config/                       # Project configuration
 │   ├── settings/
 │   │   ├── base.py              # Shared settings
