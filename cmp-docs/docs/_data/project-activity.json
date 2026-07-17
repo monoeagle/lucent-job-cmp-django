@@ -1,17 +1,22 @@
 {
-  "generatedAt": "2026-07-17T21:55:59",
+  "generatedAt": "2026-07-17T22:24:41",
   "range": {
     "from": "2025-07-18",
     "to": "2026-07-17"
   },
   "byDay": {
     "2026-07-17": {
-      "commits": 3,
+      "commits": 4,
       "kinds": {
-        "refactor": 2,
+        "refactor": 3,
         "feat": 1
       },
       "list": [
+        {
+          "sha": "e396b4c",
+          "subject": "refactor: Branding Teil 2 — Doku-Site mpp-docs→cmp-docs + Deployment-Guides",
+          "kind": "refactor"
+        },
         {
           "sha": "fe594ff",
           "subject": "refactor: Branding MPP→CloudMan Portal (Teil 1: Code, Root, scripts, .claude)",
@@ -809,7 +814,7 @@
     }
   },
   "stats": {
-    "totalCommits": 131,
+    "totalCommits": 132,
     "activeDays": 16,
     "longestStreak": 2,
     "topKinds": [
@@ -835,7 +840,7 @@
       },
       {
         "kind": "refactor",
-        "count": 3
+        "count": 4
       }
     ],
     "testCount": 323

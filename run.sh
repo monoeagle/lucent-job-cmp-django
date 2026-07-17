@@ -354,6 +354,36 @@ cmd_release() {
   "$VENV_DIR/bin/python3" "$PROJECT_DIR/tools/build_release.py"
 }
 
+# Statisches HTML-ZIP der Doku-Site — Windows-taugliches Format (Terminal-Server
+# u.ä.): entpacken, index.html im Browser öffnen. Offline, kein Server, keine
+# Installation. Das Docs-AppImage bleibt als Linux-Option (docs-appimage).
+cmd_docs_zip() {
+  header "CMP Django — Docs HTML-ZIP Build"
+  if [ ! -d "$DOCS_DIR/site" ] || [ ! -f "$DOCS_DIR/site/index.html" ]; then
+    fail "Doku-Site nicht gebaut — zuerst: cmp-docs/run_cmp_docs.sh --build"
+  fi
+  local zipname="Lucent-CMP-Django-Docs-${APP_VERSION}-html.zip"
+  local out="$PROJECT_DIR/build/$zipname"
+  mkdir -p "$PROJECT_DIR/build" "$PROJECT_DIR/release"
+  info "Packe cmp-docs/site/ → $zipname ..."
+  "$VENV_DIR/bin/python3" - "$DOCS_DIR/site" "$out" <<'PYZIP'
+import sys, zipfile, pathlib
+site, out = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+if out.exists():
+    out.unlink()
+n = 0
+with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+    for p in sorted(site.rglob("*")):
+        if p.is_file():
+            z.write(p, p.relative_to(site))
+            n += 1
+print(f"{n} Dateien, {out.stat().st_size / 1_000_000:.1f} MB")
+PYZIP
+  cp -f "$out" "$PROJECT_DIR/release/$zipname"
+  ok "HTML-ZIP: release/$zipname"
+  info "Windows: ZIP entpacken, index.html im Browser öffnen (offline, kein Server)."
+}
+
 # ══════════════════════════════════════════════════════════════════════════════
 # CLI Dispatch
 # ══════════════════════════════════════════════════════════════════════════════
@@ -361,9 +391,10 @@ case "${1:-serve}" in
   serve)           cmd_serve ;;
   appimage-build)  cmd_appimage ;;
   docs-appimage)   cmd_docs_appimage ;;
+  docs-zip)        cmd_docs_zip ;;
   release)         cmd_release ;;
   *)
-    echo "Usage: $0 [serve|appimage-build|docs-appimage|release]"
+    echo "Usage: $0 [serve|appimage-build|docs-appimage|docs-zip|release]"
     exit 1
     ;;
 esac

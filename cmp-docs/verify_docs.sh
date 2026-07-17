@@ -208,14 +208,19 @@ PYEOF
   fi
 fi
 
-# ── R-APPIMAGE ────────────────────────────────────────────────────────────────
-rule "R-APPIMAGE — frisch & byte-gleich in build/ release/ AppImages/"
-AI="Lucent-${DISPLAY_NAME}-Docs-${v_zen}-x86_64.AppImage"
-b="$PROJECT_DIR/build/$AI"; r="$PROJECT_DIR/release/$AI"; g="$PROJECTS_ROOT/AppImages/$AI"
-if [ -f "$b" ] && [ -f "$r" ] && [ -f "$g" ] && cmp -s "$b" "$r" && cmp -s "$r" "$g"; then
-  pass "build == release == AppImages ($AI)"
+# ── R-DOCS-ZIP ────────────────────────────────────────────────────────────────
+# Primäres Doku-Auslieferungsformat ist das statische HTML-ZIP (Windows-tauglich,
+# offline: entpacken, index.html öffnen). Das Docs-AppImage ist nur noch optionale
+# Linux-Variante (./run.sh docs-appimage) und wird hier NICHT mehr erzwungen.
+# Die Version im Dateinamen erzwingt bei jedem Bump ein frisches ZIP.
+rule "R-DOCS-ZIP — HTML-ZIP in release/, aktuelle Version, mit index.html"
+ZIP="$PROJECT_DIR/release/Lucent-${DISPLAY_NAME}-Docs-${v_zen}-html.zip"
+if [ ! -f "$ZIP" ]; then
+  fail "HTML-ZIP fehlt: release/$(basename "$ZIP") — bauen mit ./run.sh docs-zip"
+elif "$PY" -c "import zipfile,sys; sys.exit(0 if 'index.html' in zipfile.ZipFile(sys.argv[1]).namelist() else 1)" "$ZIP" 2>/dev/null; then
+  pass "HTML-ZIP vollständig ($(basename "$ZIP"))"
 else
-  fail "AppImage fehlt oder nicht byte-gleich (build/release/AppImages)"
+  fail "HTML-ZIP ohne index.html an der Wurzel: $(basename "$ZIP")"
 fi
 
 # ── R-AP-SYNC ─────────────────────────────────────────────────────────────────

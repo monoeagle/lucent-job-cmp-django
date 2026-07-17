@@ -37,3 +37,8 @@ venv/bin/python -m pytest        # config.settings.testing
 
 Ausführliche Projekt-Doku (Architektur, Datenmodell, Services, Konventionen) in
 `cmp-docs/` (zensical/MkDocs).
+
+**Offline lesen (Windows / Terminal-Server):** `./run.sh docs-zip` baut ein
+statisches HTML-ZIP (`release/Lucent-CMP-Django-Docs-<version>-html.zip`) —
+entpacken und `index.html` im Browser öffnen, kein Server, keine Installation.
+Für Linux alternativ ein AppImage: `./run.sh docs-appimage`.
