@@ -1,17 +1,33 @@
 {
-  "generatedAt": "2026-07-17T22:42:30",
+  "generatedAt": "2026-07-17T23:02:48",
   "range": {
     "from": "2025-07-18",
     "to": "2026-07-17"
   },
   "byDay": {
     "2026-07-17": {
-      "commits": 6,
+      "commits": 9,
       "kinds": {
+        "docs": 3,
         "feat": 3,
         "refactor": 3
       },
       "list": [
+        {
+          "sha": "abb943c",
+          "subject": "docs: Session-6-Handoff + Insight + KPI-Zeile (CloudMan Portal v1.3.0)",
+          "kind": "docs"
+        },
+        {
+          "sha": "cfdaefa",
+          "subject": "docs: v1.3.0-Nachtrag — von R-VERSION ungeprüfte Versionsstellen nachgezogen",
+          "kind": "docs"
+        },
+        {
+          "sha": "db4516c",
+          "subject": "docs: Serien-Ende v1.3.0 — Version-Bump + Changelog + Kennzahlen nachgezogen",
+          "kind": "docs"
+        },
         {
           "sha": "963ba75",
           "subject": "feat: Redis air-gapped aus Bundle-RPM installieren (Punkt 3)",
@@ -824,7 +840,7 @@
     }
   },
   "stats": {
-    "totalCommits": 134,
+    "totalCommits": 137,
     "activeDays": 16,
     "longestStreak": 2,
     "topKinds": [
@@ -834,7 +850,7 @@
       },
       {
         "kind": "docs",
-        "count": 31
+        "count": 34
       },
       {
         "kind": "fix",
