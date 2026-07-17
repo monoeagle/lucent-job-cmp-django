@@ -25,6 +25,8 @@ _MANAGED_KEYS = (
     "DEBUG",
     "CSRF_TRUSTED_ORIGINS",
     "SECURE_SSL_REDIRECT",
+    "SESSION_COOKIE_SECURE",
+    "CSRF_COOKIE_SECURE",
 )
 
 
@@ -76,6 +78,16 @@ def test_security_hardening_enabled(monkeypatch):
     assert mod.SECURE_HSTS_SECONDS > 0
     assert mod.SECURE_CONTENT_TYPE_NOSNIFF is True
     assert mod.SECURE_PROXY_SSL_HEADER == ("HTTP_X_FORWARDED_PROTO", "https")
+
+
+def test_cookie_secure_can_be_disabled_via_env(monkeypatch):
+    """HTTP-Modus (kein TLS): Secure-Cookies muessen abschaltbar sein — sonst
+    wird das Session-/CSRF-Cookie ueber reines HTTP nie gesendet und Login ist
+    unmoeglich. Default bleibt True (sicher-by-default)."""
+    env = {**VALID_ENV, "SESSION_COOKIE_SECURE": "False", "CSRF_COOKIE_SECURE": "False"}
+    mod = _load_production(monkeypatch, env)
+    assert mod.SESSION_COOKIE_SECURE is False
+    assert mod.CSRF_COOKIE_SECURE is False
 
 
 def test_static_root_configured_for_collectstatic(monkeypatch):

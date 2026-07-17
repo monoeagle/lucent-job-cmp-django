@@ -215,19 +215,28 @@ cmp_status_database() {
     fi
 }
 
-# cmp_status_links <env-datei>
+# cmp_status_links <env-datei> [nginx-conf]
 # Der FQDN kommt aus ALLOWED_HOSTS. Gibt es ihn nicht, wird keine URL erfunden.
+# Protokoll/Port werden aus der TATSAECHLICHEN nginx-Conf abgeleitet (cmp_portal_proto),
+# damit das Panel nicht https/443 anzeigt, waehrend real http/80 laeuft. Ohne Conf
+# (z.B. --skip-nginx) ist das Portal nur lokal auf gunicorn erreichbar.
 cmp_status_links() {
-    local envfile="$1" fqdn
+    local envfile="$1" nginx_conf="${2:-}" fqdn proto_port proto port
     fqdn="$(cmp_env_get "$envfile" ALLOWED_HOSTS)"
     fqdn="${fqdn%%,*}"
 
     printf 'S|LINKS & PORTS\n'
-    if [ -n "$fqdn" ]; then
-        printf 'P|Portal|https://%s/  :443\n' "$fqdn"
-        printf 'P|Admin|https://%s/admin/\n' "$fqdn"
-    else
+    if [ -z "$fqdn" ]; then
         printf 'P|Portal|noch nicht installiert\n'
+    else
+        proto_port="$(cmp_portal_proto "$nginx_conf")"
+        if [ -n "$proto_port" ]; then
+            proto="${proto_port%% *}"; port="${proto_port##* }"
+            printf 'P|Portal|%s://%s/  :%s\n' "$proto" "$fqdn" "$port"
+            printf 'P|Admin|%s://%s/admin/\n' "$proto" "$fqdn"
+        else
+            printf 'P|Portal|nur lokal (127.0.0.1:8001, kein nginx)\n'
+        fi
     fi
     printf 'P|gunicorn|127.0.0.1:8001  :8001\n'
     printf 'P|PostgreSQL|127.0.0.1:5432  :5432\n'

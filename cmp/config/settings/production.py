@@ -21,6 +21,11 @@ env = environ.Env(
     SECURE_HSTS_SECONDS=(int, 31536000),  # 1 Jahr
     ALLOWED_HOSTS=(list, []),
     CSRF_TRUSTED_ORIGINS=(list, []),
+    # Secure-Cookies sind sicher-by-default an; der Installer schaltet sie nur
+    # im HTTP-Modus (kein TLS verfuegbar) ab — sonst kaeme ueber reines HTTP
+    # weder Session- noch CSRF-Cookie an und Login waere unmoeglich.
+    SESSION_COOKIE_SECURE=(bool, True),
+    CSRF_COOKIE_SECURE=(bool, True),
 )
 
 # Optionale .env-Datei (neben manage.py). In Produktion liefert systemd die
@@ -51,8 +56,8 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env("SECURE_SSL_REDIRECT")
 
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = env("SESSION_COOKIE_SECURE")
+CSRF_COOKIE_SECURE = env("CSRF_COOKIE_SECURE")
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
 
 SECURE_HSTS_SECONDS = env("SECURE_HSTS_SECONDS")

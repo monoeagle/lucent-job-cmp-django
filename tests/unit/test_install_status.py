@@ -174,17 +174,35 @@ def test_status_app_nicht_installiert(tmp_path):
 # ── Links & Ports ─────────────────────────────────────────────────────────────
 
 
-def test_links_nutzen_fqdn_aus_der_env_datei(tmp_path):
+def test_links_https_wenn_conf_tls_terminiert(tmp_path):
+    """HTTPS-Modus: die nginx-Conf hat 443 -> Panel zeigt https/443."""
     envfile = tmp_path / "cmp.env"
     envfile.write_text("ALLOWED_HOSTS=cmp.intern\n")
+    conf = tmp_path / "cmp.conf"
+    conf.write_text("server { listen 443 ssl; server_name cmp.intern; }\n")
 
-    r = run_sh(f'cmp_status_links "{envfile}"')
+    r = run_sh(f'cmp_status_links "{envfile}" "{conf}"')
 
     assert r.returncode == 0, r.stderr
-    assert "https://cmp.intern/" in r.stdout
+    assert "https://cmp.intern/  :443" in r.stdout
     assert "8001" in r.stdout, "gunicorn-Port fehlt"
     assert "5432" in r.stdout, "PostgreSQL-Port fehlt"
     assert "6379" in r.stdout, "Redis-Port fehlt"
+
+
+def test_links_http_wenn_kein_zertifikat(tmp_path):
+    """HTTP-Modus (kein Zert): das Panel zeigt http/80 statt eine erfundene
+    https-URL — sonst klickt der Admin auf ein 443, das es nicht gibt."""
+    envfile = tmp_path / "cmp.env"
+    envfile.write_text("ALLOWED_HOSTS=cmp.intern\n")
+    conf = tmp_path / "cmp.conf"
+    conf.write_text("server { listen 80; server_name cmp.intern; }\n")
+
+    r = run_sh(f'cmp_status_links "{envfile}" "{conf}"')
+
+    assert r.returncode == 0, r.stderr
+    assert "http://cmp.intern/  :80" in r.stdout
+    assert "https://" not in r.stdout
 
 
 def test_links_erfinden_keine_url_wenn_nichts_installiert_ist(tmp_path):

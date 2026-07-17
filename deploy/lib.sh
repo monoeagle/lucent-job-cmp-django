@@ -284,3 +284,83 @@ cmp_cert_is_self_signed() {
     subject="$(openssl x509 -in "$crt" -noout -subject 2>/dev/null | sed 's/^subject=//')" || return 1
     [ -n "$issuer" ] && [ "$issuer" = "$subject" ]
 }
+
+# ── HTTP/HTTPS-Modus ──────────────────────────────────────────────────────────
+# Der Installer waehlt den Modus automatisch: liegt ein zum FQDN passendes
+# Zertifikat vor, laeuft HTTPS; sonst HTTP (kein TLS). Beide Modi muessen sich
+# konsistent durch env-Datei, nginx-Conf und Panel ziehen.
+
+# cmp_env_security_lines <fqdn> <mode>
+# Liefert die modus-abhaengigen Zeilen fuer /etc/cmp/cmp.env. Im http-Modus
+# MUESSEN Secure-Cookies UND der SSL-Redirect aus — sonst wird ueber reines HTTP
+# weder Session- noch CSRF-Cookie gesendet und der Login schlaegt fehl. HSTS
+# bleibt 0 (self-signed/intern); bei einer echten CA manuell erhoehen.
+cmp_env_security_lines() {
+    local fqdn="$1" mode="$2"
+    if [ "$mode" = "http" ]; then
+        printf 'CSRF_TRUSTED_ORIGINS=http://%s\n' "$fqdn"
+        printf 'SECURE_SSL_REDIRECT=False\n'
+        printf 'SESSION_COOKIE_SECURE=False\n'
+        printf 'CSRF_COOKIE_SECURE=False\n'
+        printf 'SECURE_HSTS_SECONDS=0\n'
+    else
+        printf 'CSRF_TRUSTED_ORIGINS=https://%s\n' "$fqdn"
+        printf 'SECURE_HSTS_SECONDS=0\n'
+    fi
+}
+
+# cmp_render_nginx <fqdn> <app_dir> <mode>
+# Rendert die nginx-Server-Conf fuer /etc/nginx/conf.d/cmp.conf.
+#   http : nur Port 80, proxyt direkt auf gunicorn (kein TLS, KEIN Redirect —
+#          ein Redirect auf 443 liefe ohne Zertifikat ins Leere).
+#   https: Port 80 leitet dauerhaft auf 443 um, 443 terminiert TLS.
+# nginx-eigene Variablen ($host, $scheme, …) werden mit \$ vor der Bash-
+# Expansion geschuetzt; ${fqdn}/${app_dir} sind Bash-Variablen.
+cmp_render_nginx() {
+    local fqdn="$1" app_dir="$2" mode="$3"
+    if [ "$mode" = "http" ]; then
+        cat <<NGINX
+server {
+    listen 80; server_name ${fqdn}; client_max_body_size 25m;
+    location /static/ { alias ${app_dir}/cmp/staticfiles/; access_log off; expires 30d; }
+    location / {
+        proxy_pass http://127.0.0.1:8001;
+        proxy_set_header Host \$host; proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme; proxy_redirect off;
+    }
+}
+NGINX
+    else
+        cat <<NGINX
+server { listen 80; server_name ${fqdn}; return 301 https://\$host\$request_uri; }
+server {
+    listen 443 ssl; http2 on; server_name ${fqdn};
+    ssl_certificate /etc/pki/cmp/cmp.crt; ssl_certificate_key /etc/pki/cmp/cmp.key;
+    ssl_protocols TLSv1.2 TLSv1.3; client_max_body_size 25m;
+    location /static/ { alias ${app_dir}/cmp/staticfiles/; access_log off; expires 30d; }
+    location / {
+        proxy_pass http://127.0.0.1:8001;
+        proxy_set_header Host \$host; proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme; proxy_redirect off;
+    }
+}
+NGINX
+    fi
+}
+
+# cmp_portal_proto <nginx-conf>
+# Leitet aus der TATSAECHLICH geschriebenen Conf ab, unter welchem Protokoll das
+# Portal erreichbar ist — fuers Panel, damit es nicht https/443 anzeigt, waehrend
+# real http/80 laeuft. Gibt "<proto> <port>" aus; ohne Conf keine Ausgabe
+# (nichts erfinden).
+cmp_portal_proto() {
+    local conf="$1"
+    [ -f "$conf" ] || return 0
+    if grep -q 'listen 443' "$conf"; then
+        echo "https 443"
+    elif grep -q 'listen 80' "$conf"; then
+        echo "http 80"
+    fi
+}

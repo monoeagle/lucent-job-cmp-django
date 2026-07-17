@@ -45,6 +45,7 @@ APP_ROOT="/opt/cmp"
 APP_DIR="$APP_ROOT/app"
 VENV="$APP_ROOT/venv"
 ENV_FILE="/etc/cmp/cmp.env"
+NGINX_CONF="/etc/nginx/conf.d/cmp.conf"
 SVC_USER="cmp"
 PY="python3.12"
 
@@ -100,7 +101,7 @@ status_sammeln() {
   cmp_status_database cmp cmp_prod
   cmp_status_service cmp-web
   cmp_status_service cmp-celery
-  cmp_status_links "$ENV_FILE"
+  cmp_status_links "$ENV_FILE" "$NGINX_CONF"
 }
 
 panel_zeigen() {
@@ -195,6 +196,17 @@ aktion_installieren() {
   fi
   ok "Konfiguration erfasst"
 
+  # HTTP/HTTPS automatisch waehlen: liegt ein zum FQDN passendes Zertifikat vor,
+  # laeuft HTTPS; sonst HTTP (kein TLS, KEIN self-signed). Ohne nginx ist ohnehin
+  # kein TLS moeglich -> http, sonst blockieren SSL-Redirect + Secure-Cookies
+  # sogar den lokalen Zugriff.
+  if [ "$SKIP_NGINX" -eq 0 ] && cmp_cert_matches_fqdn /etc/pki/cmp/cmp.crt "$FQDN"; then
+    MODE="https"; info "Zertifikat für ${FQDN} vorhanden — HTTPS-Modus"
+  else
+    MODE="http"
+    [ "$SKIP_NGINX" -eq 0 ] && warn "Kein Zertifikat für ${FQDN} unter /etc/pki/cmp/cmp.crt — Portal läuft über UNVERSCHLÜSSELTES HTTP. Für Produktion ein Zertifikat (cmp.crt + cmp.key) dort einspielen und install.sh erneut ausführen."
+  fi
+
   # ── 2. Service-User + App-Code ──────────────────────────────────────────────
   hdr "2/8  Service-User + App-Code"
   id "$SVC_USER" &>/dev/null || useradd --system --create-home --home-dir "$APP_ROOT" --shell /usr/sbin/nologin "$SVC_USER"
@@ -231,13 +243,15 @@ aktion_installieren() {
 DEBUG=False
 SECRET_KEY=${SECRET}
 ALLOWED_HOSTS=${FQDN}
-CSRF_TRUSTED_ORIGINS=https://${FQDN}
 DATABASE_URL=postgres://cmp:${DBPW}@127.0.0.1:5432/cmp_prod
 CELERY_BROKER_URL=redis://localhost:6379/0
-SECURE_HSTS_SECONDS=0
 ENV
+  # Modus-abhaengige Security-Zeilen (CSRF-Origin, SSL-Redirect, Secure-Cookies,
+  # HSTS) anhaengen — im http-Modus MUESSEN die Secure-Cookies aus, sonst Login
+  # ueber HTTP unmoeglich.
+  cmp_env_security_lines "$FQDN" "$MODE" >> "$ENV_FILE"
   chown root:"$SVC_USER" "$ENV_FILE"; chmod 640 "$ENV_FILE"
-  ok "$ENV_FILE geschrieben (HSTS=0 für self-signed; bei interner CA erhöhen)"
+  ok "$ENV_FILE geschrieben (Modus: $MODE; HSTS=0, bei gültigem CA-Zertifikat erhöhen)"
 
   # ── 6. Migrationen + Static + Admin ─────────────────────────────────────────
   hdr "6/8  Migrationen, Static, Superuser"
@@ -279,36 +293,10 @@ sys.exit(0 if get_user_model().objects.filter(is_superuser=True).exists() else 1
   if [ "$SKIP_NGINX" -eq 1 ]; then
     warn "Übersprungen — kein Reverse-Proxy, kein TLS. Portal nur auf 127.0.0.1:8001."
   else
-    # Nicht nur auf Datei-Existenz pruefen: bei geaendertem FQDN wuerde nginx
-    # sonst weiter das Zertifikat mit dem alten CN ausliefern.
-    if cmp_cert_matches_fqdn /etc/pki/cmp/cmp.crt "$FQDN"; then
-      info "Vorhandenes Zertifikat passt zu ${FQDN} — unverändert"
-    elif [ -f /etc/pki/cmp/cmp.crt ] && ! cmp_cert_is_self_signed /etc/pki/cmp/cmp.crt; then
-      # Fremdes (CA-signiertes) Zertifikat: nie ueberschreiben, nur melden.
-      warn "Zertifikat /etc/pki/cmp/cmp.crt passt nicht zu ${FQDN}, ist aber CA-signiert — bleibt unangetastet. Bitte manuell ein Zertifikat für ${FQDN} einspielen."
-    else
-      mkdir -p /etc/pki/cmp
-      openssl req -x509 -nodes -newkey rsa:2048 -days 825 \
-        -keyout /etc/pki/cmp/cmp.key -out /etc/pki/cmp/cmp.crt \
-        -subj "/CN=${FQDN}" -addext "subjectAltName=DNS:${FQDN}" 2>/dev/null
-      chmod 600 /etc/pki/cmp/cmp.key
-      warn "Self-signed Zertifikat für ${FQDN} erzeugt — für Produktion internes CA-Zertifikat einspielen"
-    fi
-    cat > /etc/nginx/conf.d/cmp.conf <<NGINX
-server { listen 80; server_name ${FQDN}; return 301 https://\$host\$request_uri; }
-server {
-    listen 443 ssl; http2 on; server_name ${FQDN};
-    ssl_certificate /etc/pki/cmp/cmp.crt; ssl_certificate_key /etc/pki/cmp/cmp.key;
-    ssl_protocols TLSv1.2 TLSv1.3; client_max_body_size 25m;
-    location /static/ { alias $APP_DIR/cmp/staticfiles/; access_log off; expires 30d; }
-    location / {
-        proxy_pass http://127.0.0.1:8001;
-        proxy_set_header Host \$host; proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme; proxy_redirect off;
-    }
-}
-NGINX
+    # Modus (http/https) wurde in Schritt 1 aus der Zertifikats-Situation
+    # bestimmt. KEIN self-signed mehr: fehlt ein passendes Zertifikat, laeuft
+    # HTTP. Ein vom Admin eingespieltes Zertifikat wird nie angetastet.
+    cmp_render_nginx "$FQDN" "$APP_DIR" "$MODE" > "$NGINX_CONF"
     nginx -t && systemctl enable --now nginx && systemctl reload nginx
     if command -v setsebool >/dev/null; then
       setsebool -P httpd_can_network_connect on || true
@@ -316,10 +304,14 @@ NGINX
       restorecon -Rv "$APP_DIR/cmp/staticfiles" >/dev/null 2>&1 || true
     fi
     if command -v firewall-cmd >/dev/null; then
-      firewall-cmd --permanent --add-service=http --add-service=https >/dev/null 2>&1 || true
+      # http immer oeffnen; https nur, wenn TLS wirklich laeuft.
+      firewall-cmd --permanent --add-service=http >/dev/null 2>&1 || true
+      if [ "$MODE" = "https" ]; then
+        firewall-cmd --permanent --add-service=https >/dev/null 2>&1 || true
+      fi
       firewall-cmd --reload >/dev/null 2>&1 || true
     fi
-    ok "nginx + TLS + firewalld/SELinux konfiguriert"
+    ok "nginx (${MODE}) + firewalld/SELinux konfiguriert"
   fi
 
   hdr "FERTIG"
