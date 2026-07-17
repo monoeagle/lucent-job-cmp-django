@@ -88,6 +88,39 @@ def test_breite_ist_konfigurierbar():
     assert breiten == {60}, f"erwartet 60, bekam {sorted(breiten)}"
 
 
+def test_lange_pfade_werden_nicht_abgeschnitten():
+    """Panel-Breite wächst mit dem Inhalt: lange URLs/Pfade dürfen nicht mit ..
+    gekürzt werden — sonst sieht der Admin die Adresse/den Pfad nicht vollständig."""
+    fqdn = "cmp.internal.rechenzentrum-sued.example.com"
+    lang_pfad = "/opt/cloudman-portal/app/cmp/staticfiles"
+    daten = (
+        "S|LINKS & PORTS\n"
+        f"P|Portal|https://{fqdn}/  :443\n"
+        f"P|Admin|https://{fqdn}/admin/\n"
+        "P|gunicorn|127.0.0.1:8001  :8001\n"
+        "S|INSTALLATION\n"
+        f"R|ok|{lang_pfad}|v1.3.0\n"
+    )
+    r = run_ui('cmp_ui_render "CMP Django · Installer v1.3.0"', stdin=daten)
+
+    assert r.returncode == 0, r.stderr
+    assert f"https://{fqdn}/  :443" in r.stdout, f"Portal-URL abgeschnitten:\n{r.stdout}"
+    assert f"https://{fqdn}/admin/" in r.stdout, f"Admin-URL abgeschnitten:\n{r.stdout}"
+    assert lang_pfad in r.stdout, f"Pfad abgeschnitten:\n{r.stdout}"
+    breiten = set(sichtbare_breiten(r.stdout))
+    assert len(breiten) == 1, f"Box schief bei breitem Inhalt: {sorted(breiten)}\n{r.stdout}"
+
+
+def test_langer_titel_wird_nicht_abgeschnitten():
+    """Auch ein langer Titel muss vollständig in die Kopfzeile passen."""
+    titel = "CloudMan Portal · Installer v1.3.0 · air-gapped"
+    r = run_ui(f'cmp_ui_render "{titel}"', stdin="R|ok|nginx|aktiv\n")
+
+    assert titel in r.stdout, f"Titel abgeschnitten:\n{r.stdout}"
+    breiten = set(sichtbare_breiten(r.stdout))
+    assert len(breiten) == 1, f"Box schief bei langem Titel: {sorted(breiten)}"
+
+
 # ── Symbole / Zustaende ───────────────────────────────────────────────────────
 
 

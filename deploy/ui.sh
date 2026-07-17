@@ -102,11 +102,13 @@ _cmp_ui_pad() {
     return 0
 }
 
-# _cmp_ui_line <inhalt> — eine Rahmenzeile mit gepolstertem Inhalt.
+# _cmp_ui_line <inhalt> [h_inner] — eine Rahmenzeile mit gepolstertem Inhalt.
+# h_inner ist optional; ohne Angabe gilt die Minimalbreite (CMP_UI_WIDTH-4).
+# cmp_ui_render reicht die dynamisch berechnete Innenbreite durch.
 _cmp_ui_line() {
     local v_border h_inner
     if cmp_ui_unicode_ok; then v_border='║'; else v_border='|'; fi
-    h_inner=$((CMP_UI_WIDTH - 4))
+    h_inner="${2:-$((CMP_UI_WIDTH - 4))}"
     printf '%s ' "$v_border"
     _cmp_ui_pad "$1" "$h_inner"
     printf ' %s\n' "$v_border"
@@ -245,57 +247,97 @@ cmp_status_links() {
 
 # cmp_ui_render <titel>  — Daten kommen ueber stdin.
 cmp_ui_render() {
-    local titel="$1" zeile typ zustand name detail
+    local titel="$1" zeile typ zustand name detail sym
     local tl tr bl br hz vb
     if cmp_ui_unicode_ok; then
         tl='╔'; tr='╗'; bl='╚'; br='╝'; hz='═'; vb='║'
     else
         tl='+'; tr='+'; bl='+'; br='+'; hz='-'; vb='|'
     fi
-
-    # Kopfzeile: Titel in die obere Rahmenlinie einbetten.
     titel="$(_cmp_ui_text "$titel")"
+
+    # ── 1. Zeilen puffern + Spaltenbreiten/Innenbreite ermitteln ───────────────
+    # Die Box-Breite waechst mit dem laengsten Inhalt (Minimum: CMP_UI_WIDTH-4),
+    # damit lange Pfade/URLs/Titel nie mit ".." abgeschnitten werden. Auch die
+    # name-Spalten (R: min 15, P: min 12) wachsen mit dem laengsten Namen — sonst
+    # kuerzt `_cmp_ui_pad` einen langen Pfad-Namen (z.B. cmp_status_app) auf 15.
+    # Die Rechnung MUSS die Render-Logik in Schritt 3 spiegeln.
+    local -a zeilen=()
+    local r_namew=15 p_namew=12 max_r_det=0 max_p_det=0 max_s=0 sym_len=1
+    cmp_ui_unicode_ok || sym_len=4    # ASCII-Symbole "[OK]" sind 4 Zeichen breit
+
+    while IFS= read -r zeile || [ -n "$zeile" ]; do
+        [ -n "$zeile" ] || continue
+        zeilen+=("$zeile")
+        typ="${zeile%%|*}"
+        case "$typ" in
+            S)
+                name="$(_cmp_ui_text "${zeile#S|}")"
+                [ "${#name}" -gt "$max_s" ] && max_s="${#name}"
+                ;;
+            R)
+                local restz="${zeile#R|}"; restz="${restz#*|}"
+                name="$(_cmp_ui_text "${restz%%|*}")"; detail="$(_cmp_ui_text "${restz#*|}")"
+                [ "${#name}" -gt "$r_namew" ] && r_namew="${#name}"
+                [ "${#detail}" -gt "$max_r_det" ] && max_r_det="${#detail}"
+                ;;
+            P)
+                local restp="${zeile#P|}"
+                name="$(_cmp_ui_text "${restp%%|*}")"; detail="$(_cmp_ui_text "${restp#*|}")"
+                [ "${#name}" -gt "$p_namew" ] && p_namew="${#name}"
+                [ "${#detail}" -gt "$max_p_det" ] && max_p_det="${#detail}"
+                ;;
+        esac
+    done
+
+    local h_inner=$((CMP_UI_WIDTH - 4)) need
+    need=$(( ${#titel} + 1 ));                       [ "$need" -gt "$h_inner" ] && h_inner="$need"
+    [ "$max_s" -gt "$h_inner" ] && h_inner="$max_s"
+    need=$(( r_namew + 1 + max_r_det + 3 + sym_len )); [ "$need" -gt "$h_inner" ] && h_inner="$need"
+    need=$(( 2 + p_namew + 1 + max_p_det ));          [ "$need" -gt "$h_inner" ] && h_inner="$need"
+    local width=$(( h_inner + 4 ))
+
+    # ── 2. Kopfzeile: Titel in die obere Rahmenlinie einbetten ─────────────────
     local kopf="${hz} ${titel} "
-    local rest=$((CMP_UI_WIDTH - 2 - ${#kopf}))
+    local rest=$((width - 2 - ${#kopf}))
     [ "$rest" -lt 0 ] && rest=0
     printf '%s%s' "$tl" "$kopf"
     local i=0
     while [ "$i" -lt "$rest" ]; do printf '%s' "$hz"; i=$((i + 1)); done
     printf '%s\n' "$tr"
 
-    while IFS= read -r zeile || [ -n "$zeile" ]; do
-        [ -n "$zeile" ] || continue
+    # ── 3. Inhaltszeilen mit der dynamischen Innenbreite ───────────────────────
+    for zeile in "${zeilen[@]}"; do
         typ="${zeile%%|*}"
         case "$typ" in
             S)
-                _cmp_ui_line "$(_cmp_ui_text "${zeile#S|}")"
+                _cmp_ui_line "$(_cmp_ui_text "${zeile#S|}")" "$h_inner"
                 ;;
             R)
                 local restz="${zeile#R|}"
                 zustand="${restz%%|*}"; restz="${restz#*|}"
                 name="$(_cmp_ui_text "${restz%%|*}")"; detail="$(_cmp_ui_text "${restz#*|}")"
-                local sym; sym="$(cmp_ui_symbol "$zustand")"
+                sym="$(cmp_ui_symbol "$zustand")"
                 # Farbe nur um das Symbol, deshalb Zeile manuell zusammensetzen
                 # statt ueber _cmp_ui_line: ANSI-Sequenzen wuerden sonst in die
                 # Breitenrechnung einfliessen und die Box verziehen.
-                local h_inner=$((CMP_UI_WIDTH - 4))
                 printf '%s ' "$vb"
                 printf '  '
                 _cmp_ui_color "$zustand"; printf '%s' "$sym"; _cmp_ui_color reset
                 printf ' '
-                _cmp_ui_pad "$(_cmp_ui_pad "$name" 15) ${detail}" "$((h_inner - 3 - ${#sym}))"
+                _cmp_ui_pad "$(_cmp_ui_pad "$name" "$r_namew") ${detail}" "$((h_inner - 3 - ${#sym}))"
                 printf ' %s\n' "$vb"
                 ;;
             P)
                 local restp="${zeile#P|}"
                 name="$(_cmp_ui_text "${restp%%|*}")"; detail="$(_cmp_ui_text "${restp#*|}")"
-                _cmp_ui_line "  $(_cmp_ui_pad "$name" 12) ${detail}"
+                _cmp_ui_line "  $(_cmp_ui_pad "$name" "$p_namew") ${detail}" "$h_inner"
                 ;;
         esac
     done
 
     printf '%s' "$bl"
     i=0
-    while [ "$i" -lt $((CMP_UI_WIDTH - 2)) ]; do printf '%s' "$hz"; i=$((i + 1)); done
+    while [ "$i" -lt $((width - 2)) ]; do printf '%s' "$hz"; i=$((i + 1)); done
     printf '%s\n' "$br"
 }
