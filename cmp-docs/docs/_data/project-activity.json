@@ -1,19 +1,29 @@
 {
-  "generatedAt": "2026-07-17T23:27:32",
+  "generatedAt": "2026-07-17T23:53:16",
   "range": {
     "from": "2025-07-18",
     "to": "2026-07-17"
   },
   "byDay": {
     "2026-07-17": {
-      "commits": 11,
+      "commits": 13,
       "kinds": {
+        "docs": 6,
         "chore": 1,
-        "docs": 4,
         "feat": 3,
         "refactor": 3
       },
       "list": [
+        {
+          "sha": "00cbadd",
+          "subject": "docs: site/ nach gh-pages-Deploy (v1.3.0)",
+          "kind": "docs"
+        },
+        {
+          "sha": "0ba4fbd",
+          "subject": "docs: Repo-URL-Nachzug (→ lucent-job-cmp-django) + Handoff-Endstand",
+          "kind": "docs"
+        },
         {
           "sha": "c0f797b",
           "subject": "chore: .nojekyll im site/ (GitHub-Pages-Marker)",
@@ -851,7 +861,7 @@
     }
   },
   "stats": {
-    "totalCommits": 139,
+    "totalCommits": 141,
     "activeDays": 16,
     "longestStreak": 2,
     "topKinds": [
@@ -861,7 +871,7 @@
       },
       {
         "kind": "docs",
-        "count": 35
+        "count": 37
       },
       {
         "kind": "fix",
