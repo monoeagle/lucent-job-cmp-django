@@ -183,7 +183,7 @@ Bugfix im Bestell-Flow.
   Django-Admin), klickbar via Lightbox. Screenshots automatisiert per Selenium
   aus der laufenden App aufgenommen.
 - **gh-pages-Deployment**: Doku live unter
-  `https://monoeagle.github.io/lucent-job-MPP_Django/`. Wiederverwendbares
+  `https://monoeagle.github.io/lucent-job-cmp-django/`. Wiederverwendbares
   Deploy-Skript `cmp-docs/deploy_ghpages.sh` (worktree-basiert, `main` bleibt
   unberührt) + `.nojekyll`. Repo dafür auf public gestellt.
 - **Bugfix Bestell-Flow**: `OrderFormView` filterte den Pflicht-Parameter

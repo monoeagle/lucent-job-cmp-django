@@ -42,13 +42,13 @@ Vom GitHub-Release das Offline-ZIP herunterladen — per `gh` CLI:
 
 ```bash
 gh release download v1.1.0 \
-  --repo monoeagle/lucent-job-MPP_Django \
+  --repo monoeagle/lucent-job-cmp-django \
   --pattern '*-almalinux9-offline.zip'
 sha256sum *-almalinux9-offline.zip      # Prüfsumme notieren (für Schritt 2)
 ```
 
 …oder ohne `gh` direkt von der Releases-Seite:
-`https://github.com/monoeagle/lucent-job-MPP_Django/releases` → Asset
+`https://github.com/monoeagle/lucent-job-cmp-django/releases` → Asset
 `Lucent-CMP-Django-<version>-almalinux9-offline.zip`.
 
 ### Schritt 2 — Auf die Ziel-VM transferieren (kein Internet)
