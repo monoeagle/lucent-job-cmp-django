@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="IT-Service Marketplace Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.1.0">
+        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.0">
       
       
         <meta name="author" content="LucentTools">
@@ -27,7 +27,7 @@
     
     
       
-        <title>Troubleshooting - MPP Django — Marketplace Portal</title>
+        <title>Troubleshooting - CMP Django — CloudMan Portal</title>
       
     
     
@@ -95,7 +95,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Kopfzeile">
-    <a href="../.." title="MPP Django — Marketplace Portal" class="md-header__button md-logo" aria-label="MPP Django — Marketplace Portal" data-md-component="logo">
+    <a href="../.." title="CMP Django — CloudMan Portal" class="md-header__button md-logo" aria-label="CMP Django — CloudMan Portal" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
@@ -109,7 +109,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            MPP Django — Marketplace Portal
+            CMP Django — CloudMan Portal
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -194,13 +194,13 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="MPP Django — Marketplace Portal" class="md-nav__button md-logo" aria-label="MPP Django — Marketplace Portal" data-md-component="logo">
+    <a href="../.." title="CMP Django — CloudMan Portal" class="md-nav__button md-logo" aria-label="CMP Django — CloudMan Portal" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
 
     </a>
-    MPP Django — Marketplace Portal
+    CMP Django — CloudMan Portal
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -1426,23 +1426,23 @@
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>postgresql
 </span></code></pre></div>
 <h3 id="datenbank-existiert-nicht">Datenbank existiert nicht<a class="headerlink" href="#datenbank-existiert-nicht" title="Permanent link">&para;</a></h3>
-<p><strong>Symptom:</strong> <code>FATAL: database "mpp_django_dev" does not exist</code></p>
+<p><strong>Symptom:</strong> <code>FATAL: database "cmp_django_dev" does not exist</code></p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># DB anlegen (braucht superuser)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>createdb<span class="w"> </span>mpp_django_dev<span class="w"> </span>-O<span class="w"> </span>mpp
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>createdb<span class="w"> </span>mpp_django_test<span class="w"> </span>-O<span class="w"> </span>mpp
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>createdb<span class="w"> </span>cmp_django_dev<span class="w"> </span>-O<span class="w"> </span>cmp
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>createdb<span class="w"> </span>cmp_django_test<span class="w"> </span>-O<span class="w"> </span>cmp
 </span></code></pre></div>
-<p>Falls der User <code>mpp</code> nicht existiert:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;CREATE USER mpp WITH PASSWORD &#39;mpp&#39; CREATEDB;&quot;</span>
+<p>Falls der User <code>cmp</code> nicht existiert:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;CREATE USER cmp WITH PASSWORD &#39;cmp&#39; CREATEDB;&quot;</span>
 </span></code></pre></div>
 <h3 id="migrationen-fehlgeschlagen">Migrationen fehlgeschlagen<a class="headerlink" href="#migrationen-fehlgeschlagen" title="Permanent link">&para;</a></h3>
 <p><strong>Symptom:</strong> <code>relation "..." already exists</code> oder <code>column "..." does not exist</code></p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Test-DB zurücksetzen</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nv">PGPASSWORD</span><span class="o">=</span>mpp<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span>localhost<span class="w"> </span>-U<span class="w"> </span>mpp<span class="w"> </span>-d<span class="w"> </span>mpp_django_test<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;DROP SCHEMA public CASCADE; CREATE SCHEMA public;&quot;</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nb">cd</span><span class="w"> </span>mpp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nv">DJANGO_SETTINGS_MODULE</span><span class="o">=</span>config.settings.testing<span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>migrate
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nv">PGPASSWORD</span><span class="o">=</span>cmp<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span>localhost<span class="w"> </span>-U<span class="w"> </span>cmp<span class="w"> </span>-d<span class="w"> </span>cmp_django_test<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;DROP SCHEMA public CASCADE; CREATE SCHEMA public;&quot;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nb">cd</span><span class="w"> </span>cmp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nv">DJANGO_SETTINGS_MODULE</span><span class="o">=</span>config.settings.testing<span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>migrate
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># Dev-DB zurücksetzen</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="nv">PGPASSWORD</span><span class="o">=</span>mpp<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span>localhost<span class="w"> </span>-U<span class="w"> </span>mpp<span class="w"> </span>-d<span class="w"> </span>mpp_django_dev<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;DROP SCHEMA public CASCADE; CREATE SCHEMA public;&quot;</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="nb">cd</span><span class="w"> </span>mpp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>migrate<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>seed
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="nv">PGPASSWORD</span><span class="o">=</span>cmp<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span>localhost<span class="w"> </span>-U<span class="w"> </span>cmp<span class="w"> </span>-d<span class="w"> </span>cmp_django_dev<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;DROP SCHEMA public CASCADE; CREATE SCHEMA public;&quot;</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="nb">cd</span><span class="w"> </span>cmp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>migrate<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>seed
 </span></code></pre></div>
 <h3 id="port-8000-belegt">Port 8000 belegt<a class="headerlink" href="#port-8000-belegt" title="Permanent link">&para;</a></h3>
 <p><strong>Symptom:</strong> <code>Error: That port is already in use.</code></p>
@@ -1470,7 +1470,7 @@
 <p><strong>Symptom:</strong> <code>ProgrammingError: relation "..." does not exist</code></p>
 <p>Die Test-DB nutzt <code>keepdb=True</code>. Nach Model-Änderungen:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Migrationen auf Test-DB anwenden</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nb">cd</span><span class="w"> </span>mpp
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nb">cd</span><span class="w"> </span>cmp
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nv">DJANGO_SETTINGS_MODULE</span><span class="o">=</span>config.settings.testing<span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>migrate
 </span></code></pre></div>
 <h3 id="virtual-environment-probleme">Virtual Environment Probleme<a class="headerlink" href="#virtual-environment-probleme" title="Permanent link">&para;</a></h3>
@@ -1484,7 +1484,7 @@
 <h3 id="celery-fehler-im-development">Celery-Fehler im Development<a class="headerlink" href="#celery-fehler-im-development" title="Permanent link">&para;</a></h3>
 <p><strong>Symptom:</strong> <code>redis.exceptions.ConnectionError</code></p>
 <p>Im Development-Modus ist Redis nicht erforderlich. Prüfe:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># mpp/config/settings/development.py</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># cmp/config/settings/development.py</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">CELERY_TASK_ALWAYS_EAGER</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">CELERY_TASK_EAGER_PROPAGATES</span> <span class="o">=</span> <span class="kc">True</span>
 </span></code></pre></div>
@@ -1492,7 +1492,7 @@
 <h3 id="htmx-funktioniert-nicht">HTMX funktioniert nicht<a class="headerlink" href="#htmx-funktioniert-nicht" title="Permanent link">&para;</a></h3>
 <p><strong>Symptom:</strong> Suche/Filter laden nicht dynamisch</p>
 <p>Prüfe:
-1. <code>mpp/static/js/htmx.min.js</code> existiert
+1. <code>cmp/static/js/htmx.min.js</code> existiert
 2. <code>django_htmx</code> in INSTALLED_APPS
 3. <code>HtmxMiddleware</code> in MIDDLEWARE
 4. <code>&lt;script src="{% static 'js/htmx.min.js' %}" defer&gt;&lt;/script&gt;</code> in base.html</p>
@@ -1503,7 +1503,7 @@
 - <code>test-superadmin</code> (is_staff=True, is_superuser=True)</p>
 <h2 id="nutzliche-befehle">Nützliche Befehle<a class="headerlink" href="#nutzliche-befehle" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Django Check (findet Konfigurationsprobleme)</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nb">cd</span><span class="w"> </span>mpp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>check
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nb">cd</span><span class="w"> </span>cmp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>check
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
 </span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># Alle Migrationen anzeigen</span>
 </span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>python<span class="w"> </span>manage.py<span class="w"> </span>showmigrations
@@ -1515,7 +1515,7 @@
 </span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>python<span class="w"> </span>manage.py<span class="w"> </span>show_urls<span class="w">  </span><span class="c1"># (braucht django-extensions)</span>
 </span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>
 </span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="c1"># Datenbank-Inhalt prüfen</span>
-</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="nv">PGPASSWORD</span><span class="o">=</span>mpp<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span>localhost<span class="w"> </span>-U<span class="w"> </span>mpp<span class="w"> </span>-d<span class="w"> </span>mpp_django_dev<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SELECT username, role FROM users;&quot;</span>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="nv">PGPASSWORD</span><span class="o">=</span>cmp<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span>localhost<span class="w"> </span>-U<span class="w"> </span>cmp<span class="w"> </span>-d<span class="w"> </span>cmp_django_dev<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SELECT username, role FROM users;&quot;</span>
 </span></code></pre></div>
 
 

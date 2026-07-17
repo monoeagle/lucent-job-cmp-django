@@ -23,12 +23,12 @@
   // ── Versionen ──────────────────────────────────────────────────────────
   // Hardcoded — bei Release in lucent-hub.yml UND hier nachziehen. Früh
   // deklariert, weil INFO_HTML (Modul-Level-const) darauf zugreift.
-  const APP_VERSION   = '1.1.0';                 // MPP Django (lucent-hub.yml)
-  const HEADER_PREFIX = `MPP Django v${APP_VERSION}`;  // MPP Django
+  const APP_VERSION   = '1.3.0';                 // CMP Django (lucent-hub.yml)
+  const HEADER_PREFIX = `CMP Django v${APP_VERSION}`;  // CMP Django
   // Testzahl NUR hier pflegen — stand vorher doppelt und widersprüchlich im
   // Code (Badge 239, Info-Tabelle 230) und driftete unbemerkt, weil R-STALE
   // nur *.html prüft. Frisch erheben: venv/bin/python3 -m pytest -q
-  const TEST_COUNT    = 317;
+  const TEST_COUNT    = 328;
 
   // ── Icon-Map: Titel-Schluesselwort → Emoji ─────────────────────────────
   // Trifft per indexOf in lowercase auf den Top-Level-Title.
@@ -161,7 +161,7 @@
   }
 
   // ── Flyout-State (persistent via localStorage) ─────────────────────────
-  const LS_KEY = 'mpp-django-rail.flyoutIdx';  // eindeutiger Key je Projekt
+  const LS_KEY = 'cmp-django-rail.flyoutIdx';  // eindeutiger Key je Projekt
   const INFO_IDX = -2;  // Sentinel fuer das Info-Flyout (Entwickler + Stack)
   let _currentIdx = -1;
   let _sections = [];
@@ -290,8 +290,8 @@
       '<section class="adb-info-block">' +
         '<h4>Stack</h4>' +
         '<table class="adb-info-stack">' +
-          // Stack-Zeilen MPP Django
-          '<tr><td>MPP Django</td><td>v' + APP_VERSION + '</td></tr>' +
+          // Stack-Zeilen CMP Django
+          '<tr><td>CMP Django</td><td>v' + APP_VERSION + '</td></tr>' +
           '<tr><td>Django</td><td>6.0.3</td></tr>' +
           '<tr><td>Frontend</td><td>HTMX + DaisyUI</td></tr>' +
           '<tr><td>DB</td><td>PostgreSQL</td></tr>' +
@@ -370,7 +370,7 @@
 
     // Startseite hat keinen H1 (pageTitle leer) — dann nur den Prefix ohne
     // Doppelnennung setzen.
-    const isHomePage = /mpp django/i.test(pageTitle);  // MPP Django (Home-H1-Erkennung)
+    const isHomePage = /cmp django/i.test(pageTitle);  // CMP Django (Home-H1-Erkennung)
 
     if (!pageTitle || isHomePage) {
       firstTopic.textContent = HEADER_PREFIX;

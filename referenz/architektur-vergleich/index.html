@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="IT-Service Marketplace Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.1.0">
+        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.0">
       
       
         <meta name="author" content="LucentTools">
@@ -27,7 +27,7 @@
     
     
       
-        <title>Architektur-Vergleich: SSR vs. API-First - MPP Django — Marketplace Portal</title>
+        <title>Architektur-Vergleich: SSR vs. API-First - CMP Django — CloudMan Portal</title>
       
     
     
@@ -95,7 +95,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Kopfzeile">
-    <a href="../.." title="MPP Django — Marketplace Portal" class="md-header__button md-logo" aria-label="MPP Django — Marketplace Portal" data-md-component="logo">
+    <a href="../.." title="CMP Django — CloudMan Portal" class="md-header__button md-logo" aria-label="CMP Django — CloudMan Portal" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
@@ -109,7 +109,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            MPP Django — Marketplace Portal
+            CMP Django — CloudMan Portal
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -194,13 +194,13 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="MPP Django — Marketplace Portal" class="md-nav__button md-logo" aria-label="MPP Django — Marketplace Portal" data-md-component="logo">
+    <a href="../.." title="CMP Django — CloudMan Portal" class="md-nav__button md-logo" aria-label="CMP Django — CloudMan Portal" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
 
     </a>
-    MPP Django — Marketplace Portal
+    CMP Django — CloudMan Portal
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -715,10 +715,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#ssr-mpp-django-django-htmx" class="md-nav__link">
+  <a href="#ssr-cmp-django-django-htmx" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SSR (MPP Django · Django + HTMX)
+        SSR (CMP Django · Django + HTMX)
       
     </span>
   </a>
@@ -726,10 +726,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#api-first-lucent-job-mpp-flask-react" class="md-nav__link">
+  <a href="#api-first-lucent-job-cmp-flask-react" class="md-nav__link">
     <span class="md-ellipsis">
       
-        API-First (lucent-job-MPP · Flask + React)
+        API-First (lucent-job-CMP · Flask + React)
       
     </span>
   </a>
@@ -1316,10 +1316,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#ssr-mpp-django-django-htmx" class="md-nav__link">
+  <a href="#ssr-cmp-django-django-htmx" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SSR (MPP Django · Django + HTMX)
+        SSR (CMP Django · Django + HTMX)
       
     </span>
   </a>
@@ -1327,10 +1327,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#api-first-lucent-job-mpp-flask-react" class="md-nav__link">
+  <a href="#api-first-lucent-job-cmp-flask-react" class="md-nav__link">
     <span class="md-ellipsis">
       
-        API-First (lucent-job-MPP · Flask + React)
+        API-First (lucent-job-CMP · Flask + React)
       
     </span>
   </a>
@@ -1370,10 +1370,10 @@
 
 <h1 id="architektur-vergleich-ssr-vs-api-first">Architektur-Vergleich: SSR vs. API-First<a class="headerlink" href="#architektur-vergleich-ssr-vs-api-first" title="Permanent link">&para;</a></h1>
 <h2 id="uberblick">Überblick<a class="headerlink" href="#uberblick" title="Permanent link">&para;</a></h2>
-<p>MPP existiert als zwei bewusst gegensätzliche Schwesterprojekte, die dasselbe
-Self-Service-IT-Provisioning-Portal umsetzen. <strong>MPP Django</strong> (dieses Projekt,
+<p>CMP existiert als zwei bewusst gegensätzliche Schwesterprojekte, die dasselbe
+Self-Service-IT-Provisioning-Portal umsetzen. <strong>CMP Django</strong> (dieses Projekt,
 <code>lucent-job-mpp-TDD-Django</code>) rendert HTML auf dem Server (<strong>SSR</strong>) — bewusst
-<em>ohne</em> DRF, <em>ohne</em> React, <em>ohne</em> API-First. <strong>lucent-job-MPP</strong> liefert ein
+<em>ohne</em> DRF, <em>ohne</em> React, <em>ohne</em> API-First. <strong>lucent-job-CMP</strong> liefert ein
 Headless-JSON-Backend an eine React-SPA (<strong>API-First</strong>).</p>
 <p>Alle Kennzahlen unten sind per <code>grep</code>/<code>find</code> am echten Code <strong>beider</strong> Repos
 erhoben (Stand 2026-07-15), nicht aus Doku fortgeschrieben.</p>
@@ -1382,8 +1382,8 @@ erhoben (Stand 2026-07-15), nicht aus Doku fortgeschrieben.</p>
 <thead>
 <tr>
 <th>Dimension</th>
-<th>MPP Django (dieses Projekt · SSR)</th>
-<th>lucent-job-MPP (Schwester · API-First)</th>
+<th>CMP Django (dieses Projekt · SSR)</th>
+<th>lucent-job-CMP (Schwester · API-First)</th>
 </tr>
 </thead>
 <tbody>
@@ -1420,14 +1420,14 @@ erhoben (Stand 2026-07-15), nicht aus Doku fortgeschrieben.</p>
 </tbody>
 </table>
 <h2 id="ssr-beleg-am-code-gepruft">SSR-Beleg (am Code geprüft)<a class="headerlink" href="#ssr-beleg-am-code-gepruft" title="Permanent link">&para;</a></h2>
-<p>Die Präsentationsschicht von MPP Django lebt vollständig im Server; es existiert
+<p>Die Präsentationsschicht von CMP Django lebt vollständig im Server; es existiert
 keine JSON-API — der Kontrakt ist Template ↔ Context.</p>
 <table>
 <thead>
 <tr>
 <th>Merkmal</th>
-<th>MPP Django (SSR)</th>
-<th>lucent-job-MPP (API-First)</th>
+<th>CMP Django (SSR)</th>
+<th>lucent-job-CMP (API-First)</th>
 </tr>
 </thead>
 <tbody>
@@ -1460,8 +1460,8 @@ spricht ausschließlich über eine typisierte Service-Schicht.</p>
 <thead>
 <tr>
 <th>Merkmal</th>
-<th>MPP Django (SSR)</th>
-<th>lucent-job-MPP (API-First)</th>
+<th>CMP Django (SSR)</th>
+<th>lucent-job-CMP (API-First)</th>
 </tr>
 </thead>
 <tbody>
@@ -1492,8 +1492,8 @@ spricht ausschließlich über eine typisierte Service-Schicht.</p>
 <thead>
 <tr>
 <th>Ebene</th>
-<th>MPP Django (SSR)</th>
-<th>lucent-job-MPP (API-First)</th>
+<th>CMP Django (SSR)</th>
+<th>lucent-job-CMP (API-First)</th>
 </tr>
 </thead>
 <tbody>
@@ -1536,8 +1536,8 @@ durch: Server-Session gegen stateless Token.</p>
 <thead>
 <tr>
 <th>Dimension</th>
-<th>MPP Django (SSR)</th>
-<th>lucent-job-MPP (API-First)</th>
+<th>CMP Django (SSR)</th>
+<th>lucent-job-CMP (API-First)</th>
 </tr>
 </thead>
 <tbody>
@@ -1568,13 +1568,13 @@ durch: Server-Session gegen stateless Token.</p>
 </tr>
 <tr>
 <td>Tests</td>
-<td><strong>317</strong></td>
+<td><strong>328</strong></td>
 <td>≈ <strong>878</strong> (771 Backend / 107 Frontend)</td>
 </tr>
 </tbody>
 </table>
 <h2 id="kern-trade-offs">Kern-Trade-offs<a class="headerlink" href="#kern-trade-offs" title="Permanent link">&para;</a></h2>
-<h3 id="ssr-mpp-django-django-htmx">SSR (MPP Django · Django + HTMX)<a class="headerlink" href="#ssr-mpp-django-django-htmx" title="Permanent link">&para;</a></h3>
+<h3 id="ssr-cmp-django-django-htmx">SSR (CMP Django · Django + HTMX)<a class="headerlink" href="#ssr-cmp-django-django-htmx" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Stärke:</strong> Weniger Moving Parts (ein Prozess, eine Sprache); schnelleres
   First-Paint; Grundfunktion ohne JS; SEO-freundlich.</li>
@@ -1582,7 +1582,7 @@ durch: Server-Session gegen stateless Token.</p>
   wiederverwendbarer API-Layer.</li>
 <li><strong>Rendering liegt bei:</strong> Server.</li>
 </ul>
-<h3 id="api-first-lucent-job-mpp-flask-react">API-First (lucent-job-MPP · Flask + React)<a class="headerlink" href="#api-first-lucent-job-mpp-flask-react" title="Permanent link">&para;</a></h3>
+<h3 id="api-first-lucent-job-cmp-flask-react">API-First (lucent-job-CMP · Flask + React)<a class="headerlink" href="#api-first-lucent-job-cmp-flask-react" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Stärke:</strong> FE/BE entkoppelt; API auch für Mobile / 3<sup>rd</sup>-Party nutzbar; reiche
   Client-Interaktivität ohne Roundtrips.</li>
@@ -1592,9 +1592,9 @@ durch: Server-Session gegen stateless Token.</p>
 </ul>
 <h2 id="fazit">Fazit<a class="headerlink" href="#fazit" title="Permanent link">&para;</a></h2>
 <p>Die beiden Repos sind das kontrollierte A/B-Experiment desselben Portals:
-<strong>MPP Django</strong> treibt den SSR-Weg — der Server rendert HTML, Session-Auth,
+<strong>CMP Django</strong> treibt den SSR-Weg — der Server rendert HTML, Session-Auth,
 Django Admin, HTMX für punktuelle Dynamik, bewusst <em>ohne</em> DRF/API-Layer.
-<strong>lucent-job-MPP</strong> treibt den API-First/SPA-Weg — JSON-Backend, typisierte
+<strong>lucent-job-CMP</strong> treibt den API-First/SPA-Weg — JSON-Backend, typisierte
 React-Frontend-Schicht, JWT, getrennte Deployments.</p>
 
 

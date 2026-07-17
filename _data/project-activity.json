@@ -1,19 +1,90 @@
 {
-  "generatedAt": "2026-07-16T20:22:33",
+  "generatedAt": "2026-07-17T23:02:48",
   "range": {
-    "from": "2025-07-17",
-    "to": "2026-07-16"
+    "from": "2025-07-18",
+    "to": "2026-07-17"
   },
   "byDay": {
-    "2026-07-16": {
-      "commits": 6,
+    "2026-07-17": {
+      "commits": 9,
       "kinds": {
+        "docs": 3,
+        "feat": 3,
+        "refactor": 3
+      },
+      "list": [
+        {
+          "sha": "abb943c",
+          "subject": "docs: Session-6-Handoff + Insight + KPI-Zeile (CloudMan Portal v1.3.0)",
+          "kind": "docs"
+        },
+        {
+          "sha": "cfdaefa",
+          "subject": "docs: v1.3.0-Nachtrag — von R-VERSION ungeprüfte Versionsstellen nachgezogen",
+          "kind": "docs"
+        },
+        {
+          "sha": "db4516c",
+          "subject": "docs: Serien-Ende v1.3.0 — Version-Bump + Changelog + Kennzahlen nachgezogen",
+          "kind": "docs"
+        },
+        {
+          "sha": "963ba75",
+          "subject": "feat: Redis air-gapped aus Bundle-RPM installieren (Punkt 3)",
+          "kind": "feat"
+        },
+        {
+          "sha": "8ad8b25",
+          "subject": "feat: Doku als statisches HTML-ZIP (Windows-tauglich) + Gate R-APPIMAGE→R-DOCS-ZIP",
+          "kind": "feat"
+        },
+        {
+          "sha": "e396b4c",
+          "subject": "refactor: Branding Teil 2 — Doku-Site mpp-docs→cmp-docs + Deployment-Guides",
+          "kind": "refactor"
+        },
+        {
+          "sha": "fe594ff",
+          "subject": "refactor: Branding MPP→CloudMan Portal (Teil 1: Code, Root, scripts, .claude)",
+          "kind": "refactor"
+        },
+        {
+          "sha": "97a98bf",
+          "subject": "feat: HTTP/HTTPS-Auto-Modus im Installer — Zert vorhanden→HTTPS, sonst HTTP",
+          "kind": "feat"
+        },
+        {
+          "sha": "b37a37a",
+          "subject": "refactor: Code-Rename MPP→CMP — Hülle, Deploy-Schicht, Test/Dev-DB, templatetags, Celery-App",
+          "kind": "refactor"
+        }
+      ]
+    },
+    "2026-07-16": {
+      "commits": 9,
+      "kinds": {
+        "docs": 4,
+        "other": 1,
         "chore": 1,
         "fix": 2,
-        "docs": 2,
         "feat": 1
       },
       "list": [
+        {
+          "sha": "65f430c",
+          "subject": "docs: Handoff-Nachtrag (Release v1.2.0, run.sh-Versionsstelle) + KPI aktualisiert",
+          "kind": "docs"
+        },
+        {
+          "sha": "202ed48",
+          "subject": "release: v1.2.0 — Offline-Installer produktionsreif",
+          "kind": "other"
+        },
+        {
+          "sha": "28142b3",
+          "subject": "docs: Session-5-Handoff + Insight + KPI-Zeile; Projektstruktur nachgezogen",
+          "kind": "docs"
+        },
         {
           "sha": "f257588",
           "subject": "chore(docs): Gantt-SVG aus dem Build aktualisiert",
@@ -769,17 +840,17 @@
     }
   },
   "stats": {
-    "totalCommits": 125,
-    "activeDays": 15,
+    "totalCommits": 137,
+    "activeDays": 16,
     "longestStreak": 2,
     "topKinds": [
       {
         "kind": "feat",
-        "count": 59
+        "count": 62
       },
       {
         "kind": "docs",
-        "count": 29
+        "count": 34
       },
       {
         "kind": "fix",
@@ -791,14 +862,14 @@
       },
       {
         "kind": "other",
-        "count": 6
+        "count": 7
       },
       {
         "kind": "refactor",
-        "count": 1
+        "count": 4
       }
     ],
-    "testCount": 314
+    "testCount": 325
   },
   "phases": []
 }

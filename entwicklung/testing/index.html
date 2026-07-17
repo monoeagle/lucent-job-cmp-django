@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="IT-Service Marketplace Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.1.0">
+        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.0">
       
       
         <meta name="author" content="LucentTools">
@@ -27,7 +27,7 @@
     
     
       
-        <title>Testing - MPP Django — Marketplace Portal</title>
+        <title>Testing - CMP Django — CloudMan Portal</title>
       
     
     
@@ -95,7 +95,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Kopfzeile">
-    <a href="../.." title="MPP Django — Marketplace Portal" class="md-header__button md-logo" aria-label="MPP Django — Marketplace Portal" data-md-component="logo">
+    <a href="../.." title="CMP Django — CloudMan Portal" class="md-header__button md-logo" aria-label="CMP Django — CloudMan Portal" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
@@ -109,7 +109,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            MPP Django — Marketplace Portal
+            CMP Django — CloudMan Portal
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -194,13 +194,13 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="MPP Django — Marketplace Portal" class="md-nav__button md-logo" aria-label="MPP Django — Marketplace Portal" data-md-component="logo">
+    <a href="../.." title="CMP Django — CloudMan Portal" class="md-nav__button md-logo" aria-label="CMP Django — CloudMan Portal" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
 
     </a>
-    MPP Django — Marketplace Portal
+    CMP Django — CloudMan Portal
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -1453,12 +1453,12 @@
 <tr>
 <td><strong>Gesamt</strong></td>
 <td></td>
-<td><strong>317</strong></td>
+<td><strong>328</strong></td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p>Stand 2026-07-16: <strong>317 Tests grün</strong> (<code>venv/bin/python3 -m pytest</code>, 0 Errors).
+<p>Stand 2026-07-17: <strong>328 Tests grün</strong> (<code>venv/bin/python3 -m pytest</code>, 0 Errors).
 Inkl. 8 Tests für <code>config.settings.production</code> (env-basierte Produktions-Settings)
 und 78 Tests für den Offline-Installer (<code>deploy/lib.sh</code>, <code>deploy/ui.sh</code> — psql,
 systemctl, dnf über Fakes injiziert; siehe <code>tests/unit/test_install_*.py</code>).</p>
@@ -1496,7 +1496,7 @@ systemctl, dnf über Fakes injiziert; siehe <code>tests/unit/test_install_*.py</
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="k">assert</span> <span class="n">Order</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
 </span></code></pre></div>
 <ul>
-<li>Echte PostgreSQL-Datenbank (mpp_django_test)</li>
+<li>Echte PostgreSQL-Datenbank (cmp_django_test)</li>
 <li>Django Test-Client für HTTP-Requests</li>
 <li>Transaktions-Isolation pro Test</li>
 </ul>
@@ -1548,20 +1548,20 @@ systemctl, dnf über Fakes injiziert; siehe <code>tests/unit/test_install_*.py</
 </span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests/unit/test_catalog_service.py::TestCatalogServiceList::test_list_active_templates<span class="w"> </span>-v
 </span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>
 </span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="c1"># Mit Coverage</span>
-</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests/<span class="w"> </span>--cov<span class="o">=</span>mpp<span class="w"> </span>--cov-report<span class="o">=</span>term-missing
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests/<span class="w"> </span>--cov<span class="o">=</span>cmp<span class="w"> </span>--cov-report<span class="o">=</span>term-missing
 </span></code></pre></div>
 <h2 id="konfiguration">Konfiguration<a class="headerlink" href="#konfiguration" title="Permanent link">&para;</a></h2>
 <p><strong>pytest.ini:</strong>
 <div class="language-ini highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">[pytest]</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="na">DJANGO_SETTINGS_MODULE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">config.settings.testing</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="na">pythonpath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">mpp</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="na">pythonpath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">cmp</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="na">testpaths</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">tests</span>
 </span></code></pre></div></p>
-<p><strong>testing.py:</strong> Schnelle Passwort-Hashes (<code>MD5PasswordHasher</code>), Celery EAGER-Modus, Test-Datenbank <code>mpp_django_test</code>.</p>
+<p><strong>testing.py:</strong> Schnelle Passwort-Hashes (<code>MD5PasswordHasher</code>), Celery EAGER-Modus, Test-Datenbank <code>cmp_django_test</code>.</p>
 <h2 id="hinweis-keepdb">Hinweis: keepdb<a class="headerlink" href="#hinweis-keepdb" title="Permanent link">&para;</a></h2>
-<p>Die Test-DB wird mit <code>keepdb=True</code> wiederverwendet (mpp-User hat kein CREATEDB). Bei Schema-Änderungen muss die DB manuell gelöscht werden:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nv">PGPASSWORD</span><span class="o">=</span>mpp<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span>localhost<span class="w"> </span>-U<span class="w"> </span>mpp<span class="w"> </span>-d<span class="w"> </span>mpp_django_test<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;DROP SCHEMA public CASCADE; CREATE SCHEMA public;&quot;</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nb">cd</span><span class="w"> </span>mpp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>migrate<span class="w"> </span>--settings<span class="o">=</span>config.settings.testing
+<p>Die Test-DB wird mit <code>keepdb=True</code> wiederverwendet (cmp-User hat kein CREATEDB). Bei Schema-Änderungen muss die DB manuell gelöscht werden:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nv">PGPASSWORD</span><span class="o">=</span>cmp<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span>localhost<span class="w"> </span>-U<span class="w"> </span>cmp<span class="w"> </span>-d<span class="w"> </span>cmp_django_test<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;DROP SCHEMA public CASCADE; CREATE SCHEMA public;&quot;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nb">cd</span><span class="w"> </span>cmp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>migrate<span class="w"> </span>--settings<span class="o">=</span>config.settings.testing
 </span></code></pre></div>
 
 
