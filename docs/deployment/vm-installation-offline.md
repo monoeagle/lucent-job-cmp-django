@@ -1,6 +1,6 @@
-# VM-Installation OFFLINE / Air-Gapped — MPP Django (Produktion)
+# VM-Installation OFFLINE / Air-Gapped — CMP Django (Produktion)
 
-Schritt-für-Schritt-Anleitung, um MPP Django auf einer **Rocky/AlmaLinux 9**-VM
+Schritt-für-Schritt-Anleitung, um CMP Django auf einer **Rocky/AlmaLinux 9**-VM
 **ohne Internetzugang** produktionssicher zu installieren. Alle Quellen
 (System-RPMs, Python-Wheels, App-Code) werden auf einem verbundenen
 **Staging-Host** eingesammelt, als Bundle auf die **Ziel-VM** transportiert und
@@ -49,52 +49,63 @@ sha256sum *-almalinux9-offline.zip      # Prüfsumme notieren (für Schritt 2)
 
 …oder ohne `gh` direkt von der Releases-Seite:
 `https://github.com/monoeagle/lucent-job-MPP_Django/releases` → Asset
-`Lucent-MPP-Django-<version>-almalinux9-offline.zip`.
+`Lucent-CMP-Django-<version>-almalinux9-offline.zip`.
 
 ### Schritt 2 — Auf die Ziel-VM transferieren (kein Internet)
 
 ```bash
 # per SSH (falls erlaubt) …
-scp Lucent-MPP-Django-*-almalinux9-offline.zip admin@mpp-vm:/var/tmp/
+scp Lucent-CMP-Django-*-almalinux9-offline.zip admin@cmp-vm:/var/tmp/
 # … oder per USB-Medium kopieren.
 ```
 
 Auf der VM die Integrität prüfen (Prüfsumme aus Schritt 1):
 
 ```bash
-cd /var/tmp && sha256sum -c <<< "<sha256> Lucent-MPP-Django-<version>-almalinux9-offline.zip"
+cd /var/tmp && sha256sum -c <<< "<sha256> Lucent-CMP-Django-<version>-almalinux9-offline.zip"
 ```
 
 ### Schritt 3 — Auf der Ziel-VM entpacken + Setup ausführen
 
 ```bash
-unzip Lucent-MPP-Django-<version>-almalinux9-offline.zip
-cd Lucent-MPP-Django-<version>-almalinux9-offline
+unzip Lucent-CMP-Django-<version>-almalinux9-offline.zip
+cd Lucent-CMP-Django-<version>-almalinux9-offline
 sudo ./deploy/install.sh        # zeigt Prüfbereich + Menü
 ```
 
 **Das war's — die App wird installiert.** `install.sh` erledigt offline aus dem
 Bundle: venv + Wheels (`pip --no-index`), DB-Anlage, `.env` (SECRET_KEY auto),
-Migrationen, `collectstatic`, Superuser, systemd (gunicorn + Celery), nginx +
-self-signed TLS, firewalld/SELinux. Danach erreichbar unter **`https://<FQDN>/`**.
+Migrationen, `collectstatic`, Superuser, systemd (gunicorn + Celery), nginx,
+firewalld/SELinux.
+
+> **HTTP/HTTPS wird automatisch gewählt.** Liegt unter `/etc/pki/cmp/cmp.crt`
+> ein zum FQDN passendes Zertifikat, läuft das Portal über **HTTPS** (`:443`);
+> fehlt es, über **HTTP** (`:80`) — mit einer deutlichen Warnung. Der Installer
+> erzeugt **kein** self-signed Zertifikat mehr. Für HTTPS in Produktion ein
+> CA-Zertifikat einspielen (`cmp.crt` + `cmp.key` nach `/etc/pki/cmp/`) und
+> `install.sh` erneut ausführen (idempotent — er erkennt das Zert und schaltet
+> auf HTTPS). Der Prüfbereich zeigt die **tatsächliche** URL/Port.
+>
+> Der **FQDN muss im Client-Netz auflösbar** sein (DNS oder `hosts`-Eintrag) —
+> sonst greift `ALLOWED_HOSTS` und Django antwortet mit **400 Bad Request**.
 
 Am Terminal startet das Skript mit einem **Prüfbereich** (Ist-Zustand von
 python3.12, PostgreSQL inkl. erkannter Variante, Redis, nginx, Installation,
 Datenbank, Diensten) samt **Links & Ports**, gefolgt von einem Menü:
 
 ```
-╔═ MPP Django · Installer v1.1.0 ════════════╗
+╔═ CMP Django · Installer v1.1.0 ════════════╗
 ║ SYSTEM                                     ║
 ║   ✓ python3.12      3.12.4                 ║
 ║   ✓ PostgreSQL      PGDG 16 · aktiv        ║
 ║   ✓ Redis           aktiv                  ║
 ║   ✗ nginx           nicht installiert      ║
 ║ INSTALLATION                               ║
-║   ✓ /opt/mpp/app    v1.1.0                 ║
-║   ✓ Datenbank       mpp_prod               ║
-║   ✗ mpp-web         inaktiv                ║
+║   ✓ /opt/cmp/app    v1.1.0                 ║
+║   ✓ Datenbank       cmp_prod               ║
+║   ✗ cmp-web         inaktiv                ║
 ║ LINKS & PORTS                              ║
-║   Portal       https://mpp.intern/  :443   ║
+║   Portal       https://cmp.intern/  :443   ║
 ║   gunicorn     127.0.0.1:8001  :8001       ║
 ╚════════════════════════════════════════════╝
   1) Installieren / Aktualisieren
@@ -108,7 +119,7 @@ Datenbank, Diensten) samt **Links & Ports**, gefolgt von einem Menü:
 | `sudo ./deploy/install.sh` | Prüfbereich + Menü (nur am Terminal) |
 | `sudo ./deploy/install.sh --install` | Direkt installieren/aktualisieren, ohne Menü |
 | `sudo ./deploy/install.sh --check` | Nur prüfen, ändert nichts. **Exit 0 nur, wenn alles grün ist** — taugt als Health-Check für Monitoring/Cron |
-| `sudo ./deploy/install.sh --restart` | `mpp-web` + `mpp-celery` neu starten |
+| `sudo ./deploy/install.sh --restart` | `cmp-web` + `cmp-celery` neu starten |
 
 **Ohne Terminal** (Pipe, CI, `ssh host './install.sh'`) erscheint kein Menü —
 dann läuft direkt die Installation, wie bisher. Bestehende Automatisierung
@@ -141,7 +152,7 @@ bleibt damit gültig.
 > (**nicht** im PATH) und nennt die Unit `postgresql-16.service`; das
 > AppStream-Modul nutzt `/usr/bin/psql` und `postgresql.service`. Service-Name
 > und `psql`-Pfad werden daraus abgeleitet, auch für die `Requires=`-Abhängigkeit
-> der `mpp-web`/`mpp-celery`-Units. Findet der Preflight **kein** PostgreSQL,
+> der `cmp-web`/`cmp-celery`-Units. Findet der Preflight **kein** PostgreSQL,
 > bricht er ab (statt wie früher nur zu warnen und später an der DB-Anlage zu
 > scheitern).
 
@@ -203,8 +214,8 @@ Architektur und Python-Version gebunden. Der Staging-Host **muss** matchen:
 
 ```bash
 # Arbeitsverzeichnis fürs Bundle
-mkdir -p ~/mpp-bundle/{rpms,wheelhouse,src}
-cd ~/mpp-bundle
+mkdir -p ~/cmp-bundle/{rpms,wheelhouse,src}
+cd ~/cmp-bundle
 
 # Download-Plugins + PGDG-Repo (liefert PostgreSQL 16)
 sudo dnf -y install dnf-plugins-core
@@ -221,7 +232,7 @@ sudo dnf -y install epel-release
 Staging-Host schon installiert sind (sonst fehlen sie auf der frischen Ziel-VM):
 
 ```bash
-cd ~/mpp-bundle
+cd ~/cmp-bundle
 sudo dnf download --resolve --alldeps --destdir ./rpms \
   python3.12 python3.12-devel python3.12-pip \
   gcc make libpq-devel \
@@ -245,7 +256,7 @@ Wheels passend zu **Python 3.12 / x86_64**. Am robustesten in einem frischen
 venv auf dem Staging-Host:
 
 ```bash
-cd ~/mpp-bundle
+cd ~/cmp-bundle
 # App-Source wird in Schritt 4 geholt; requirements brauchen wir hier schon:
 # (entweder aus dem Repo kopieren oder requirements/*.txt einzeln bereitstellen)
 
@@ -274,12 +285,12 @@ Reproduzierbar aus dem Git-Stand (ohne `.git`-Historie → klein):
 
 ```bash
 cd /pfad/zum/repo
-git archive --format=tar.gz --prefix=app/ -o ~/mpp-bundle/src/mpp-app.tar.gz HEAD
+git archive --format=tar.gz --prefix=app/ -o ~/cmp-bundle/src/cmp-app.tar.gz HEAD
 # Version/Commit dokumentieren:
-git rev-parse HEAD > ~/mpp-bundle/src/COMMIT.txt
+git rev-parse HEAD > ~/cmp-bundle/src/COMMIT.txt
 ```
 
-> Alternativ ein voller Klon als `git bundle create mpp.bundle --all`, falls die
+> Alternativ ein voller Klon als `git bundle create cmp.bundle --all`, falls die
 > Historie auf der VM gebraucht wird. Für reines Deployment reicht `git archive`.
 
 ## 5. Bundle schnüren + Prüfsummen
@@ -287,12 +298,12 @@ git rev-parse HEAD > ~/mpp-bundle/src/COMMIT.txt
 ```bash
 cd ~
 # Prüfsummen über alle Artefakte
-( cd mpp-bundle && find . -type f -exec sha256sum {} \; > SHA256SUMS )
+( cd cmp-bundle && find . -type f -exec sha256sum {} \; > SHA256SUMS )
 # Ein Transport-Archiv
-tar -czf mpp-offline-bundle.tar.gz -C mpp-bundle .
-sha256sum mpp-offline-bundle.tar.gz > mpp-offline-bundle.tar.gz.sha256
+tar -czf cmp-offline-bundle.tar.gz -C cmp-bundle .
+sha256sum cmp-offline-bundle.tar.gz > cmp-offline-bundle.tar.gz.sha256
 
-ls -lh mpp-offline-bundle.tar.gz*
+ls -lh cmp-offline-bundle.tar.gz*
 ```
 
 ---
@@ -305,18 +316,18 @@ Per `scp` (falls SSH erlaubt) oder USB-Medium:
 
 ```bash
 # Beispiel scp (vom Staging-Host)
-scp mpp-offline-bundle.tar.gz* admin@mpp-vm:/var/tmp/
+scp cmp-offline-bundle.tar.gz* admin@cmp-vm:/var/tmp/
 ```
 
 Auf der **Ziel-VM** integrität prüfen und entpacken:
 
 ```bash
 cd /var/tmp
-sha256sum -c mpp-offline-bundle.tar.gz.sha256      # -> OK
+sha256sum -c cmp-offline-bundle.tar.gz.sha256      # -> OK
 
-sudo mkdir -p /opt/mpp-offline
-sudo tar -xzf mpp-offline-bundle.tar.gz -C /opt/mpp-offline
-cd /opt/mpp-offline
+sudo mkdir -p /opt/cmp-offline
+sudo tar -xzf cmp-offline-bundle.tar.gz -C /opt/cmp-offline
+cd /opt/cmp-offline
 
 # Datei-Prüfsummen verifizieren
 sha256sum -c SHA256SUMS | grep -v ': OK$' || echo "Alle Artefakte OK"
@@ -334,10 +345,10 @@ Direkt aus den lokalen RPMs installieren (kein Online-Repo, DNF löst innerhalb
 des lokalen Satzes auf):
 
 ```bash
-sudo dnf install -y --disablerepo='*' /opt/mpp-offline/rpms/*.rpm
+sudo dnf install -y --disablerepo='*' /opt/cmp-offline/rpms/*.rpm
 
 # Grundkonfiguration (offline-fähig)
-sudo hostnamectl set-hostname mpp.internal.example.com
+sudo hostnamectl set-hostname cmp.internal.example.com
 sudo timedatectl set-timezone Europe/Berlin
 sudo systemctl enable --now chronyd
 python3.12 --version    # erwartet 3.12.x
@@ -345,8 +356,8 @@ python3.12 --version    # erwartet 3.12.x
 
 > **Reusable-Repo-Alternative:** Ist `createrepo_c` im Bundle, lässt sich ein
 > dauerhaftes lokales Repo bauen:
-> `createrepo_c /opt/mpp-offline/rpms` und eine `.repo`-Datei mit
-> `baseurl=file:///opt/mpp-offline/rpms` unter `/etc/yum.repos.d/` anlegen.
+> `createrepo_c /opt/cmp-offline/rpms` und eine `.repo`-Datei mit
+> `baseurl=file:///opt/cmp-offline/rpms` unter `/etc/yum.repos.d/` anlegen.
 
 ## 8. PostgreSQL 16 / Redis / Service-User
 
@@ -358,9 +369,9 @@ sudo /usr/pgsql-16/bin/postgresql-16-setup initdb
 sudo systemctl enable --now postgresql-16
 
 sudo -u postgres psql <<'SQL'
-CREATE ROLE mpp WITH LOGIN PASSWORD '<DB-PASSWORT>';
-CREATE DATABASE mpp_prod OWNER mpp ENCODING 'UTF8' TEMPLATE template0;
-GRANT ALL PRIVILEGES ON DATABASE mpp_prod TO mpp;
+CREATE ROLE cmp WITH LOGIN PASSWORD '<DB-PASSWORT>';
+CREATE DATABASE cmp_prod OWNER cmp ENCODING 'UTF8' TEMPLATE template0;
+GRANT ALL PRIVILEGES ON DATABASE cmp_prod TO cmp;
 SQL
 
 # scram-sha-256 für localhost erzwingen, dann neu starten
@@ -373,8 +384,8 @@ sudo systemctl enable --now redis
 redis-cli ping     # -> PONG
 
 # Dedizierter Service-User + Verzeichnisse
-sudo useradd --system --create-home --home-dir /opt/mpp --shell /usr/sbin/nologin mpp
-sudo mkdir -p /etc/mpp
+sudo useradd --system --create-home --home-dir /opt/cmp --shell /usr/sbin/nologin cmp
+sudo mkdir -p /etc/cmp
 ```
 
 Details zu DB-Härtung/Redis siehe [Online-Anleitung §4–§6](vm-installation.md#4-postgresql-16).
@@ -382,23 +393,23 @@ Details zu DB-Härtung/Redis siehe [Online-Anleitung §4–§6](vm-installation.
 ## 9. Code + venv + Wheels offline
 
 ```bash
-sudo -iu mpp bash
+sudo -iu cmp bash
 
-# App-Source entpacken nach /opt/mpp/app
-mkdir -p /opt/mpp/app
-tar -xzf /opt/mpp-offline/src/mpp-app.tar.gz -C /opt/mpp --strip-components=0
-# -> /opt/mpp/app/ (prefix "app/")
-cat /opt/mpp-offline/src/COMMIT.txt   # deployter Commit
+# App-Source entpacken nach /opt/cmp/app
+mkdir -p /opt/cmp/app
+tar -xzf /opt/cmp-offline/src/cmp-app.tar.gz -C /opt/cmp --strip-components=0
+# -> /opt/cmp/app/ (prefix "app/")
+cat /opt/cmp-offline/src/COMMIT.txt   # deployter Commit
 
 # venv mit Python 3.12
-python3.12 -m venv /opt/mpp/venv
+python3.12 -m venv /opt/cmp/venv
 
 # pip OHNE Internet — ausschließlich aus dem wheelhouse
-/opt/mpp/venv/bin/pip install --no-index --find-links=/opt/mpp-offline/wheelhouse \
-  -r /opt/mpp/app/requirements/production.txt
+/opt/cmp/venv/bin/pip install --no-index --find-links=/opt/cmp-offline/wheelhouse \
+  -r /opt/cmp/app/requirements/production.txt
 
 # Prüfen, dass nichts nachgeladen werden wollte (sollte fehlerfrei sein)
-/opt/mpp/venv/bin/python -c "import django, gunicorn, environ, psycopg, celery; print('Imports OK')"
+/opt/cmp/venv/bin/python -c "import django, gunicorn, environ, psycopg, celery; print('Imports OK')"
 exit
 ```
 
@@ -412,18 +423,18 @@ Wie in der Online-Anleitung — env-basiertes `config.settings.production`:
 
 ```bash
 # SECRET_KEY erzeugen (lokal, kein Internet nötig)
-/opt/mpp/venv/bin/python -c "import secrets; print(secrets.token_urlsafe(64))"
+/opt/cmp/venv/bin/python -c "import secrets; print(secrets.token_urlsafe(64))"
 
-sudo cp /opt/mpp/app/.env.example /etc/mpp/mpp.env
-sudo vim /etc/mpp/mpp.env          # SECRET_KEY, ALLOWED_HOSTS, DATABASE_URL, CSRF_TRUSTED_ORIGINS
-sudo chown root:mpp /etc/mpp/mpp.env && sudo chmod 640 /etc/mpp/mpp.env
+sudo cp /opt/cmp/app/.env.example /etc/cmp/cmp.env
+sudo vim /etc/cmp/cmp.env          # SECRET_KEY, ALLOWED_HOSTS, DATABASE_URL, CSRF_TRUSTED_ORIGINS
+sudo chown root:cmp /etc/cmp/cmp.env && sudo chmod 640 /etc/cmp/cmp.env
 
 # Migrationen / Static / Admin
-sudo -iu mpp bash
-cd /opt/mpp/app/mpp
-set -a; source /etc/mpp/mpp.env; set +a
+sudo -iu cmp bash
+cd /opt/cmp/app/cmp
+set -a; source /etc/cmp/cmp.env; set +a
 export DJANGO_SETTINGS_MODULE=config.settings.production
-PY=/opt/mpp/venv/bin/python
+PY=/opt/cmp/venv/bin/python
 $PY manage.py check --deploy
 $PY manage.py migrate
 $PY manage.py collectstatic --noinput
@@ -433,27 +444,27 @@ exit
 
 `.env`-Felder im Detail: siehe [Online-Anleitung §8](vm-installation.md#8-umgebungsdatei-secrets)
 und [`.env.example`](../../.env.example). `ALLOWED_HOSTS`/`CSRF_TRUSTED_ORIGINS`
-auf den **internen** FQDN setzen (z.B. `mpp.internal.example.com`).
+auf den **internen** FQDN setzen (z.B. `cmp.internal.example.com`).
 
 ## 11. systemd-Units (gunicorn + Celery)
 
 **Identisch zur Online-Anleitung** — keine Internet-Abhängigkeit.
-`/etc/systemd/system/mpp-web.service`:
+`/etc/systemd/system/cmp-web.service`:
 
 ```ini
 [Unit]
-Description=MPP Django (gunicorn)
+Description=CMP Django (gunicorn)
 After=network.target postgresql-16.service redis.service
 Requires=postgresql-16.service
 
 [Service]
-User=mpp
-Group=mpp
-WorkingDirectory=/opt/mpp/app/mpp
-EnvironmentFile=/etc/mpp/mpp.env
+User=cmp
+Group=cmp
+WorkingDirectory=/opt/cmp/app/cmp
+EnvironmentFile=/etc/cmp/cmp.env
 Environment=DJANGO_SETTINGS_MODULE=config.settings.production
-RuntimeDirectory=mpp
-ExecStart=/opt/mpp/venv/bin/gunicorn config.wsgi:application \
+RuntimeDirectory=cmp
+ExecStart=/opt/cmp/venv/bin/gunicorn config.wsgi:application \
     --bind 127.0.0.1:8001 --workers 3 --timeout 60 \
     --access-logfile - --error-logfile -
 Restart=on-failure
@@ -467,21 +478,21 @@ ProtectHome=true
 WantedBy=multi-user.target
 ```
 
-`/etc/systemd/system/mpp-celery.service`:
+`/etc/systemd/system/cmp-celery.service`:
 
 ```ini
 [Unit]
-Description=MPP Django Celery Worker
+Description=CMP Django Celery Worker
 After=network.target redis.service postgresql-16.service
 Requires=redis.service
 
 [Service]
-User=mpp
-Group=mpp
-WorkingDirectory=/opt/mpp/app/mpp
-EnvironmentFile=/etc/mpp/mpp.env
+User=cmp
+Group=cmp
+WorkingDirectory=/opt/cmp/app/cmp
+EnvironmentFile=/etc/cmp/cmp.env
 Environment=DJANGO_SETTINGS_MODULE=config.settings.production
-ExecStart=/opt/mpp/venv/bin/celery -A config worker --loglevel=info --concurrency=2
+ExecStart=/opt/cmp/venv/bin/celery -A config worker --loglevel=info --concurrency=2
 Restart=on-failure
 RestartSec=5
 NoNewPrivileges=true
@@ -495,8 +506,8 @@ WantedBy=multi-user.target
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now mpp-web mpp-celery
-sudo systemctl status mpp-web mpp-celery --no-pager
+sudo systemctl enable --now cmp-web cmp-celery
+sudo systemctl status cmp-web cmp-celery --no-pager
 ```
 
 ## 12. nginx + internes TLS (ohne Let's Encrypt)
@@ -505,46 +516,46 @@ sudo systemctl status mpp-web mpp-celery --no-pager
 air-gapped aus. Stattdessen ein **internes CA-** oder **self-signed Zertifikat**.
 
 ### Variante A — Zertifikat von der internen Unternehmens-CA
-Wenn vorhanden, `mpp.crt` (inkl. Zwischen-CA-Kette) + `mpp.key` von der internen
-PKI ausstellen lassen und nach `/etc/pki/mpp/` legen. Clients vertrauen der
+Wenn vorhanden, `cmp.crt` (inkl. Zwischen-CA-Kette) + `cmp.key` von der internen
+PKI ausstellen lassen und nach `/etc/pki/cmp/` legen. Clients vertrauen der
 internen Root-CA bereits → keine Browser-Warnung. **Empfohlen.**
 
 ### Variante B — Self-signed (Test/kleine Umgebung)
 
 ```bash
-sudo mkdir -p /etc/pki/mpp
+sudo mkdir -p /etc/pki/cmp
 sudo openssl req -x509 -nodes -newkey rsa:2048 -days 825 \
-  -keyout /etc/pki/mpp/mpp.key -out /etc/pki/mpp/mpp.crt \
-  -subj "/CN=mpp.internal.example.com" \
-  -addext "subjectAltName=DNS:mpp.internal.example.com"
-sudo chmod 600 /etc/pki/mpp/mpp.key
+  -keyout /etc/pki/cmp/cmp.key -out /etc/pki/cmp/cmp.crt \
+  -subj "/CN=cmp.internal.example.com" \
+  -addext "subjectAltName=DNS:cmp.internal.example.com"
+sudo chmod 600 /etc/pki/cmp/cmp.key
 ```
 
-> Die `mpp.crt` muss in den **Trust-Store der Clients** importiert werden
+> Die `cmp.crt` muss in den **Trust-Store der Clients** importiert werden
 > (Browser/OS), sonst Zertifikatswarnung.
 
-`/etc/nginx/conf.d/mpp.conf`:
+`/etc/nginx/conf.d/cmp.conf`:
 
 ```nginx
 server {
     listen 80;
-    server_name mpp.internal.example.com;
+    server_name cmp.internal.example.com;
     return 301 https://$host$request_uri;   # HTTP -> HTTPS
 }
 
 server {
     listen 443 ssl;
     http2 on;
-    server_name mpp.internal.example.com;
+    server_name cmp.internal.example.com;
 
-    ssl_certificate     /etc/pki/mpp/mpp.crt;
-    ssl_certificate_key /etc/pki/mpp/mpp.key;
+    ssl_certificate     /etc/pki/cmp/cmp.crt;
+    ssl_certificate_key /etc/pki/cmp/cmp.key;
     ssl_protocols       TLSv1.2 TLSv1.3;
 
     client_max_body_size 25m;
 
     location /static/ {
-        alias /opt/mpp/app/mpp/staticfiles/;
+        alias /opt/cmp/app/cmp/staticfiles/;
         access_log off;
         expires 30d;
     }
@@ -567,7 +578,7 @@ sudo systemctl enable --now nginx
 
 > **HSTS-Hinweis:** Bei *self-signed* Zertifikaten kann ein langer
 > `SECURE_HSTS_SECONDS` Clients aussperren. Für interne/Test-Umgebungen ggf. in
-> `/etc/mpp/mpp.env` `SECURE_HSTS_SECONDS=0` setzen (Default produktiv: 1 Jahr).
+> `/etc/cmp/cmp.env` `SECURE_HSTS_SECONDS=0` setzen (Default produktiv: 1 Jahr).
 > Bei vertrauenswürdiger interner CA (Variante A) HSTS regulär lassen.
 
 ## 13. SELinux & firewalld
@@ -576,8 +587,8 @@ Vollständig offline-fähig (keine Internet-Calls):
 
 ```bash
 sudo setsebool -P httpd_can_network_connect on
-sudo semanage fcontext -a -t httpd_sys_content_t "/opt/mpp/app/mpp/staticfiles(/.*)?"
-sudo restorecon -Rv /opt/mpp/app/mpp/staticfiles
+sudo semanage fcontext -a -t httpd_sys_content_t "/opt/cmp/app/cmp/staticfiles(/.*)?"
+sudo restorecon -Rv /opt/cmp/app/cmp/staticfiles
 
 sudo firewall-cmd --permanent --add-service=http --add-service=https
 sudo firewall-cmd --reload
@@ -586,19 +597,19 @@ sudo firewall-cmd --reload
 ## 14. Verifikation
 
 ```bash
-systemctl is-active mpp-web mpp-celery nginx postgresql-16 redis
+systemctl is-active cmp-web cmp-celery nginx postgresql-16 redis
 
 # HTTPS lokal testen (-k akzeptiert self-signed)
-curl -kI https://mpp.internal.example.com
-curl -ksI https://mpp.internal.example.com/admin/login/ | head -n1
+curl -kI https://cmp.internal.example.com
+curl -ksI https://cmp.internal.example.com/admin/login/ | head -n1
 ```
 
 Optional die App-Tests im Ziel-venv (PostgreSQL muss erreichbar sein):
 
 ```bash
-sudo -iu mpp bash
-cd /opt/mpp/app
-/opt/mpp/venv/bin/python -m pytest -q   # erwartet: alle grün
+sudo -iu cmp bash
+cd /opt/cmp/app
+/opt/cmp/venv/bin/python -m pytest -q   # erwartet: alle grün
 exit
 ```
 
@@ -608,17 +619,17 @@ exit
 > **idempotent** — ein zweiter Lauf über einem neuen Bundle aktualisiert die
 > bestehende Installation, statt sie zu duplizieren:
 >
-> - der **`SECRET_KEY` bleibt erhalten** (aus `/etc/mpp/mpp.env` übernommen) —
+> - der **`SECRET_KEY` bleibt erhalten** (aus `/etc/cmp/cmp.env` übernommen) —
 >   angemeldete Nutzer bleiben angemeldet;
 > - **Rolle und Datenbank** werden getrennt geprüft, vorhandene Daten bleiben;
 > - der App-Ordner wird **gespiegelt**, nicht gemerged — im neuen Release
 >   gelöschte Module und alte Migrationen verschwinden auch auf der VM;
-> - `mpp-web` und `mpp-celery` werden **neu gestartet**, laufen also mit dem
+> - `cmp-web` und `cmp-celery` werden **neu gestartet**, laufen also mit dem
 >   neuen Code;
 > - ein vorhandenes **CA-signiertes Zertifikat** wird nie überschrieben.
 >
 > Beim Re-Run werden FQDN und DB-Passwort erneut abgefragt; ein leer gelassenes
-> DB-Passwort wird neu vergeben (Rolle und `mpp.env` bleiben dabei konsistent).
+> DB-Passwort wird neu vergeben (Rolle und `cmp.env` bleiben dabei konsistent).
 
 Alternativ — oder wenn nur einzelne Artefakte getauscht werden sollen — der
 manuelle Weg: pro Update auf dem Staging-Host ein **neues Bundle** bauen
@@ -627,18 +638,18 @@ frisches `git archive`. Auf der VM:
 
 ```bash
 # Neue Artefakte entpacken (Teil B), dann:
-sudo -iu mpp bash
-tar -xzf /opt/mpp-offline/src/mpp-app.tar.gz -C /opt/mpp        # App aktualisieren
-/opt/mpp/venv/bin/pip install --no-index --find-links=/opt/mpp-offline/wheelhouse \
-  -r /opt/mpp/app/requirements/production.txt --upgrade
-cd /opt/mpp/app/mpp
-set -a; source /etc/mpp/mpp.env; set +a
+sudo -iu cmp bash
+tar -xzf /opt/cmp-offline/src/cmp-app.tar.gz -C /opt/cmp        # App aktualisieren
+/opt/cmp/venv/bin/pip install --no-index --find-links=/opt/cmp-offline/wheelhouse \
+  -r /opt/cmp/app/requirements/production.txt --upgrade
+cd /opt/cmp/app/cmp
+set -a; source /etc/cmp/cmp.env; set +a
 export DJANGO_SETTINGS_MODULE=config.settings.production
-/opt/mpp/venv/bin/python manage.py migrate
-/opt/mpp/venv/bin/python manage.py collectstatic --noinput
+/opt/cmp/venv/bin/python manage.py migrate
+/opt/cmp/venv/bin/python manage.py collectstatic --noinput
 exit
-sudo systemctl restart mpp-web mpp-celery
-sudo restorecon -Rv /opt/mpp/app/mpp/staticfiles   # neue Static-Dateien
+sudo systemctl restart cmp-web cmp-celery
+sudo restorecon -Rv /opt/cmp/app/cmp/staticfiles   # neue Static-Dateien
 ```
 
 ## 16. Troubleshooting + Sicherheits-Checkliste
@@ -650,10 +661,38 @@ sudo restorecon -Rv /opt/mpp/app/mpp/staticfiles   # neue Static-Dateien
 | `dnf … No match for argument` | RPM (oder Dep) fehlt im Bundle → Staging Schritt 2 mit `--alldeps` ergänzen |
 | `pip … No matching distribution` | Wheel fehlt/falsche Plattform → Staging-Host muss Rocky 9 + Py 3.12 sein; Schritt 3 wiederholen |
 | `psycopg`-Importfehler | `psycopg-binary`-Wheel fehlt oder Architektur-Mismatch (nicht x86_64) |
-| Zertifikatswarnung im Browser | interne CA-/self-signed `mpp.crt` nicht im Client-Trust-Store |
+| Zertifikatswarnung im Browser | interne CA-/self-signed `cmp.crt` nicht im Client-Trust-Store |
 | HSTS sperrt Client aus | self-signed + langer HSTS → `SECURE_HSTS_SECONDS=0` (siehe §12) |
 | `sha256sum -c` schlägt fehl | Bundle-Transport korrupt → erneut übertragen |
 | Zeit/Token-Fehler beim Login | NTP/`chronyd` ohne Zeitserver → internen NTP-Server konfigurieren |
+| **Portal aus dem Subnetz nicht erreichbar** | Meist: nginx fehlte (Portal nur auf `127.0.0.1:8001`), firewalld blockt `:80`/`:443`, oder Zugriff per **IP statt FQDN** (→ `ALLOWED_HOSTS` → 400). Diagnose unten. |
+
+### Portal aus dem Netz nicht erreichbar — Diagnose
+
+**Auf der Ziel-VM (Linux):**
+
+```bash
+sudo ss -tlnp | grep -E ':(80|443|8001)'   # was lauscht worauf? :8001 ist NUR lokal (gunicorn)
+sudo systemctl status nginx cmp-web cmp-celery redis --no-pager
+curl -kI https://localhost/                 # bzw. curl -I http://localhost/ im HTTP-Modus
+sudo firewall-cmd --list-all                # sind http/https offen? in welcher Zone liegt das Interface?
+getenforce                                  # SELinux Enforcing?
+ip -br addr                                 # IP der VM
+```
+
+**Vom Windows-Client (PowerShell):**
+
+```powershell
+Test-NetConnection -ComputerName <FQDN> -Port 443    # im HTTP-Modus: -Port 80
+nslookup <FQDN>                                       # kennt das Netz den FQDN? (sonst nicht erreichbar / 400)
+curl.exe -vk https://<FQDN>/                          # 400 = ALLOWED_HOSTS-Falle → per FQDN zugreifen, nicht per IP
+```
+
+Auswertung:
+
+- Lauscht **nur** `127.0.0.1:8001` und kein `:80`/`:443` → **nginx fehlte** bei der Installation. `sudo dnf install nginx`, dann `install.sh` erneut (idempotent).
+- `TcpTestSucceeded: False` trotz laufendem nginx → **firewalld/Zone**: `sudo firewall-cmd --permanent --add-service=http --add-service=https && sudo firewall-cmd --reload`.
+- TCP klappt, aber **400 Bad Request** → per **FQDN** statt IP zugreifen und den FQDN im Client-Netz auflösbar machen (DNS/`hosts`).
 
 **Sicherheits-Checkliste** (zusätzlich zur
 [Online-Liste §19](vm-installation.md#19-sicherheits-checkliste)):

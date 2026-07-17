@@ -1,0 +1,83 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# zensical.toml – CMP Django Dokumentation
+# ══════════════════════════════════════════════════════════════════════════════
+
+[project]
+site_name        = "CMP Django — CloudMan Portal"
+site_description = "IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.2.0"
+site_author      = "LucentTools"
+copyright        = "Copyright &copy; 2026 LucentTools"
+
+docs_dir = "docs"
+site_dir = "site"
+
+extra_css        = ["stylesheets/extra.css"]
+extra_javascript = [
+  { path = "javascripts/mermaid.min.js", defer = true },
+  "javascripts/mermaid-init.js",
+  "javascripts/palette-init.js",
+  "javascripts/lightbox.js",
+  "javascripts/activity-heatmap.js",   # Heatmap + Insights auf der Startseite
+  "javascripts/icon-rail.js",          # linkes Icon-Menü statt Material-Tabs
+  "javascripts/hub-stop.js",
+]
+
+nav = [
+  { "Überblick" = "index.md" },
+  { "Grundlagen" = [
+    { "Überblick"       = "grundlagen/ueberblick.md" },
+    { "Installation"    = "grundlagen/installation.md" },
+    { "Schnellstart"    = "grundlagen/schnellstart.md" },
+    { "Architektur"     = "grundlagen/architektur.md" },
+  ]},
+  { "Referenz" = [
+    { "Oberflächen"     = "referenz/oberflaeche.md" },
+    { "Datenmodell"     = "referenz/datenmodell.md" },
+    { "URL-Referenz"    = "referenz/url-referenz.md" },
+    { "Services"        = "referenz/services.md" },
+    { "Architektur-Vergleich" = "referenz/architektur-vergleich.md" },
+  ]},
+  { "Entwicklung" = [
+    { "Projektstruktur" = "entwicklung/projektstruktur.md" },
+    { "Arbeitspakete"   = "entwicklung/arbeitspakete.md" },
+    { "Conventions"     = "entwicklung/conventions.md" },
+    { "Testing"         = "entwicklung/testing.md" },
+    { "Credentials"     = "entwicklung/credentials.md" },
+    { "Changelog"       = "entwicklung/changelog.md" },
+  ]},
+  { "Betrieb" = [
+    { "Stubs & Mocks"     = "betrieb/stubs-mocks.md" },
+    { "Troubleshooting"   = "betrieb/troubleshooting.md" },
+  ]},
+  { "Entscheidungen" = [
+    { "ADR-0001 · Deployment (Native vs. Container)" = "decisions/0001-deployment-native-vs-container.md" },
+  ]},
+]
+
+[project.theme]
+language = "de"
+font = false   # kein Google-Fonts-CDN (globale No-CDN-Regel / R-NO-CDN) — System-Fonts
+features = [
+  # navigation.tabs / .tabs.sticky bewusst ENTFERNT — die Icon-Rail (icon-rail.js)
+  # ersetzt die horizontale Tab-Leiste (Pattern §17), sonst doppelte Navigation.
+  "navigation.sections",
+  "navigation.top",
+  "search.highlight",
+  "content.code.copy",
+]
+
+[[project.theme.palette]]
+media   = "(prefers-color-scheme: light)"
+scheme  = "default"
+primary = "custom"
+accent  = "custom"
+toggle.icon = "material/weather-night"
+toggle.name = "Dunkelmodus aktivieren"
+
+[[project.theme.palette]]
+media   = "(prefers-color-scheme: dark)"
+scheme  = "slate"
+primary = "custom"
+accent  = "custom"
+toggle.icon = "material/weather-sunny"
+toggle.name = "Hellmodus aktivieren"

@@ -8,7 +8,7 @@ VENV_DIR="$PROJECT_DIR/venv"
 # ── AppImage-Variablen ────────────────────────────────────────────────────────
 APPIMAGE_DIR="$PROJECT_DIR/build/appimage"
 RELEASE_DIR="$PROJECT_DIR/release"
-DOCS_DIR="$PROJECT_DIR/mpp-docs"
+DOCS_DIR="$PROJECT_DIR/cmp-docs"
 DOCS_PORT=5063
 # Version NICHT hartkodieren — sie stand hier auf 1.1.0, während lucent-hub.yml
 # schon 1.2.0 sagte, und R-VERSION prüfte diese Stelle nicht. Single Source:

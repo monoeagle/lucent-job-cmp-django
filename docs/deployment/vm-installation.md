@@ -1,6 +1,6 @@
-# VM-Installation — MPP Django (Produktion)
+# VM-Installation — CMP Django (Produktion)
 
-Schritt-für-Schritt-Anleitung, um das **Marketplace Portal (MPP Django)**
+Schritt-für-Schritt-Anleitung, um das **CloudMan Portal (CMP Django)**
 dezidiert auf einer frischen **Rocky Linux 9 / AlmaLinux 9**-VM in einer
 **produktionssicheren** Konfiguration zu installieren:
 
@@ -58,18 +58,18 @@ Internet ──TLS──▶ nginx (80/443) ──HTTP──▶ gunicorn (127.0.0
 | PostgreSQL | 16 (PGDG-Repo) |
 | Redis | 7 (AppStream) |
 | Zugang | sudo-fähiger User, SSH |
-| DNS | A-Record `mpp.example.com` → öffentliche IP der VM (für TLS) |
+| DNS | A-Record `cmp.example.com` → öffentliche IP der VM (für TLS) |
 
 In dieser Anleitung verwendete Platzhalter — überall konsequent ersetzen:
 
 | Platzhalter | Beispiel |
 |---|---|
-| `mpp.example.com` | euer FQDN |
-| `/opt/mpp` | Installationswurzel |
-| DB-Name / -User / -Passwort | `mpp_prod` / `mpp` / `<DB-PASSWORT>` |
+| `cmp.example.com` | euer FQDN |
+| `/opt/cmp` | Installationswurzel |
+| DB-Name / -User / -Passwort | `cmp_prod` / `cmp` / `<DB-PASSWORT>` |
 
 > **Konvention:** Befehle mit `sudo` laufen als Admin. Befehle nach
-> `sudo -iu mpp` laufen als **Service-User** `mpp` (siehe Schritt 6).
+> `sudo -iu cmp` laufen als **Service-User** `cmp` (siehe Schritt 6).
 
 ---
 
@@ -83,7 +83,7 @@ sudo dnf -y upgrade --refresh
 sudo dnf -y install vim git curl policycoreutils-python-utils
 
 # Hostname & Zeitzone (Projekt nutzt Europe/Berlin)
-sudo hostnamectl set-hostname mpp.example.com
+sudo hostnamectl set-hostname cmp.example.com
 sudo timedatectl set-timezone Europe/Berlin
 
 # Zeitsynchronisation
@@ -94,7 +94,7 @@ sudo systemctl enable --now chronyd
 
 ## 3. System-Pakete (Python 3.12, Build-Tools, nginx)
 
-Rocky/Alma 9 liefert standardmäßig Python 3.9. MPP benötigt **3.12** aus dem
+Rocky/Alma 9 liefert standardmäßig Python 3.9. CMP benötigt **3.12** aus dem
 AppStream:
 
 ```bash
@@ -137,9 +137,9 @@ Datenbank und Rolle anlegen:
 
 ```bash
 sudo -u postgres psql <<'SQL'
-CREATE ROLE mpp WITH LOGIN PASSWORD '<DB-PASSWORT>';
-CREATE DATABASE mpp_prod OWNER mpp ENCODING 'UTF8' LC_COLLATE 'de_DE.UTF-8' LC_CTYPE 'de_DE.UTF-8' TEMPLATE template0;
-GRANT ALL PRIVILEGES ON DATABASE mpp_prod TO mpp;
+CREATE ROLE cmp WITH LOGIN PASSWORD '<DB-PASSWORT>';
+CREATE DATABASE cmp_prod OWNER cmp ENCODING 'UTF8' LC_COLLATE 'de_DE.UTF-8' LC_CTYPE 'de_DE.UTF-8' TEMPLATE template0;
+GRANT ALL PRIVILEGES ON DATABASE cmp_prod TO cmp;
 SQL
 ```
 
@@ -152,7 +152,7 @@ sudo sed -i 's/^host\s\+all\s\+all\s\+127.0.0.1\/32\s\+ident/host    all        
 sudo systemctl restart postgresql-16
 
 # Verbindung testen (Passwort aus obigem CREATE ROLE)
-psql "postgres://mpp:<DB-PASSWORT>@127.0.0.1:5432/mpp_prod" -c '\conninfo'
+psql "postgres://cmp:<DB-PASSWORT>@127.0.0.1:5432/cmp_prod" -c '\conninfo'
 ```
 
 > Die VM hält DB, Redis und App auf demselben Host. Liegt PostgreSQL auf einem
@@ -187,13 +187,13 @@ Die App läuft als **unprivilegierter** System-User ohne Login-Shell:
 
 ```bash
 # Dedizierter Service-User
-sudo useradd --system --create-home --home-dir /opt/mpp --shell /usr/sbin/nologin mpp
+sudo useradd --system --create-home --home-dir /opt/cmp --shell /usr/sbin/nologin cmp
 
 # Verzeichnis für die Umgebungsdatei (Secrets)
-sudo mkdir -p /etc/mpp
+sudo mkdir -p /etc/cmp
 
 # Laufzeitverzeichnis (Socket/PID) — wird zusätzlich per systemd RuntimeDirectory gepflegt
-sudo install -d -o mpp -g mpp /run/mpp
+sudo install -d -o cmp -g cmp /run/cmp
 ```
 
 ---
@@ -202,18 +202,18 @@ sudo install -d -o mpp -g mpp /run/mpp
 
 ```bash
 # Als Service-User arbeiten
-sudo -iu mpp
+sudo -iu cmp
 
 # Repository holen (oder per CI-Artefakt/rsync ausrollen)
-git clone <REPO-URL> /opt/mpp/app
-cd /opt/mpp/app
+git clone <REPO-URL> /opt/cmp/app
+cd /opt/cmp/app
 
 # venv mit Python 3.12
-python3.12 -m venv /opt/mpp/venv
-/opt/mpp/venv/bin/python -m pip install --upgrade pip
+python3.12 -m venv /opt/cmp/venv
+/opt/cmp/venv/bin/python -m pip install --upgrade pip
 
 # Produktions-Abhängigkeiten (zieht requirements/base.txt + gunicorn)
-/opt/mpp/venv/bin/pip install -r requirements/production.txt
+/opt/cmp/venv/bin/pip install -r requirements/production.txt
 
 # zurück zum Admin
 exit
@@ -222,16 +222,16 @@ exit
 Verzeichnis-Layout danach:
 
 ```
-/opt/mpp/
+/opt/cmp/
 ├── app/                 # Git-Checkout (Repo-Wurzel)
-│   ├── mpp/             # Django-Projekt (manage.py, config/, apps/)
+│   ├── cmp/             # Django-Projekt (manage.py, config/, apps/)
 │   └── requirements/
 └── venv/                # virtualenv (Python 3.12)
-/etc/mpp/mpp.env         # Secrets (Schritt 8)
+/etc/cmp/cmp.env         # Secrets (Schritt 8)
 ```
 
 > **Pfad-Hinweis:** `manage.py` und das `config`-Paket liegen unter
-> `/opt/mpp/app/mpp`. Alle Django-Kommandos laufen daher aus diesem Verzeichnis
+> `/opt/cmp/app/cmp`. Alle Django-Kommandos laufen daher aus diesem Verzeichnis
 > (so findet Python das Top-Level-Paket `config`).
 
 ---
@@ -243,30 +243,30 @@ Verzeichnis-Layout danach:
 
 ```bash
 # SECRET_KEY erzeugen
-/opt/mpp/venv/bin/python -c "import secrets; print(secrets.token_urlsafe(64))"
+/opt/cmp/venv/bin/python -c "import secrets; print(secrets.token_urlsafe(64))"
 
 # Umgebungsdatei aus der Vorlage anlegen
-sudo cp /opt/mpp/app/.env.example /etc/mpp/mpp.env
-sudo vim /etc/mpp/mpp.env
+sudo cp /opt/cmp/app/.env.example /etc/cmp/cmp.env
+sudo vim /etc/cmp/cmp.env
 ```
 
-Mindestens setzen — `/etc/mpp/mpp.env`:
+Mindestens setzen — `/etc/cmp/cmp.env`:
 
 ```ini
 SECRET_KEY=<erzeugter-token>
-ALLOWED_HOSTS=mpp.example.com
-DATABASE_URL=postgres://mpp:<DB-PASSWORT>@127.0.0.1:5432/mpp_prod
-CSRF_TRUSTED_ORIGINS=https://mpp.example.com
+ALLOWED_HOSTS=cmp.example.com
+DATABASE_URL=postgres://cmp:<DB-PASSWORT>@127.0.0.1:5432/cmp_prod
+CSRF_TRUSTED_ORIGINS=https://cmp.example.com
 CELERY_BROKER_URL=redis://127.0.0.1:6379/0
 CELERY_RESULT_BACKEND=redis://127.0.0.1:6379/0
 DEBUG=False
 ```
 
-Rechte restriktiv setzen (nur root liest, Gruppe mpp liest):
+Rechte restriktiv setzen (nur root liest, Gruppe cmp liest):
 
 ```bash
-sudo chown root:mpp /etc/mpp/mpp.env
-sudo chmod 640 /etc/mpp/mpp.env
+sudo chown root:cmp /etc/cmp/cmp.env
+sudo chmod 640 /etc/cmp/cmp.env
 ```
 
 > **`DEBUG=True` in Produktion ist FATAL.** Der Default in `production.py` ist
@@ -277,14 +277,14 @@ sudo chmod 640 /etc/mpp/mpp.env
 ## 9. Migrationen, Static Files, Admin-User
 
 Alle Kommandos mit Produktions-Settings und geladener Umgebungsdatei. Praktisch
-ist ein Wrapper, der `mpp.env` einliest:
+ist ein Wrapper, der `cmp.env` einliest:
 
 ```bash
-sudo -iu mpp bash
-cd /opt/mpp/app/mpp
-set -a; source /etc/mpp/mpp.env; set +a
+sudo -iu cmp bash
+cd /opt/cmp/app/cmp
+set -a; source /etc/cmp/cmp.env; set +a
 export DJANGO_SETTINGS_MODULE=config.settings.production
-PY=/opt/mpp/venv/bin/python
+PY=/opt/cmp/venv/bin/python
 
 # Konfiguration prüfen (sollte 0 Issues melden)
 $PY manage.py check --deploy
@@ -292,7 +292,7 @@ $PY manage.py check --deploy
 # Datenbank-Schema
 $PY manage.py migrate
 
-# Static Files einsammeln -> /opt/mpp/app/mpp/staticfiles
+# Static Files einsammeln -> /opt/cmp/app/cmp/staticfiles
 $PY manage.py collectstatic --noinput
 
 # Admin anlegen (Self-Service-Signup ist deaktiviert — Admin erstellt User)
@@ -308,22 +308,22 @@ exit
 
 ## 10. gunicorn als systemd-Service
 
-`/etc/systemd/system/mpp-web.service`:
+`/etc/systemd/system/cmp-web.service`:
 
 ```ini
 [Unit]
-Description=MPP Django (gunicorn)
+Description=CMP Django (gunicorn)
 After=network.target postgresql-16.service redis.service
 Requires=postgresql-16.service
 
 [Service]
-User=mpp
-Group=mpp
-WorkingDirectory=/opt/mpp/app/mpp
-EnvironmentFile=/etc/mpp/mpp.env
+User=cmp
+Group=cmp
+WorkingDirectory=/opt/cmp/app/cmp
+EnvironmentFile=/etc/cmp/cmp.env
 Environment=DJANGO_SETTINGS_MODULE=config.settings.production
-RuntimeDirectory=mpp
-ExecStart=/opt/mpp/venv/bin/gunicorn config.wsgi:application \
+RuntimeDirectory=cmp
+ExecStart=/opt/cmp/venv/bin/gunicorn config.wsgi:application \
     --bind 127.0.0.1:8001 \
     --workers 3 \
     --timeout 60 \
@@ -344,8 +344,8 @@ WantedBy=multi-user.target
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now mpp-web
-sudo systemctl status mpp-web --no-pager
+sudo systemctl enable --now cmp-web
+sudo systemctl status cmp-web --no-pager
 ```
 
 > **Worker-Faustregel:** `(2 × CPU-Kerne) + 1`. Bei 1 Kern also 3.
@@ -354,21 +354,21 @@ sudo systemctl status mpp-web --no-pager
 
 ## 11. Celery-Worker als systemd-Service
 
-`/etc/systemd/system/mpp-celery.service`:
+`/etc/systemd/system/cmp-celery.service`:
 
 ```ini
 [Unit]
-Description=MPP Django Celery Worker
+Description=CMP Django Celery Worker
 After=network.target redis.service postgresql-16.service
 Requires=redis.service
 
 [Service]
-User=mpp
-Group=mpp
-WorkingDirectory=/opt/mpp/app/mpp
-EnvironmentFile=/etc/mpp/mpp.env
+User=cmp
+Group=cmp
+WorkingDirectory=/opt/cmp/app/cmp
+EnvironmentFile=/etc/cmp/cmp.env
 Environment=DJANGO_SETTINGS_MODULE=config.settings.production
-ExecStart=/opt/mpp/venv/bin/celery -A config worker \
+ExecStart=/opt/cmp/venv/bin/celery -A config worker \
     --loglevel=info \
     --concurrency=2
 Restart=on-failure
@@ -385,8 +385,8 @@ WantedBy=multi-user.target
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now mpp-celery
-sudo systemctl status mpp-celery --no-pager
+sudo systemctl enable --now cmp-celery
+sudo systemctl status cmp-celery --no-pager
 ```
 
 > Die Celery-App ist `config.celery` → Aufruf mit `-A config`. In Produktion ist
@@ -397,18 +397,18 @@ sudo systemctl status mpp-celery --no-pager
 ## 12. nginx Reverse-Proxy
 
 Zunächst HTTP (Port 80); TLS kommt in Schritt 14 dazu.
-`/etc/nginx/conf.d/mpp.conf`:
+`/etc/nginx/conf.d/cmp.conf`:
 
 ```nginx
 server {
     listen 80;
-    server_name mpp.example.com;
+    server_name cmp.example.com;
 
     client_max_body_size 25m;
 
     # Static Files direkt von nginx
     location /static/ {
-        alias /opt/mpp/app/mpp/staticfiles/;
+        alias /opt/cmp/app/cmp/staticfiles/;
         access_log off;
         expires 30d;
     }
@@ -445,8 +445,8 @@ SELinux den Proxy-Zugriff und nginx kann die Static Files nicht lesen.
 sudo setsebool -P httpd_can_network_connect on
 
 # Korrekten SELinux-Kontext für die Static Files setzen
-sudo semanage fcontext -a -t httpd_sys_content_t "/opt/mpp/app/mpp/staticfiles(/.*)?"
-sudo restorecon -Rv /opt/mpp/app/mpp/staticfiles
+sudo semanage fcontext -a -t httpd_sys_content_t "/opt/cmp/app/cmp/staticfiles(/.*)?"
+sudo restorecon -Rv /opt/cmp/app/cmp/staticfiles
 
 # Firewall: HTTP + HTTPS öffnen
 sudo firewall-cmd --permanent --add-service=http
@@ -467,7 +467,7 @@ sudo dnf -y install epel-release
 sudo dnf -y install certbot python3-certbot-nginx
 
 # Zertifikat holen und nginx automatisch konfigurieren
-sudo certbot --nginx -d mpp.example.com --redirect --agree-tos -m admin@example.com
+sudo certbot --nginx -d cmp.example.com --redirect --agree-tos -m admin@example.com
 
 # Automatische Erneuerung (certbot bringt einen systemd-Timer mit)
 sudo systemctl enable --now certbot-renew.timer
@@ -475,7 +475,7 @@ sudo certbot renew --dry-run
 ```
 
 certbot ergänzt den `listen 443 ssl`-Block und einen 80→443-Redirect in
-`mpp.conf`. Danach erzwingt zusätzlich Django (`SECURE_SSL_REDIRECT=True`,
+`cmp.conf`. Danach erzwingt zusätzlich Django (`SECURE_SSL_REDIRECT=True`,
 HSTS) HTTPS.
 
 ---
@@ -484,16 +484,16 @@ HSTS) HTTPS.
 
 ```bash
 # Dienste laufen?
-systemctl is-active mpp-web mpp-celery nginx postgresql-16 redis
+systemctl is-active cmp-web cmp-celery nginx postgresql-16 redis
 
 # HTTP -> sollte auf HTTPS umleiten
-curl -I http://mpp.example.com
+curl -I http://cmp.example.com
 
 # HTTPS -> 200/302 mit Sicherheits-Headern (HSTS)
-curl -I https://mpp.example.com
+curl -I https://cmp.example.com
 
 # Admin-Login erreichbar
-curl -sI https://mpp.example.com/admin/login/ | head -n1
+curl -sI https://cmp.example.com/admin/login/ | head -n1
 ```
 
 Erwartung: `http://` → `301/302` nach `https://`, `https://` liefert eine
@@ -506,20 +506,20 @@ Antwort mit `Strict-Transport-Security`-Header, der Login ist erreichbar.
 Neue Version ausrollen:
 
 ```bash
-sudo -iu mpp bash
-cd /opt/mpp/app
+sudo -iu cmp bash
+cd /opt/cmp/app
 git pull --ff-only
-/opt/mpp/venv/bin/pip install -r requirements/production.txt
+/opt/cmp/venv/bin/pip install -r requirements/production.txt
 
-cd /opt/mpp/app/mpp
-set -a; source /etc/mpp/mpp.env; set +a
+cd /opt/cmp/app/cmp
+set -a; source /etc/cmp/cmp.env; set +a
 export DJANGO_SETTINGS_MODULE=config.settings.production
-/opt/mpp/venv/bin/python manage.py migrate
-/opt/mpp/venv/bin/python manage.py collectstatic --noinput
+/opt/cmp/venv/bin/python manage.py migrate
+/opt/cmp/venv/bin/python manage.py collectstatic --noinput
 exit
 
 # Dienste neu starten
-sudo systemctl restart mpp-web mpp-celery
+sudo systemctl restart cmp-web cmp-celery
 ```
 
 > Nach Änderungen an Static Files erneut `restorecon` laufen lassen (Schritt 13),
@@ -532,23 +532,23 @@ sudo systemctl restart mpp-web mpp-celery
 **Logs** (gunicorn/Celery loggen nach journald):
 
 ```bash
-sudo journalctl -u mpp-web -f
-sudo journalctl -u mpp-celery -f
+sudo journalctl -u cmp-web -f
+sudo journalctl -u cmp-celery -f
 sudo tail -f /var/log/nginx/{access,error}.log
 ```
 
 **Datenbank-Backup** (z.B. täglich per cron/systemd-Timer):
 
 ```bash
-sudo -u postgres pg_dump -Fc mpp_prod > /var/backups/mpp_prod_$(date +%F).dump
+sudo -u postgres pg_dump -Fc cmp_prod > /var/backups/cmp_prod_$(date +%F).dump
 ```
 
 **Health-Indikatoren:**
 
 | Prüfung | Befehl |
 |---|---|
-| Web aktiv | `systemctl is-active mpp-web` |
-| Worker aktiv | `systemctl is-active mpp-celery` |
+| Web aktiv | `systemctl is-active cmp-web` |
+| Worker aktiv | `systemctl is-active cmp-celery` |
 | DB erreichbar | `psql "$DATABASE_URL" -c 'SELECT 1'` |
 | Redis | `redis-cli ping` |
 | Migrationen | `manage.py migrate --check` |
@@ -559,13 +559,13 @@ sudo -u postgres pg_dump -Fc mpp_prod > /var/backups/mpp_prod_$(date +%F).dump
 
 | Symptom | Ursache / Lösung |
 |---|---|
-| `502 Bad Gateway` | gunicorn down (`systemctl status mpp-web`) oder SELinux blockiert TCP → `setsebool -P httpd_can_network_connect on` |
+| `502 Bad Gateway` | gunicorn down (`systemctl status cmp-web`) oder SELinux blockiert TCP → `setsebool -P httpd_can_network_connect on` |
 | `403` auf `/static/` | falscher SELinux-Kontext → `restorecon -Rv .../staticfiles`; collectstatic gelaufen? |
-| `DisallowedHost` | FQDN fehlt in `ALLOWED_HOSTS` (`/etc/mpp/mpp.env`) → ergänzen, `mpp-web` neu starten |
+| `DisallowedHost` | FQDN fehlt in `ALLOWED_HOSTS` (`/etc/cmp/cmp.env`) → ergänzen, `cmp-web` neu starten |
 | `CSRF verification failed` | Origin fehlt in `CSRF_TRUSTED_ORIGINS` (mit `https://`!) |
-| gunicorn startet nicht | `ModuleNotFoundError: config` → `WorkingDirectory` muss `/opt/mpp/app/mpp` sein |
+| gunicorn startet nicht | `ModuleNotFoundError: config` → `WorkingDirectory` muss `/opt/cmp/app/cmp` sein |
 | `psycopg.OperationalError` | DB-Passwort/`pg_hba.conf` falsch; `DATABASE_URL` prüfen |
-| Tasks laufen nicht | `mpp-celery` down oder Redis nicht erreichbar; `journalctl -u mpp-celery` |
+| Tasks laufen nicht | `cmp-celery` down oder Redis nicht erreichbar; `journalctl -u cmp-celery` |
 | TLS-Redirect-Loop | `SECURE_PROXY_SSL_HEADER` greift nur, wenn nginx `X-Forwarded-Proto` setzt (Schritt 12) |
 
 Optionale Container-Variante ist mit AP-11 (Docker-Setup) vorgesehen; diese
@@ -577,7 +577,7 @@ Anleitung beschreibt die native VM-Installation.
 
 - [ ] `DEBUG=False` (Default) — niemals `True` in Produktion
 - [ ] `SECRET_KEY` zufällig erzeugt, nicht der `change-me`-Default
-- [ ] `/etc/mpp/mpp.env` mit `chmod 640`, Eigentümer `root:mpp`
+- [ ] `/etc/cmp/cmp.env` mit `chmod 640`, Eigentümer `root:cmp`
 - [ ] `ALLOWED_HOSTS` exakt auf den/die FQDN gesetzt
 - [ ] `manage.py check --deploy` ohne Warnungen
 - [ ] TLS aktiv, HTTP → HTTPS-Redirect, HSTS-Header vorhanden

@@ -1,0 +1,844 @@
+{
+  "generatedAt": "2026-07-17T21:55:59",
+  "range": {
+    "from": "2025-07-18",
+    "to": "2026-07-17"
+  },
+  "byDay": {
+    "2026-07-17": {
+      "commits": 3,
+      "kinds": {
+        "refactor": 2,
+        "feat": 1
+      },
+      "list": [
+        {
+          "sha": "fe594ff",
+          "subject": "refactor: Branding MPP→CloudMan Portal (Teil 1: Code, Root, scripts, .claude)",
+          "kind": "refactor"
+        },
+        {
+          "sha": "97a98bf",
+          "subject": "feat: HTTP/HTTPS-Auto-Modus im Installer — Zert vorhanden→HTTPS, sonst HTTP",
+          "kind": "feat"
+        },
+        {
+          "sha": "b37a37a",
+          "subject": "refactor: Code-Rename MPP→CMP — Hülle, Deploy-Schicht, Test/Dev-DB, templatetags, Celery-App",
+          "kind": "refactor"
+        }
+      ]
+    },
+    "2026-07-16": {
+      "commits": 9,
+      "kinds": {
+        "docs": 4,
+        "other": 1,
+        "chore": 1,
+        "fix": 2,
+        "feat": 1
+      },
+      "list": [
+        {
+          "sha": "65f430c",
+          "subject": "docs: Handoff-Nachtrag (Release v1.2.0, run.sh-Versionsstelle) + KPI aktualisiert",
+          "kind": "docs"
+        },
+        {
+          "sha": "202ed48",
+          "subject": "release: v1.2.0 — Offline-Installer produktionsreif",
+          "kind": "other"
+        },
+        {
+          "sha": "28142b3",
+          "subject": "docs: Session-5-Handoff + Insight + KPI-Zeile; Projektstruktur nachgezogen",
+          "kind": "docs"
+        },
+        {
+          "sha": "f257588",
+          "subject": "chore(docs): Gantt-SVG aus dem Build aktualisiert",
+          "kind": "chore"
+        },
+        {
+          "sha": "fbf047c",
+          "subject": "fix(docs): R-STALE prueft gegen frisch erhobene Testzahl statt Alt-Konstanten",
+          "kind": "fix"
+        },
+        {
+          "sha": "5bc0967",
+          "subject": "fix(docs): driftende Testzahl im Header-Badge auf eine Konstante ziehen",
+          "kind": "fix"
+        },
+        {
+          "sha": "c47e360",
+          "subject": "docs: Changelog + Kennzahlen zur Installer-Arbeit nachziehen",
+          "kind": "docs"
+        },
+        {
+          "sha": "547e5b1",
+          "subject": "feat(deploy): Installer idempotent, PostgreSQL-Erkennung, Menue mit Pruefbereich",
+          "kind": "feat"
+        },
+        {
+          "sha": "4eedb26",
+          "subject": "docs: Referenz-Seite \"Architektur-Vergleich\" (SSR vs. API-First)",
+          "kind": "docs"
+        }
+      ]
+    },
+    "2026-07-03": {
+      "commits": 4,
+      "kinds": {
+        "docs": 3,
+        "chore": 1
+      },
+      "list": [
+        {
+          "sha": "ed64dad",
+          "subject": "docs: Handoff-Nachtrag (Heatmap/--no-activity-Befund, Release-Klärung) + KPI-Zeile",
+          "kind": "docs"
+        },
+        {
+          "sha": "7b099c3",
+          "subject": "chore(docs): Activity-Heatmap-Daten aktualisieren (Session-4-Commits)",
+          "kind": "chore"
+        },
+        {
+          "sha": "d88fce7",
+          "subject": "docs: Session-4-Handoff (Channels→AP-12) + Insight + KPI-Zeile",
+          "kind": "docs"
+        },
+        {
+          "sha": "67e0d5e",
+          "subject": "docs: Channels-Behauptung korrigiert, AP-12 Live-Updates angelegt",
+          "kind": "docs"
+        }
+      ]
+    },
+    "2026-06-29": {
+      "commits": 1,
+      "kinds": {
+        "docs": 1
+      },
+      "list": [
+        {
+          "sha": "661ed46",
+          "subject": "docs: Marke \"Lucent Trails\" → \"LucentTools\" (Footer/Autor/CSS)",
+          "kind": "docs"
+        }
+      ]
+    },
+    "2026-06-27": {
+      "commits": 16,
+      "kinds": {
+        "docs": 10,
+        "feat": 3,
+        "chore": 2,
+        "fix": 1
+      },
+      "list": [
+        {
+          "sha": "8dd0085",
+          "subject": "docs: Session-3-Handoff (16:44, Forts.) + KPI-Zeile aktualisiert",
+          "kind": "docs"
+        },
+        {
+          "sha": "2783f67",
+          "subject": "docs(changelog): v1.1.0-Eintrag um Offline-Release, ADR-0001, Startseite/Heatmap ergänzen",
+          "kind": "docs"
+        },
+        {
+          "sha": "c164159",
+          "subject": "docs(offline): Schnellstart über GitHub-Release (ziehen → transferieren → install.sh)",
+          "kind": "docs"
+        },
+        {
+          "sha": "b1ad642",
+          "subject": "docs(oberflaechen): Bestellformular-Bilder gleich groß, volle Zusammenfassung sichtbar",
+          "kind": "docs"
+        },
+        {
+          "sha": "6c05d1f",
+          "subject": "docs(oberflaechen): Bestellformular-Bilder als lesbare Viewport-Shots neu",
+          "kind": "docs"
+        },
+        {
+          "sha": "377273f",
+          "subject": "docs(adr): ADR-0001 Deployment (Native vs. Container) + AP-11 auf Podman/Quadlets",
+          "kind": "docs"
+        },
+        {
+          "sha": "1a60bfd",
+          "subject": "docs(roadmap): Status auf 239 Tests / v1.1.0 + Session-3-Arbeit als nicht-AP",
+          "kind": "docs"
+        },
+        {
+          "sha": "c5f8205",
+          "subject": "docs: Session-3-Handoff + Insight + KPI-Matrix-Zeile (v1.1.0)",
+          "kind": "docs"
+        },
+        {
+          "sha": "67960a8",
+          "subject": "docs(oberflaechen): Bestellformular-Bilder inline auf 560px beschneiden",
+          "kind": "docs"
+        },
+        {
+          "sha": "7b02643",
+          "subject": "feat(release): Offline-Release-Bundle für AlmaLinux 9 (gebündelte Wheels + Installer)",
+          "kind": "feat"
+        },
+        {
+          "sha": "b0f9b5e",
+          "subject": "docs(home): Startseite auf reines Home-Layout reduzieren",
+          "kind": "docs"
+        },
+        {
+          "sha": "df74c39",
+          "subject": "feat(docs): Heatmap-Detailliste per Klick togglen + Architektur-Header-Badge",
+          "kind": "feat"
+        },
+        {
+          "sha": "2d712b0",
+          "subject": "chore(docs): Roadmap-Gantt-SVG re-render",
+          "kind": "chore"
+        },
+        {
+          "sha": "67f8440",
+          "subject": "chore(docs): Activity-Heatmap-Daten + Architektur-SVG aktualisieren",
+          "kind": "chore"
+        },
+        {
+          "sha": "67b0ae5",
+          "subject": "feat(docs): Oberflächen-Galerie + gh-pages + Architektur-Restyle (v1.1.0)",
+          "kind": "feat"
+        },
+        {
+          "sha": "71a68a8",
+          "subject": "fix(orders): Pflicht-Parameter 'location' nicht als Kontext-Key wegfiltern",
+          "kind": "fix"
+        }
+      ]
+    },
+    "2026-06-19": {
+      "commits": 5,
+      "kinds": {
+        "docs": 2,
+        "chore": 1,
+        "other": 1,
+        "feat": 1
+      },
+      "list": [
+        {
+          "sha": "89eba56",
+          "subject": "docs: Testzahlen 230→238 sync + Session-2-Handoff",
+          "kind": "docs"
+        },
+        {
+          "sha": "36a5704",
+          "subject": "docs: Offline/air-gapped VM-Installationsanleitung ergänzt",
+          "kind": "docs"
+        },
+        {
+          "sha": "90aec5c",
+          "subject": "chore: App-AppImage (85 MB) aus Tracking nehmen — *.AppImage ignoriert",
+          "kind": "chore"
+        },
+        {
+          "sha": "1df0e44",
+          "subject": "Merge remote-tracking branch 'origin/main'",
+          "kind": "other"
+        },
+        {
+          "sha": "ed2a887",
+          "subject": "feat: env-basierte Production-Settings + VM-Deployment-Anleitung",
+          "kind": "feat"
+        }
+      ]
+    },
+    "2026-06-18": {
+      "commits": 1,
+      "kinds": {
+        "docs": 1
+      },
+      "list": [
+        {
+          "sha": "f6a7286",
+          "subject": "docs: App-Look + TDD-Gate + Sync (verify_docs.sh grün)",
+          "kind": "docs"
+        }
+      ]
+    },
+    "2026-05-11": {
+      "commits": 1,
+      "kinds": {
+        "other": 1
+      },
+      "list": [
+        {
+          "sha": "1f0d3a3",
+          "subject": "mpp TDD Django",
+          "kind": "other"
+        }
+      ]
+    },
+    "2026-05-06": {
+      "commits": 2,
+      "kinds": {
+        "chore": 2
+      },
+      "list": [
+        {
+          "sha": "65bc616",
+          "subject": "chore: untrack .claude/ user-/machine-state per gitignore",
+          "kind": "chore"
+        },
+        {
+          "sha": "719b625",
+          "subject": "chore(gitignore): einheitliches .claude/-Pattern",
+          "kind": "chore"
+        }
+      ]
+    },
+    "2026-04-27": {
+      "commits": 2,
+      "kinds": {
+        "other": 2
+      },
+      "list": [
+        {
+          "sha": "be99c7f",
+          "subject": "Resolve merge conflicts (accept remote)",
+          "kind": "other"
+        },
+        {
+          "sha": "9649e57",
+          "subject": "Initial commit",
+          "kind": "other"
+        }
+      ]
+    },
+    "2026-04-10": {
+      "commits": 1,
+      "kinds": {
+        "fix": 1
+      },
+      "list": [
+        {
+          "sha": "c242a80",
+          "subject": "fix: AppImage standalone Python + App-spezifische Fixes",
+          "kind": "fix"
+        }
+      ]
+    },
+    "2026-04-09": {
+      "commits": 3,
+      "kinds": {
+        "chore": 2,
+        "feat": 1
+      },
+      "list": [
+        {
+          "sha": "b17d822",
+          "subject": "chore: .wheels/ aus Git-Tracking entfernt",
+          "kind": "chore"
+        },
+        {
+          "sha": "afcd00c",
+          "subject": "chore: .gitignore um AppImage-Build-Artefakte erweitert",
+          "kind": "chore"
+        },
+        {
+          "sha": "8e6fead",
+          "subject": "feat: AppImage-Erzeugung (App + Docs) in run.sh integriert",
+          "kind": "feat"
+        }
+      ]
+    },
+    "2026-04-04": {
+      "commits": 2,
+      "kinds": {
+        "other": 1,
+        "refactor": 1
+      },
+      "list": [
+        {
+          "sha": "00dfbf0",
+          "subject": "neu",
+          "kind": "other"
+        },
+        {
+          "sha": "b446b40",
+          "subject": "refactor: slim CLAUDE.md, extract rules for progressive disclosure",
+          "kind": "refactor"
+        }
+      ]
+    },
+    "2026-04-01": {
+      "commits": 1,
+      "kinds": {
+        "chore": 1
+      },
+      "list": [
+        {
+          "sha": "e6909f3",
+          "subject": "chore: gitignore fixes, port-resolution in docs script, add hub config",
+          "kind": "chore"
+        }
+      ]
+    },
+    "2026-03-30": {
+      "commits": 13,
+      "kinds": {
+        "docs": 1,
+        "feat": 6,
+        "fix": 6
+      },
+      "list": [
+        {
+          "sha": "88b160f",
+          "subject": "docs: add detailed comparison Flask+React vs Django+HTMX",
+          "kind": "docs"
+        },
+        {
+          "sha": "d525aff",
+          "subject": "feat: remove PostgreSQL DB template — only Linux VM and Windows VM",
+          "kind": "feat"
+        },
+        {
+          "sha": "ef64cca",
+          "subject": "fix: swap order tabs — Alle Bestellungen first and default",
+          "kind": "fix"
+        },
+        {
+          "sha": "04189a5",
+          "subject": "feat: collapsible review cards with bulk select/approve/reject",
+          "kind": "feat"
+        },
+        {
+          "sha": "722f12c",
+          "subject": "feat: detailed review requests matching Flask layout",
+          "kind": "feat"
+        },
+        {
+          "sha": "b24adba",
+          "subject": "fix: dashboard shows system-wide data for admin/superadmin",
+          "kind": "fix"
+        },
+        {
+          "sha": "fb405f2",
+          "subject": "fix: dashboard charts — DOMContentLoaded, Flask-matching layout, sized donut",
+          "kind": "fix"
+        },
+        {
+          "sha": "18bf921",
+          "subject": "fix: load Chart.js in head so it is available before chart init scripts",
+          "kind": "fix"
+        },
+        {
+          "sha": "838ccb0",
+          "subject": "fix: remove double JSON serialization in dashboard views (json.dumps + json_script)",
+          "kind": "fix"
+        },
+        {
+          "sha": "ede6993",
+          "subject": "feat: seed demo orders with full 30-parameter schemas",
+          "kind": "feat"
+        },
+        {
+          "sha": "bad7e8c",
+          "subject": "feat: T-Shirt Size auto-fills CPU, RAM, OS Disk via metadata",
+          "kind": "feat"
+        },
+        {
+          "sha": "1e21e36",
+          "subject": "feat: live summary sidebar shows selected values + rename MPP → MPP Django",
+          "kind": "feat"
+        },
+        {
+          "sha": "8b25875",
+          "subject": "fix: use inline styles instead of Tailwind classes for summary sidebar (Tailwind purge issue)",
+          "kind": "fix"
+        }
+      ]
+    },
+    "2026-03-29": {
+      "commits": 67,
+      "kinds": {
+        "fix": 10,
+        "feat": 47,
+        "docs": 9,
+        "other": 1
+      },
+      "list": [
+        {
+          "sha": "ab08d33",
+          "subject": "fix: move fixed_sidebar block outside DaisyUI drawer element entirely",
+          "kind": "fix"
+        },
+        {
+          "sha": "2c12f95",
+          "subject": "fix: fixed sidebar outside scroll container + red borders for required fields",
+          "kind": "fix"
+        },
+        {
+          "sha": "3c66e78",
+          "subject": "fix: JS-based sticky sidebar that works within DaisyUI drawer scroll container",
+          "kind": "fix"
+        },
+        {
+          "sha": "e426288",
+          "subject": "fix: use fixed positioning for summary sidebar — stays visible while scrolling",
+          "kind": "fix"
+        },
+        {
+          "sha": "3c37c57",
+          "subject": "fix: make summary sidebar sticky while scrolling (override drawer overflow)",
+          "kind": "fix"
+        },
+        {
+          "sha": "5e25083",
+          "subject": "fix: form view as default, fields stacked vertically full-width",
+          "kind": "fix"
+        },
+        {
+          "sha": "5154cca",
+          "subject": "feat: port complete 30+ parameter templates from Flask project",
+          "kind": "feat"
+        },
+        {
+          "sha": "09d9970",
+          "subject": "feat: add single-page form view with wizard/form toggle",
+          "kind": "feat"
+        },
+        {
+          "sha": "7bd8e46",
+          "subject": "feat: implement multi-step order wizard with context, parameter groups, and summary",
+          "kind": "feat"
+        },
+        {
+          "sha": "ef37cbf",
+          "subject": "fix: use template_id instead of slug in dashboard popular services link",
+          "kind": "fix"
+        },
+        {
+          "sha": "742c1ea",
+          "subject": "feat: improve catalog detail Bestellen button",
+          "kind": "feat"
+        },
+        {
+          "sha": "4a27c99",
+          "subject": "feat: add workspace tabs, status filters, add/remove items to orders",
+          "kind": "feat"
+        },
+        {
+          "sha": "b35292d",
+          "subject": "feat: add rich demo seed data with 8 orders across all statuses",
+          "kind": "feat"
+        },
+        {
+          "sha": "c9bac75",
+          "subject": "feat: enrich template parameters with groups and display_order",
+          "kind": "feat"
+        },
+        {
+          "sha": "76c6001",
+          "subject": "feat: add Chart.js, full navigation, admin panel, and UI parity",
+          "kind": "feat"
+        },
+        {
+          "sha": "711b796",
+          "subject": "feat: add Chart.js, full menu, admin panel, and UI parity templates",
+          "kind": "feat"
+        },
+        {
+          "sha": "90a1c36",
+          "subject": "docs: add UI parity design spec (Chart.js, full menu, admin panel)",
+          "kind": "docs"
+        },
+        {
+          "sha": "6649431",
+          "subject": "fix: update test to use mpp_django_test DB name",
+          "kind": "fix"
+        },
+        {
+          "sha": "4242a94",
+          "subject": "fix: separate Django DBs from Flask project (mpp_django_dev/test)",
+          "kind": "fix"
+        },
+        {
+          "sha": "307c4ce",
+          "subject": "feat: add doc-writer + brainstorming agents and full project documentation",
+          "kind": "feat"
+        },
+        {
+          "sha": "b62d365",
+          "subject": "feat(B9): add dev launcher script with status dashboard",
+          "kind": "feat"
+        },
+        {
+          "sha": "1645992",
+          "subject": "feat(B9): Phase B0-B9 complete — all features implemented",
+          "kind": "feat"
+        },
+        {
+          "sha": "3ee1288",
+          "subject": "feat(B9): add E2E tests for full order lifecycle workflows",
+          "kind": "feat"
+        },
+        {
+          "sha": "b7ac4ef",
+          "subject": "feat(B9): update seed command with approval rules and tenant assignments",
+          "kind": "feat"
+        },
+        {
+          "sha": "9c05a74",
+          "subject": "feat(B8): add subscription views with list, detail, cancel",
+          "kind": "feat"
+        },
+        {
+          "sha": "dfaea46",
+          "subject": "feat(B8): add SubscriptionService with create, list, cancel",
+          "kind": "feat"
+        },
+        {
+          "sha": "7b1037b",
+          "subject": "feat(B8): add Subscription and GroupSubscription models",
+          "kind": "feat"
+        },
+        {
+          "sha": "2c47f0f",
+          "subject": "docs: add Phase B8 subscriptions implementation plan",
+          "kind": "docs"
+        },
+        {
+          "sha": "a715b08",
+          "subject": "feat(B7): add dashboard stats with order count and notifications",
+          "kind": "feat"
+        },
+        {
+          "sha": "9090013",
+          "subject": "feat(B7): add notification and audit views with templates",
+          "kind": "feat"
+        },
+        {
+          "sha": "e149e2d",
+          "subject": "feat(B7): add Notification model and NotificationService",
+          "kind": "feat"
+        },
+        {
+          "sha": "1694077",
+          "subject": "feat(B7): add AuditLog model and AuditService",
+          "kind": "feat"
+        },
+        {
+          "sha": "ca6a99f",
+          "subject": "docs: add Phase B7 cross-cutting implementation plan",
+          "kind": "docs"
+        },
+        {
+          "sha": "9333b2f",
+          "subject": "feat(B6): add approval views with queue, approve, reject",
+          "kind": "feat"
+        },
+        {
+          "sha": "d5d298e",
+          "subject": "feat(B6): add ApprovalService with needs_approval, create, approve, reject",
+          "kind": "feat"
+        },
+        {
+          "sha": "82addca",
+          "subject": "feat(B6): add ApprovalRule and ApprovalRequest models",
+          "kind": "feat"
+        },
+        {
+          "sha": "e94fd8a",
+          "subject": "docs: add Phase B6 approvals implementation plan",
+          "kind": "docs"
+        },
+        {
+          "sha": "2887ef2",
+          "subject": "feat(B5): add ProvisioningService with dispatch, complete, and Celery tasks",
+          "kind": "feat"
+        },
+        {
+          "sha": "7bffb58",
+          "subject": "feat(B5): add DispatchLog model",
+          "kind": "feat"
+        },
+        {
+          "sha": "b8e9c90",
+          "subject": "feat(B5): add GitLab stub client for pipeline simulation",
+          "kind": "feat"
+        },
+        {
+          "sha": "e7becca",
+          "subject": "feat(B5): add Celery configuration with Redis broker",
+          "kind": "feat"
+        },
+        {
+          "sha": "814085d",
+          "subject": "docs: add Phase B5 provisioning implementation plan",
+          "kind": "docs"
+        },
+        {
+          "sha": "1b11fc6",
+          "subject": "feat(B4): add CMDB stub client, models, and ContextService",
+          "kind": "feat"
+        },
+        {
+          "sha": "f8d2e68",
+          "subject": "docs: add Phase B4 context/CMDB implementation plan",
+          "kind": "docs"
+        },
+        {
+          "sha": "6eb7505",
+          "subject": "feat(B3): add order views with create wizard, detail, list, and submit",
+          "kind": "feat"
+        },
+        {
+          "sha": "1829bf7",
+          "subject": "feat(B3): add OrderService with create, add/remove item, and submit",
+          "kind": "feat"
+        },
+        {
+          "sha": "57f16f9",
+          "subject": "feat(B3): add Order, OrderItem, OrderItemGroup models",
+          "kind": "feat"
+        },
+        {
+          "sha": "0aa0a4a",
+          "subject": "feat(B3): add OrderStatus enum and StatusMachine",
+          "kind": "feat"
+        },
+        {
+          "sha": "d02c590",
+          "subject": "docs: add Phase B3 order lifecycle implementation plan",
+          "kind": "docs"
+        },
+        {
+          "sha": "0fc11f0",
+          "subject": "feat(B2): add CatalogService with list, search, validate, and seed",
+          "kind": "feat"
+        },
+        {
+          "sha": "3dc95e5",
+          "subject": "feat(B2): add TemplateValidator for parameter schema validation",
+          "kind": "feat"
+        },
+        {
+          "sha": "a1b374c",
+          "subject": "feat(B2): add ServiceTemplate model with JSONField parameters",
+          "kind": "feat"
+        },
+        {
+          "sha": "6d0db15",
+          "subject": "docs: add Phase B2 service catalog implementation plan",
+          "kind": "docs"
+        },
+        {
+          "sha": "73b1643",
+          "subject": "feat(B1): add profile view, dashboard, and URL routing",
+          "kind": "feat"
+        },
+        {
+          "sha": "aa717ee",
+          "subject": "feat(B1): add allauth login/logout templates with DaisyUI",
+          "kind": "feat"
+        },
+        {
+          "sha": "2c50219",
+          "subject": "feat(B1): add DaisyUI base template with navbar, sidebar, messages",
+          "kind": "feat"
+        },
+        {
+          "sha": "5a07e09",
+          "subject": "feat(B0): add Tailwind + DaisyUI + HTMX setup",
+          "kind": "feat"
+        },
+        {
+          "sha": "c572a21",
+          "subject": "fix: restore conftest keepdb and flush stale test data",
+          "kind": "fix"
+        },
+        {
+          "sha": "782adb6",
+          "subject": "feat(B1): add role-based access mixins with hierarchy",
+          "kind": "feat"
+        },
+        {
+          "sha": "19bcebc",
+          "subject": "feat(B1): add AccountService with seed users and role hierarchy",
+          "kind": "feat"
+        },
+        {
+          "sha": "fa6a831",
+          "subject": "feat(B1): add custom User model with role field",
+          "kind": "feat"
+        },
+        {
+          "sha": "5c3704c",
+          "subject": "feat(B0): add core domain enums, mixins, and exceptions",
+          "kind": "feat"
+        },
+        {
+          "sha": "83de037",
+          "subject": "feat(B0): add pytest-django configuration and first tests",
+          "kind": "feat"
+        },
+        {
+          "sha": "6271019",
+          "subject": "feat(B0): add Django project skeleton with settings",
+          "kind": "feat"
+        },
+        {
+          "sha": "6d18a06",
+          "subject": "feat(B0): add Python requirements and gitignore",
+          "kind": "feat"
+        },
+        {
+          "sha": "cbb2f94",
+          "subject": "docs: add Phase B0+B1 implementation plan",
+          "kind": "docs"
+        },
+        {
+          "sha": "4340d7a",
+          "subject": "Initial project setup: design spec, agents, and project configuration",
+          "kind": "other"
+        }
+      ]
+    }
+  },
+  "stats": {
+    "totalCommits": 131,
+    "activeDays": 16,
+    "longestStreak": 2,
+    "topKinds": [
+      {
+        "kind": "feat",
+        "count": 60
+      },
+      {
+        "kind": "docs",
+        "count": 31
+      },
+      {
+        "kind": "fix",
+        "count": 20
+      },
+      {
+        "kind": "chore",
+        "count": 10
+      },
+      {
+        "kind": "other",
+        "count": 7
+      },
+      {
+        "kind": "refactor",
+        "count": 3
+      }
+    ],
+    "testCount": 323
+  },
+  "phases": []
+}
