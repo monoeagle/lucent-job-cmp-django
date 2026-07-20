@@ -1,0 +1,29 @@
+graph TB
+    classDef ext fill:#2c3550,stroke:#7c83ff,color:#cdd3e8;
+    classDef svc fill:#1f2937,stroke:#4ade80,color:#e5e7eb;
+    classDef store fill:#312e41,stroke:#c084fc,color:#e9d5ff;
+
+    CL["Browser<br/>(Client im LAN)"]:::ext
+
+    subgraph VM["VM · AlmaLinux 9"]
+        NG["nginx<br/>:80 → 301 :443 · TLS-Terminierung<br/>/static/ direkt von Platte"]:::svc
+        GU["cmp-web.service<br/>gunicorn · config.wsgi<br/>127.0.0.1:8001 · 3 Worker"]:::svc
+        CE["cmp-celery.service<br/>celery -A config worker<br/>concurrency=2 · kein Port"]:::svc
+        RD["redis.service<br/>localhost:6379/0<br/>Broker + Result-Backend"]:::store
+        PG[("postgresql-16.service<br/>127.0.0.1:5432<br/>DB cmp_prod · Rolle cmp")]:::store
+        ST["staticfiles/<br/>(collectstatic)"]:::store
+    end
+
+    GL["GitLab<br/>Pipeline-Trigger"]:::ext
+    CM["CMDB<br/>Locations · Networks"]:::ext
+
+    CL -->|"HTTPS 443"| NG
+    NG -->|"proxy_pass HTTP<br/>X-Forwarded-Proto"| GU
+    NG -->|"alias /static/"| ST
+    GU -->|"psycopg · 5432"| PG
+    GU -->|"Task enqueue · 6379"| RD
+    RD -->|"Task dequeue · 6379"| CE
+    CE -->|"psycopg · 5432"| PG
+    CE -->|"Ergebnis · 6379"| RD
+    CE -.->|"Stub oder Live"| GL
+    GU -.->|"Stub oder Live"| CM

@@ -1,0 +1,7 @@
+graph LR
+    classDef svc fill:#1f2937,stroke:#4ade80,color:#e5e7eb;
+    classDef store fill:#312e41,stroke:#c084fc,color:#e9d5ff;
+
+    B["Browser"] -->|"HTTP 8000"| RS["runserver<br/>127.0.0.1:8000"]:::svc
+    RS --> DB[("PostgreSQL<br/>:5432")]:::store
+    RS -.->|"CELERY_TASK_ALWAYS_EAGER"| EG["Tasks laufen<br/>inline im Request"]:::svc

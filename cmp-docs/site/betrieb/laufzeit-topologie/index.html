@@ -13,10 +13,10 @@
       
       
       
-        <link rel="prev" href="../stubs-mocks/">
+        <link rel="prev" href="../../entwicklung/changelog/">
       
       
-        <link rel="next" href="../../decisions/0001-deployment-native-vs-container/">
+        <link rel="next" href="../stubs-mocks/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Troubleshooting - CMP Django — CloudMan Portal</title>
+        <title>Laufzeit-Topologie - CMP Django — CloudMan Portal</title>
       
     
     
@@ -79,7 +79,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#troubleshooting" class="md-skip">
+        <a href="#laufzeit-topologie" class="md-skip">
           Zum Inhalt
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Troubleshooting
+              Laufzeit-Topologie
             
           </span>
         </div>
@@ -887,10 +887,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../laufzeit-topologie/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Laufzeit-Topologie
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
         
   
   
@@ -906,6 +933,215 @@
   
 
       </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Inhaltsverzeichnis">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Inhaltsverzeichnis
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#produktion-nach-installsh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Produktion (nach install.sh)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wer-macht-was" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wer macht was
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wer macht was">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nginx-das-netzwerk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        nginx — das Netzwerk
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gunicorn-python-ausfuhren" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gunicorn — Python ausführen
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis-die-warteschlange" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis — die Warteschlange
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#celery-die-lange-arbeit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Celery — die lange Arbeit
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tls-zertifikat-vorhanden-oder-nicht" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLS: Zertifikat vorhanden oder nicht
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ports-auf-einen-blick" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ports auf einen Blick
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zugriff-vom-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zugriff vom Client
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Zugriff vom Client">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#es-muss-der-fqdn-sein-nicht-die-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Es muss der FQDN sein, nicht die IP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namensauflosung-auf-dem-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Namensauflösung auf dem Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zugriff-per-ip-nachrusten" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zugriff per IP nachrüsten
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#einstiegspunkte-nach-rolle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Einstiegspunkte nach Rolle
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#systemd-units" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd-Units
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#warum-celery-uberhaupt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warum Celery überhaupt
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entwicklung" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entwicklung
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -943,37 +1179,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Troubleshooting
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="././" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
         
   
   
@@ -989,165 +1198,6 @@
   
 
       </a>
-      
-        
-
-
-<nav class="md-nav md-nav--secondary" aria-label="Inhaltsverzeichnis">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Inhaltsverzeichnis
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#haufige-probleme" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Häufige Probleme
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Häufige Probleme">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#postgresql-nicht-erreichbar" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PostgreSQL nicht erreichbar
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#datenbank-existiert-nicht" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Datenbank existiert nicht
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#migrationen-fehlgeschlagen" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Migrationen fehlgeschlagen
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#port-8000-belegt" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Port 8000 belegt
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#nodejs-version-zu-alt" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Node.js Version zu alt
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tests-schlagen-fehl-nach-schema-anderung" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tests schlagen fehl nach Schema-Änderung
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#virtual-environment-probleme" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Virtual Environment Probleme
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#celery-fehler-im-development" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Celery-Fehler im Development
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#htmx-funktioniert-nicht" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        HTMX funktioniert nicht
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#django-admin-nicht-erreichbar" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Django Admin nicht erreichbar
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#nutzliche-befehle" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Nützliche Befehle
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1288,22 +1338,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#haufige-probleme" class="md-nav__link">
+  <a href="#produktion-nach-installsh" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Häufige Probleme
+        Produktion (nach install.sh)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Häufige Probleme">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wer-macht-was" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wer macht was
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wer macht was">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#postgresql-nicht-erreichbar" class="md-nav__link">
+  <a href="#nginx-das-netzwerk" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PostgreSQL nicht erreichbar
+        nginx — das Netzwerk
       
     </span>
   </a>
@@ -1311,10 +1372,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#datenbank-existiert-nicht" class="md-nav__link">
+  <a href="#gunicorn-python-ausfuhren" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Datenbank existiert nicht
+        gunicorn — Python ausführen
       
     </span>
   </a>
@@ -1322,10 +1383,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#migrationen-fehlgeschlagen" class="md-nav__link">
+  <a href="#redis-die-warteschlange" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Migrationen fehlgeschlagen
+        Redis — die Warteschlange
       
     </span>
   </a>
@@ -1333,76 +1394,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#port-8000-belegt" class="md-nav__link">
+  <a href="#celery-die-lange-arbeit" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Port 8000 belegt
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#nodejs-version-zu-alt" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Node.js Version zu alt
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tests-schlagen-fehl-nach-schema-anderung" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tests schlagen fehl nach Schema-Änderung
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#virtual-environment-probleme" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Virtual Environment Probleme
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#celery-fehler-im-development" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Celery-Fehler im Development
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#htmx-funktioniert-nicht" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        HTMX funktioniert nicht
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#django-admin-nicht-erreichbar" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Django Admin nicht erreichbar
+        Celery — die lange Arbeit
       
     </span>
   </a>
@@ -1415,10 +1410,115 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nutzliche-befehle" class="md-nav__link">
+  <a href="#tls-zertifikat-vorhanden-oder-nicht" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Nützliche Befehle
+        TLS: Zertifikat vorhanden oder nicht
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ports-auf-einen-blick" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ports auf einen Blick
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zugriff-vom-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zugriff vom Client
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Zugriff vom Client">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#es-muss-der-fqdn-sein-nicht-die-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Es muss der FQDN sein, nicht die IP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namensauflosung-auf-dem-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Namensauflösung auf dem Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zugriff-per-ip-nachrusten" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zugriff per IP nachrüsten
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#einstiegspunkte-nach-rolle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Einstiegspunkte nach Rolle
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#systemd-units" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd-Units
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#warum-celery-uberhaupt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warum Celery überhaupt
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entwicklung" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entwicklung
       
     </span>
   </a>
@@ -1440,111 +1540,364 @@
                 
                   
 
-<h1 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h1>
-<h2 id="haufige-probleme">Häufige Probleme<a class="headerlink" href="#haufige-probleme" title="Permanent link">&para;</a></h2>
-<h3 id="postgresql-nicht-erreichbar">PostgreSQL nicht erreichbar<a class="headerlink" href="#postgresql-nicht-erreichbar" title="Permanent link">&para;</a></h3>
-<p><strong>Symptom:</strong> <code>connection to server on socket ... failed</code></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Status prüfen</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>pg_isready<span class="w"> </span>-h<span class="w"> </span>localhost<span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Service starten (Ubuntu/Debian)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>postgresql
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Service starten (Fedora/RHEL)</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>postgresql
+<h1 id="laufzeit-topologie">Laufzeit-Topologie<a class="headerlink" href="#laufzeit-topologie" title="Permanent link">&para;</a></h1>
+<p>Wie die Prozesse auf der VM zusammenhängen — welcher Dienst auf welchem Port lauscht und wer mit wem spricht. Ergänzt das <em>logische</em> Schichtenbild auf der <a href="../../">Startseite</a> um die <strong>Betriebssicht</strong>.</p>
+<p>Quelle der Wahrheit sind die Installer-Skripte (<code>deploy/lib.sh</code>, <code>deploy/install.sh</code>) und <code>cmp/config/settings/production.py</code>.</p>
+<h2 id="produktion-nach-installsh">Produktion (nach <code>install.sh</code>)<a class="headerlink" href="#produktion-nach-installsh" title="Permanent link">&para;</a></h2>
+<p><img src="../../images/mermaid/betrieb-laufzeit-topologie-1.svg" alt="Diagramm 1 aus betrieb/laufzeit-topologie.md"></p>
+<div class="admonition warning">
+<p class="admonition-title">Ohne nginx</p>
+<p>Mit <code>--skip-nginx</code> entfällt der Reverse-Proxy komplett. Das Portal ist dann <strong>nur</strong> auf <code>127.0.0.1:8001</code> erreichbar — ohne TLS und ohne Zugriff von außen.</p>
+</div>
+<h2 id="wer-macht-was">Wer macht was<a class="headerlink" href="#wer-macht-was" title="Permanent link">&para;</a></h2>
+<p>Vier Dienste, vier klar getrennte Aufgaben. Keiner davon ist optional zu ersetzen — sie lösen verschiedene Probleme.</p>
+<h3 id="nginx-das-netzwerk">nginx — das Netzwerk<a class="headerlink" href="#nginx-das-netzwerk" title="Permanent link">&para;</a></h3>
+<p>Der einzige Dienst, der von außen erreichbar ist. Er <strong>terminiert TLS</strong> (das Zertifikat liegt nur hier), liefert <strong>statische Dateien</strong> direkt von der Platte aus (<code>/static/</code>, <code>expires 30d</code>) und <strong>puffert</strong> Requests langsamer Clients.</p>
+<p>Der letzte Punkt ist der eigentliche Grund für den Proxy: Gunicorn hat nur 3 Worker, und ein <code>sync</code>-Worker ist während der gesamten Übertragung belegt. Ohne nginx davor würden drei lahme Verbindungen das Portal blockieren. nginx nimmt den Request vollständig entgegen und reicht ihn in einem Rutsch weiter — der Python-Worker ist nur für die reine Rechenzeit belegt.</p>
+<h3 id="gunicorn-python-ausfuhren">gunicorn — Python ausführen<a class="headerlink" href="#gunicorn-python-ausfuhren" title="Permanent link">&para;</a></h3>
+<p>Django spricht kein HTTP, sondern <strong>WSGI</strong> — ein Python-Aufrufprotokoll. Gunicorn ist der Übersetzer: er nimmt HTTP entgegen, ruft <code>config.wsgi:application</code> auf und gibt die Antwort zurück. Ohne einen WSGI-Server läuft Django in Produktion überhaupt nicht.</p>
+<p>Hier läuft der <strong>gesamte</strong> Web- und Service-Layer aus dem <a href="../../">logischen Architekturbild</a>: Views, Forms, Services, ORM. 3 Worker, Timeout 60 s, gebunden an <code>127.0.0.1:8001</code> — von außen unerreichbar, der einzige Weg hinein führt über nginx.</p>
+<h3 id="redis-die-warteschlange">Redis — die Warteschlange<a class="headerlink" href="#redis-die-warteschlange" title="Permanent link">&para;</a></h3>
+<p>Reiner Zwischenspeicher zwischen Web und Worker, hält <strong>keine</strong> Geschäftsdaten (die liegen in PostgreSQL). Redis ist hier <strong>beides</strong>: <strong>Broker</strong> (Gunicorn legt Tasks ab, Celery holt sie) und <strong>Result-Backend</strong> (Celery legt Ergebnisse ab). Beides auf <code>redis://localhost:6379/0</code>.</p>
+<p>Redis ist der einzige Weg, auf dem die beiden Prozesse miteinander reden — sie kennen sich sonst nicht.</p>
+<h3 id="celery-die-lange-arbeit">Celery — die lange Arbeit<a class="headerlink" href="#celery-die-lange-arbeit" title="Permanent link">&para;</a></h3>
+<p>Ein eigener Prozess <strong>ohne Listener</strong>, der nur ausgehend spricht. Er arbeitet Provisioning-Tasks ab, die externe Pipelines anstoßen und deutlich länger dauern als ein HTTP-Request warten sollte.</p>
+<p>Der Ablauf: Die View ruft den <code>ProvisioningService</code>, der legt den Task in Redis ab, die View <strong>antwortet sofort</strong>. Der Worker (<code>--concurrency=2</code>) holt den Task und arbeitet ihn asynchron ab — der Nutzer wartet nicht.</p>
+<table>
+<thead>
+<tr>
+<th>Dienst</th>
+<th>Aufgabe in einem Satz</th>
+<th>Lauscht auf</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>nginx</strong></td>
+<td>TLS, statische Dateien, Puffer gegen langsame Clients</td>
+<td><code>:80</code> / <code>:443</code></td>
+</tr>
+<tr>
+<td><strong>gunicorn</strong></td>
+<td>führt Django-Code aus (HTTP ↔ WSGI)</td>
+<td><code>127.0.0.1:8001</code></td>
+</tr>
+<tr>
+<td><strong>Redis</strong></td>
+<td>Warteschlange zwischen Web und Worker</td>
+<td><code>localhost:6379</code></td>
+</tr>
+<tr>
+<td><strong>Celery</strong></td>
+<td>arbeitet lange Tasks ab, ohne den Request zu blockieren</td>
+<td>nichts (nur ausgehend)</td>
+</tr>
+<tr>
+<td><strong>PostgreSQL</strong></td>
+<td>alle Geschäftsdaten</td>
+<td><code>127.0.0.1:5432</code></td>
+</tr>
+</tbody>
+</table>
+<p>Merksatz: <strong>nginx macht das Netzwerk, Gunicorn macht Python, Redis macht die Übergabe, Celery macht das Warten.</strong></p>
+<h2 id="tls-zertifikat-vorhanden-oder-nicht">TLS: Zertifikat vorhanden oder nicht<a class="headerlink" href="#tls-zertifikat-vorhanden-oder-nicht" title="Permanent link">&para;</a></h2>
+<p>Der Installer erzeugt <strong>kein self-signed Zertifikat</strong>. Er prüft, ob <code>/etc/pki/cmp/cmp.crt</code> existiert und dessen SAN zum FQDN passt, und wählt danach den nginx-Modus:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Zertifikat passt zum FQDN</th>
+<th>kein / unpassendes Zertifikat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Modus</td>
+<td><code>https</code></td>
+<td><code>http</code></td>
+</tr>
+<tr>
+<td>nginx-Listener</td>
+<td><code>:80</code> → 301 auf <code>:443</code>, <code>:443 ssl</code></td>
+<td><strong>nur</strong> <code>:80</code>, proxyt direkt</td>
+</tr>
+<tr>
+<td>firewalld</td>
+<td>http <strong>und</strong> https</td>
+<td><strong>nur</strong> http</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td>normale HTTPS-Verbindung, keine Meldung</td>
+<td>unverschlüsseltes HTTP</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">Ohne Zertifikat gibt es keine Zertifikatswarnung — es gibt gar kein HTTPS</p>
+<p>Im HTTP-Modus existiert <strong>kein 443-Listener</strong>. Ein Aufruf von <code>https://&lt;fqdn&gt;/</code> läuft ins Leere (<em>Connection refused</em>) — es erscheint <strong>keine</strong> wegklickbare Browser-Warnung. Port 443 wird in firewalld gar nicht erst geöffnet.</p>
+<p>Das ist Absicht: Ein self-signed Zertifikat gewöhnt Nutzer daran, Sicherheitswarnungen wegzuklicken, und verschleiert, dass die Verbindung ungeprüft ist. Ein Redirect auf 443 liefe ohne Zertifikat ohnehin ins Leere. Der Installer warnt stattdessen deutlich, dass das Portal über <strong>unverschlüsseltes HTTP</strong> läuft.</p>
+</div>
+<p><strong>Nachträglich auf HTTPS umstellen:</strong> <code>cmp.crt</code> + <code>cmp.key</code> nach <code>/etc/pki/cmp/</code> legen, <code>install.sh</code> erneut ausführen. Der Modus wird neu bestimmt, nginx umkonfiguriert, Port 443 freigegeben. Ein vom Admin eingespieltes Zertifikat wird dabei <strong>nie</strong> angetastet — der Installer ersetzt nur Zertifikate, die er selbst erzeugt hat (Issuer == Subject).</p>
+<h2 id="ports-auf-einen-blick">Ports auf einen Blick<a class="headerlink" href="#ports-auf-einen-blick" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Dienst</th>
+<th>Bindung</th>
+<th>Von außen erreichbar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>443</td>
+<td>nginx (TLS)</td>
+<td>alle Interfaces</td>
+<td>✓ — nur im HTTPS-Modus in firewalld freigegeben</td>
+</tr>
+<tr>
+<td>80</td>
+<td>nginx</td>
+<td>alle Interfaces</td>
+<td>✓ — Redirect auf 443, im HTTP-Modus proxyt es direkt</td>
+</tr>
+<tr>
+<td>8001</td>
+<td>gunicorn</td>
+<td><code>127.0.0.1</code></td>
+<td>✗ nur lokal</td>
+</tr>
+<tr>
+<td>6379</td>
+<td>Redis</td>
+<td><code>localhost</code></td>
+<td>✗ nur lokal</td>
+</tr>
+<tr>
+<td>5432</td>
+<td>PostgreSQL</td>
+<td><code>127.0.0.1</code></td>
+<td>✗ nur lokal</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Celery-Worker</td>
+<td>kein Listener</td>
+<td>✗ spricht nur ausgehend zu Redis + PostgreSQL</td>
+</tr>
+</tbody>
+</table>
+<p>Nur nginx ist exponiert. Alles dahinter lauscht ausschließlich auf Loopback — deshalb reicht ein Zertifikat an genau einer Stelle.</p>
+<h2 id="zugriff-vom-client">Zugriff vom Client<a class="headerlink" href="#zugriff-vom-client" title="Permanent link">&para;</a></h2>
+<p>Typischer Testaufbau: Das Release wird auf einer <strong>AlmaLinux-VM</strong> per <code>install.sh</code> installiert, aufgerufen wird das Portal von einem <strong>separaten Client</strong> im selben Netz.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Client ──HTTP :80──▶ nginx (TestVM) ──▶ gunicorn :8001 ──▶ Django
 </span></code></pre></div>
-<h3 id="datenbank-existiert-nicht">Datenbank existiert nicht<a class="headerlink" href="#datenbank-existiert-nicht" title="Permanent link">&para;</a></h3>
-<p><strong>Symptom:</strong> <code>FATAL: database "cmp_django_dev" does not exist</code></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># DB anlegen (braucht superuser)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>createdb<span class="w"> </span>cmp_django_dev<span class="w"> </span>-O<span class="w"> </span>cmp
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>createdb<span class="w"> </span>cmp_django_test<span class="w"> </span>-O<span class="w"> </span>cmp
+<p>Aufruf im Browser des Clients — ohne Zertifikat über HTTP:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>http://&lt;fqdn&gt;/
 </span></code></pre></div>
-<p>Falls der User <code>cmp</code> nicht existiert:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;CREATE USER cmp WITH PASSWORD &#39;cmp&#39; CREATEDB;&quot;</span>
+<p>Port 80 ist im HTTP-Modus in firewalld freigegeben. Gunicorn, Redis und PostgreSQL lauschen nur auf Loopback und werden vom Client nie direkt angesprochen.</p>
+<h3 id="es-muss-der-fqdn-sein-nicht-die-ip">Es muss der FQDN sein, nicht die IP<a class="headerlink" href="#es-muss-der-fqdn-sein-nicht-die-ip" title="Permanent link">&para;</a></h3>
+<p>Der Installer fragt den FQDN ab und schreibt ihn wörtlich nach <code>/etc/cmp/cmp.env</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ALLOWED_HOSTS=&lt;fqdn&gt;
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>CSRF_TRUSTED_ORIGINS=http://&lt;fqdn&gt;
 </span></code></pre></div>
-<h3 id="migrationen-fehlgeschlagen">Migrationen fehlgeschlagen<a class="headerlink" href="#migrationen-fehlgeschlagen" title="Permanent link">&para;</a></h3>
-<p><strong>Symptom:</strong> <code>relation "..." already exists</code> oder <code>column "..." does not exist</code></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Test-DB zurücksetzen</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nv">PGPASSWORD</span><span class="o">=</span>cmp<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span>localhost<span class="w"> </span>-U<span class="w"> </span>cmp<span class="w"> </span>-d<span class="w"> </span>cmp_django_test<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;DROP SCHEMA public CASCADE; CREATE SCHEMA public;&quot;</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nb">cd</span><span class="w"> </span>cmp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nv">DJANGO_SETTINGS_MODULE</span><span class="o">=</span>config.settings.testing<span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>migrate
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># Dev-DB zurücksetzen</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="nv">PGPASSWORD</span><span class="o">=</span>cmp<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span>localhost<span class="w"> </span>-U<span class="w"> </span>cmp<span class="w"> </span>-d<span class="w"> </span>cmp_django_dev<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;DROP SCHEMA public CASCADE; CREATE SCHEMA public;&quot;</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="nb">cd</span><span class="w"> </span>cmp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>migrate<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>seed
+<p>Ein Aufruf über <code>http://&lt;ip&gt;/</code> endet deshalb in Djangos <code>DisallowedHost</code> (HTTP 400). Verwende exakt den Namen, der bei der Installation eingegeben wurde.</p>
+<h3 id="namensauflosung-auf-dem-client">Namensauflösung auf dem Client<a class="headerlink" href="#namensauflosung-auf-dem-client" title="Permanent link">&para;</a></h3>
+<p>Existiert in der Testumgebung kein DNS-Eintrag, muss der Client den Namen selbst auflösen:</p>
+<table>
+<thead>
+<tr>
+<th>System</th>
+<th>Datei</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux / macOS</td>
+<td><code>/etc/hosts</code></td>
+</tr>
+<tr>
+<td>Windows</td>
+<td><code>C:\Windows\System32\drivers\etc\hosts</code> (als Administrator)</td>
+</tr>
+</tbody>
+</table>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>192.168.x.y   cmp.internal.example.com
 </span></code></pre></div>
-<h3 id="port-8000-belegt">Port 8000 belegt<a class="headerlink" href="#port-8000-belegt" title="Permanent link">&para;</a></h3>
-<p><strong>Symptom:</strong> <code>Error: That port is already in use.</code></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Prozess finden</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>lsof<span class="w"> </span>-i<span class="w"> </span>:8000
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Prozess beenden</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nb">kill</span><span class="w"> </span>-9<span class="w"> </span><span class="k">$(</span>lsof<span class="w"> </span>-t<span class="w"> </span>-i<span class="w"> </span>:8000<span class="k">)</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Oder anderen Port nutzen</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>python<span class="w"> </span>manage.py<span class="w"> </span>runserver<span class="w"> </span><span class="m">8001</span>
+<div class="admonition tip">
+<p class="admonition-title">Häufigste Ursache für „Portal geht nicht"</p>
+<p>Nach einer sauberen Installation läuft die VM, aber der FQDN zeigt vom Client aus nirgendwohin. Vor der Fehlersuche im Portal erst <code>ping &lt;fqdn&gt;</code> und <code>curl -I http://&lt;fqdn&gt;/</code> vom Client aus prüfen.</p>
+</div>
+<h3 id="zugriff-per-ip-nachrusten">Zugriff per IP nachrüsten<a class="headerlink" href="#zugriff-per-ip-nachrusten" title="Permanent link">&para;</a></h3>
+<p>Soll das Portal zusätzlich über die IP erreichbar sein, beide Zeilen in <code>/etc/cmp/cmp.env</code> erweitern:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ALLOWED_HOSTS=cmp.internal.example.com,192.168.x.y
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>CSRF_TRUSTED_ORIGINS=http://cmp.internal.example.com,http://192.168.x.y
 </span></code></pre></div>
-<h3 id="nodejs-version-zu-alt">Node.js Version zu alt<a class="headerlink" href="#nodejs-version-zu-alt" title="Permanent link">&para;</a></h3>
-<p><strong>Symptom:</strong> Tailwind CSS Build schlägt fehl</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Version prüfen</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>node<span class="w"> </span>--version
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># TailwindCSS v4 braucht Node &gt;= 20</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># nvm verwenden</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>nvm<span class="w"> </span>install<span class="w"> </span><span class="m">22</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>nvm<span class="w"> </span>use<span class="w"> </span><span class="m">22</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>npm<span class="w"> </span>run<span class="w"> </span>css:build
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>systemctl<span class="w"> </span>restart<span class="w"> </span>cmp-web<span class="w"> </span>cmp-celery
 </span></code></pre></div>
-<h3 id="tests-schlagen-fehl-nach-schema-anderung">Tests schlagen fehl nach Schema-Änderung<a class="headerlink" href="#tests-schlagen-fehl-nach-schema-anderung" title="Permanent link">&para;</a></h3>
-<p><strong>Symptom:</strong> <code>ProgrammingError: relation "..." does not exist</code></p>
-<p>Die Test-DB nutzt <code>keepdb=True</code>. Nach Model-Änderungen:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Migrationen auf Test-DB anwenden</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nb">cd</span><span class="w"> </span>cmp
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nv">DJANGO_SETTINGS_MODULE</span><span class="o">=</span>config.settings.testing<span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>migrate
-</span></code></pre></div>
-<h3 id="virtual-environment-probleme">Virtual Environment Probleme<a class="headerlink" href="#virtual-environment-probleme" title="Permanent link">&para;</a></h3>
-<p><strong>Symptom:</strong> <code>ModuleNotFoundError</code></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># venv komplett neu erstellen</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>rm<span class="w"> </span>-rf<span class="w"> </span>venv
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="nb">source</span><span class="w"> </span>venv/bin/activate
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements/dev.txt
-</span></code></pre></div>
-<h3 id="celery-fehler-im-development">Celery-Fehler im Development<a class="headerlink" href="#celery-fehler-im-development" title="Permanent link">&para;</a></h3>
-<p><strong>Symptom:</strong> <code>redis.exceptions.ConnectionError</code></p>
-<p>Im Development-Modus ist Redis nicht erforderlich. Prüfe:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># cmp/config/settings/development.py</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">CELERY_TASK_ALWAYS_EAGER</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">CELERY_TASK_EAGER_PROPAGATES</span> <span class="o">=</span> <span class="kc">True</span>
-</span></code></pre></div>
-<p>Falls diese Einstellung fehlt, werden Tasks asynchron geschickt und brauchen Redis.</p>
-<h3 id="htmx-funktioniert-nicht">HTMX funktioniert nicht<a class="headerlink" href="#htmx-funktioniert-nicht" title="Permanent link">&para;</a></h3>
-<p><strong>Symptom:</strong> Suche/Filter laden nicht dynamisch</p>
-<p>Prüfe:
-1. <code>cmp/static/js/htmx.min.js</code> existiert
-2. <code>django_htmx</code> in INSTALLED_APPS
-3. <code>HtmxMiddleware</code> in MIDDLEWARE
-4. <code>&lt;script src="{% static 'js/htmx.min.js' %}" defer&gt;&lt;/script&gt;</code> in base.html</p>
-<h3 id="django-admin-nicht-erreichbar">Django Admin nicht erreichbar<a class="headerlink" href="#django-admin-nicht-erreichbar" title="Permanent link">&para;</a></h3>
-<p><strong>Symptom:</strong> 403 Forbidden</p>
-<p>Nur User mit <code>is_staff=True</code> haben Zugang:
-- <code>test-admin</code> (is_staff=True)
-- <code>test-superadmin</code> (is_staff=True, is_superuser=True)</p>
-<h2 id="nutzliche-befehle">Nützliche Befehle<a class="headerlink" href="#nutzliche-befehle" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Django Check (findet Konfigurationsprobleme)</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nb">cd</span><span class="w"> </span>cmp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>check
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># Alle Migrationen anzeigen</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>python<span class="w"> </span>manage.py<span class="w"> </span>showmigrations
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1"># Django Shell (interaktiv)</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>python<span class="w"> </span>manage.py<span class="w"> </span>shell
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="c1"># Alle registrierten URLs anzeigen</span>
-</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>python<span class="w"> </span>manage.py<span class="w"> </span>show_urls<span class="w">  </span><span class="c1"># (braucht django-extensions)</span>
-</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>
-</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="c1"># Datenbank-Inhalt prüfen</span>
-</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="nv">PGPASSWORD</span><span class="o">=</span>cmp<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span>localhost<span class="w"> </span>-U<span class="w"> </span>cmp<span class="w"> </span>-d<span class="w"> </span>cmp_django_dev<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SELECT username, role FROM users;&quot;</span>
-</span></code></pre></div>
+<p><code>CSRF_TRUSTED_ORIGINS</code> braucht das <strong>Schema</strong> (<code>http://</code>), <code>ALLOWED_HOSTS</code> steht <strong>ohne</strong>. Wird die CSRF-Zeile vergessen, lädt die Seite zwar, aber jedes Formular — inklusive Login — scheitert an der CSRF-Prüfung.</p>
+<h2 id="einstiegspunkte-nach-rolle">Einstiegspunkte nach Rolle<a class="headerlink" href="#einstiegspunkte-nach-rolle" title="Permanent link">&para;</a></h2>
+<p>Alles läuft über <strong>eine</strong> Adresse (<code>http://&lt;fqdn&gt;/</code> bzw. <code>https://</code> mit Zertifikat) — es gibt keinen separaten Admin-Host und keinen zweiten Port. Was jemand sieht, entscheidet allein die Rolle am User-Objekt. Ungenehmigter Zugriff wird vom jeweiligen Mixin abgewiesen.</p>
+<p><img src="../../images/mermaid/betrieb-laufzeit-topologie-2.svg" alt="Diagramm 2 aus betrieb/laufzeit-topologie.md"></p>
+<table>
+<thead>
+<tr>
+<th>Einstieg</th>
+<th>URL</th>
+<th>Ab Rolle</th>
+<th>Gate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Login</td>
+<td><code>/accounts/login/</code></td>
+<td>—</td>
+<td>allauth, Session-Auth</td>
+</tr>
+<tr>
+<td>Dashboard (Startseite)</td>
+<td><code>/</code></td>
+<td>requester</td>
+<td><code>RequesterRequiredMixin</code></td>
+</tr>
+<tr>
+<td>Katalog</td>
+<td><code>/catalog/</code></td>
+<td>requester</td>
+<td><code>RequesterRequiredMixin</code></td>
+</tr>
+<tr>
+<td>Bestellungen</td>
+<td><code>/orders/</code></td>
+<td>requester</td>
+<td><code>RequesterRequiredMixin</code></td>
+</tr>
+<tr>
+<td>Laufende Services</td>
+<td><code>/subscriptions/</code></td>
+<td>requester</td>
+<td><code>RequesterRequiredMixin</code></td>
+</tr>
+<tr>
+<td>Benachrichtigungen</td>
+<td><code>/notifications/</code></td>
+<td>requester</td>
+<td><code>RequesterRequiredMixin</code></td>
+</tr>
+<tr>
+<td>Profil</td>
+<td><code>/accounts/profile/</code></td>
+<td>requester</td>
+<td><code>RequesterRequiredMixin</code></td>
+</tr>
+<tr>
+<td>Genehmigungs-Queue</td>
+<td><code>/approvals/</code></td>
+<td>approver</td>
+<td><code>ApproverRequiredMixin</code></td>
+</tr>
+<tr>
+<td>Audit-Log (+ Export)</td>
+<td><code>/audit/</code></td>
+<td>admin</td>
+<td><code>AdminRequiredMixin</code></td>
+</tr>
+<tr>
+<td>Django Admin</td>
+<td><code>/admin/</code></td>
+<td>— (<code>is_staff</code>)</td>
+<td>Django-Admin-eigene Prüfung</td>
+</tr>
+</tbody>
+</table>
+<p>Der Django Admin ist der eine Einstieg, der <strong>nicht</strong> über ein Rollen-Mixin läuft: er prüft ausschließlich Djangos <code>is_staff</code>-Flag. Beim Seeden setzt <code>AccountService.seed_stub_users()</code> das Flag automatisch für die Rollen <code>admin</code> und <code>superadmin</code> (und <code>is_superuser</code> für <code>superadmin</code>). Bei <strong>manuell im Admin angelegten</strong> Nutzern muss <code>is_staff</code> dagegen separat gesetzt werden — Rolle <code>admin</code> allein öffnet den Django Admin dort nicht.</p>
+<p>Die Rollen sind <strong>kumulativ</strong>: <code>superadmin ⊃ admin ⊃ approver ⊃ requester</code>. Ein Approver erreicht also auch Katalog und Bestellungen; die Queue bleibt einem Requester dagegen verschlossen.</p>
+<div class="admonition note">
+<p class="admonition-title">Es gibt keine Registrierung</p>
+<p><code>ACCOUNT_SIGNUP_ENABLED=False</code>. Jeder Account wird von einem Admin im <strong>Django Admin</strong> angelegt — das ist der Einstiegspunkt für User-Verwaltung, nicht das Portal selbst.</p>
+</div>
+<h2 id="systemd-units">systemd-Units<a class="headerlink" href="#systemd-units" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Unit</th>
+<th>Startet</th>
+<th>Abhängigkeiten</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cmp-web.service</code></td>
+<td>gunicorn, 3 Worker, Timeout 60 s</td>
+<td><code>Requires</code> PostgreSQL, <code>After</code> redis</td>
+</tr>
+<tr>
+<td><code>cmp-celery.service</code></td>
+<td>Celery-Worker, <code>--concurrency=2</code></td>
+<td><code>Requires</code> PostgreSQL, <code>After</code> redis</td>
+</tr>
+<tr>
+<td><code>nginx</code></td>
+<td>Reverse-Proxy + TLS</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>redis</code></td>
+<td>Broker</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>postgresql-16.service</code></td>
+<td>Datenbank (PGDG)</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Der PostgreSQL-Unit-Name hängt von der Paketquelle ab: <strong>PGDG</strong> → <code>postgresql-16.service</code>, <strong>AppStream</strong> → <code>postgresql.service</code>. Der Installer ermittelt ihn zur Laufzeit und schreibt ihn in die Units.</p>
+<p>Beide CMP-Units laufen mit <code>NoNewPrivileges</code>, <code>PrivateTmp</code>, <code>ProtectSystem=full</code>, <code>ProtectHome</code> und <code>Restart=on-failure</code> (5 s).</p>
+<h2 id="warum-celery-uberhaupt">Warum Celery überhaupt<a class="headerlink" href="#warum-celery-uberhaupt" title="Permanent link">&para;</a></h2>
+<p>Provisioning-Tasks stoßen externe Pipelines an und dauern länger als ein HTTP-Request warten sollte. Der <code>ProvisioningService</code> legt den Task in Redis ab, die View antwortet sofort, der Worker arbeitet ihn asynchron ab. Redis ist dabei <strong>beides</strong>: Broker (Warteschlange) und Result-Backend — beide auf <code>redis://localhost:6379/0</code>.</p>
+<h2 id="entwicklung">Entwicklung<a class="headerlink" href="#entwicklung" title="Permanent link">&para;</a></h2>
+<p><img src="../../images/mermaid/betrieb-laufzeit-topologie-3.svg" alt="Diagramm 3 aus betrieb/laufzeit-topologie.md"></p>
+<p>Kein nginx, kein gunicorn, kein Worker-Prozess: <code>./run.sh</code> startet <code>manage.py runserver 8000</code>. Redis ist in Dev <strong>optional</strong> — mit <code>CELERY_TASK_ALWAYS_EAGER</code> führt Celery Tasks synchron im Request aus, so laufen auch die Tests.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Entwicklung</th>
+<th>Produktion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Web</td>
+<td><code>runserver :8000</code></td>
+<td>nginx :443 → gunicorn :8001</td>
+</tr>
+<tr>
+<td>Tasks</td>
+<td>inline (EAGER)</td>
+<td>Celery-Worker über Redis</td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>optional</td>
+<td>erforderlich</td>
+</tr>
+<tr>
+<td>Static</td>
+<td>Django serviert</td>
+<td>nginx, <code>expires 30d</code></td>
+</tr>
+<tr>
+<td>Settings</td>
+<td><code>config.settings.development</code></td>
+<td><code>config.settings.production</code></td>
+</tr>
+</tbody>
+</table>
 
 
 

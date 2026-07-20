@@ -46,6 +46,7 @@ nav = [
     { "Changelog"       = "entwicklung/changelog.md" },
   ]},
   { "Betrieb" = [
+    { "Laufzeit-Topologie" = "betrieb/laufzeit-topologie.md" },
     { "Stubs & Mocks"     = "betrieb/stubs-mocks.md" },
     { "Troubleshooting"   = "betrieb/troubleshooting.md" },
   ]},

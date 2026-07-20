@@ -1,0 +1,28 @@
+graph LR
+    classDef role fill:#2c3550,stroke:#7c83ff,color:#cdd3e8;
+    classDef page fill:#1f2937,stroke:#4ade80,color:#e5e7eb;
+    classDef adm fill:#3a2b2b,stroke:#f87171,color:#fecaca;
+
+    LI["/accounts/login/<br/>(allauth · kein Self-Signup)"]:::page
+
+    RQ["requester"]:::role
+    AP["approver"]:::role
+    AD["admin"]:::role
+    SA["superadmin"]:::role
+
+    DASH["/ · Dashboard"]:::page
+    CAT["/catalog/ · Katalog"]:::page
+    ORD["/orders/ · Bestellungen"]:::page
+    SUB["/subscriptions/ · Services"]:::page
+    NOT["/notifications/"]:::page
+    PRO["/accounts/profile/"]:::page
+    APQ["/approvals/ · Genehmigungs-Queue"]:::page
+    AUD["/audit/ · Audit-Log"]:::page
+    DJA["/admin/ · Django Admin"]:::adm
+
+    LI --> RQ & AP & AD & SA
+    RQ --> DASH & CAT & ORD & SUB & NOT & PRO
+    AP -->|"+ alles von requester"| APQ
+    AD -->|"+ alles von approver"| AUD
+    AD --> DJA
+    SA -->|"+ alles von admin"| DJA
