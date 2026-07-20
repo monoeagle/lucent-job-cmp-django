@@ -23,7 +23,7 @@
   // ── Versionen ──────────────────────────────────────────────────────────
   // Hardcoded — bei Release in lucent-hub.yml UND hier nachziehen. Früh
   // deklariert, weil INFO_HTML (Modul-Level-const) darauf zugreift.
-  const APP_VERSION   = '1.3.1';                 // CMP Django (lucent-hub.yml)
+  const APP_VERSION   = '1.3.2';                 // CMP Django (lucent-hub.yml)
   const HEADER_PREFIX = `CMP Django v${APP_VERSION}`;  // CMP Django
   // Testzahl NUR hier pflegen — stand vorher doppelt und widersprüchlich im
   // Code (Badge 239, Info-Tabelle 230) und driftete unbemerkt, weil R-STALE
