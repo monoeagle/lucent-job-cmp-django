@@ -4,7 +4,7 @@
 
 [project]
 site_name        = "CMP Django — CloudMan Portal"
-site_description = "IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.1"
+site_description = "IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.2"
 site_author      = "LucentTools"
 copyright        = "Copyright &copy; 2026 LucentTools"
 

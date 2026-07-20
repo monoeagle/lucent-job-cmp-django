@@ -159,7 +159,11 @@ fi
 # längst vergangenen Release und prüfte nur *.html. Dadurch konnte im
 # Header-Badge unbemerkt "239 Tests grün" stehen, während die Suite 317 zählte.
 rule "R-STALE — Testzahl: pytest == icon-rail.js == site/ (HTML+JS)"
-t_real=$("$PROJECT_DIR/venv/bin/python3" -m pytest --collect-only -q 2>/dev/null \
+# Aus $PROJECT_DIR heraus aufrufen: pytest.ini liegt im Projekt-Root. Lief die
+# Regel aus cmp-docs/, sammelte pytest 0 Tests ("no tests collected") und die
+# Regel meldete "nicht ermittelbar" — nicht wegen des Interpreters, sondern
+# wegen des Arbeitsverzeichnisses.
+t_real=$(cd "$PROJECT_DIR" && "$PROJECT_DIR/venv/bin/python3" -m pytest --collect-only -q 2>/dev/null \
          | grep -oE '[0-9]+ tests? collected' | grep -oE '[0-9]+' | head -1)
 t_rail=$(grep -oE 'TEST_COUNT[[:space:]]*=[[:space:]]*[0-9]+' "$JS_DIR/icon-rail.js" 2>/dev/null \
          | grep -oE '[0-9]+' | head -1)

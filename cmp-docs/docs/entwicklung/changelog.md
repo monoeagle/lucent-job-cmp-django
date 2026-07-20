@@ -1,5 +1,36 @@
 # Changelog
 
+## v1.3.2 — Laufzeit-Topologie dokumentiert — 2026-07-20
+
+Reines Doku-Release. **PATCH**: keine Code-Änderung, kein neues Anwendungs-Artefakt
+— das Offline-ZIP von v1.3.1 bleibt gültig.
+
+### Neue Seite: Betrieb → Laufzeit-Topologie
+
+Das bestehende Architektur-Diagramm zeigt die **logischen Schichten** („was ruft
+was") und enthält deshalb weder nginx noch gunicorn. Wie die Prozesse im Betrieb
+zusammenhängen, stand nirgends. Die neue Seite schließt diese Lücke:
+
+- **Drei Diagramme** — Produktion (nginx → gunicorn → PostgreSQL/Redis → Celery),
+  Einstiegspunkte nach Rolle, Entwicklung (`runserver` + EAGER).
+- **Wer macht was** — je Dienst die Aufgabe *und* deren Begründung: nginx puffert
+  gegen langsame Clients (3 sync-Worker), gunicorn übersetzt HTTP ↔ WSGI, Redis
+  ist Broker *und* Result-Backend, Celery entkoppelt lange Provisioning-Tasks.
+- **Ports-Tabelle** — nur nginx ist exponiert, alles dahinter lauscht auf Loopback.
+- **TLS** — der Installer erzeugt **kein** self-signed Zertifikat. Ohne passendes
+  Zertifikat existiert gar kein 443-Listener, es gibt also auch keine wegklickbare
+  Browser-Warnung, sondern *Connection refused*.
+- **Zugriff vom Client** — FQDN statt IP (`ALLOWED_HOSTS`), hosts-Eintrag für
+  Umgebungen ohne DNS, IP-Nachrüstung inkl. `CSRF_TRUSTED_ORIGINS`-Fallstrick.
+
+### Build: `.nojekyll` überlebt den Build
+
+`step_zensical_build()` löscht `site/` komplett und riss dabei jedes Mal die
+getrackte `site/.nojekyll` mit — sie musste von Hand zurückgeholt werden
+(Commit `cb4095e`). Ohne die Datei ignoriert GitHub Pages Unterstrich-Verzeichnisse,
+`_data/project-activity.json` wäre auf gh-pages tot. Der Build legt sie jetzt selbst
+wieder an.
+
 ## v1.3.1 — Panel-Breite + frische Oberflächen-Galerie — 2026-07-18
 
 Zwei Nachbesserungen nach dem CMP-Rename. **PATCH**: Bugfix + Doku, keine neuen

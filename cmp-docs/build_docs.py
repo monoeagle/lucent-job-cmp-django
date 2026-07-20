@@ -157,7 +157,12 @@ def step_zensical_build() -> None:
     if not (SITE_DIR / "index.html").is_file():
         fail("site/index.html nicht erzeugt")
         sys.exit(1)
-    ok(f"site/ unter {SITE_DIR}")
+    # .nojekyll wieder anlegen: rmtree oben loescht die getrackte Datei bei JEDEM
+    # Build, sie musste danach von Hand zurueckgeholt werden (Commit cb4095e).
+    # Ohne sie ignoriert GitHub Pages Unterstrich-Verzeichnisse — _data/ mit
+    # project-activity.json waere auf gh-pages tot.
+    (SITE_DIR / ".nojekyll").touch()
+    ok(f"site/ unter {SITE_DIR} (.nojekyll gesetzt)")
 
 
 # ─── Serve ───────────────────────────────────────────────────────────────────

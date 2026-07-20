@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.1">
+        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.2">
       
       
         <meta name="author" content="LucentTools">
@@ -864,6 +864,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v132-laufzeit-topologie-dokumentiert-2026-07-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.3.2 — Laufzeit-Topologie dokumentiert — 2026-07-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.3.2 — Laufzeit-Topologie dokumentiert — 2026-07-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#neue-seite-betrieb-laufzeit-topologie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neue Seite: Betrieb → Laufzeit-Topologie
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-nojekyll-uberlebt-den-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build: .nojekyll überlebt den Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v131-panel-breite-frische-oberflachen-galerie-2026-07-18" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1504,6 +1543,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v132-laufzeit-topologie-dokumentiert-2026-07-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.3.2 — Laufzeit-Topologie dokumentiert — 2026-07-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.3.2 — Laufzeit-Topologie dokumentiert — 2026-07-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#neue-seite-betrieb-laufzeit-topologie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neue Seite: Betrieb → Laufzeit-Topologie
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-nojekyll-uberlebt-den-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build: .nojekyll überlebt den Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v131-panel-breite-frische-oberflachen-galerie-2026-07-18" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1873,6 +1951,32 @@
                   
 
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h2 id="v132-laufzeit-topologie-dokumentiert-2026-07-20">v1.3.2 — Laufzeit-Topologie dokumentiert — 2026-07-20<a class="headerlink" href="#v132-laufzeit-topologie-dokumentiert-2026-07-20" title="Permanent link">&para;</a></h2>
+<p>Reines Doku-Release. <strong>PATCH</strong>: keine Code-Änderung, kein neues Anwendungs-Artefakt
+— das Offline-ZIP von v1.3.1 bleibt gültig.</p>
+<h3 id="neue-seite-betrieb-laufzeit-topologie">Neue Seite: Betrieb → Laufzeit-Topologie<a class="headerlink" href="#neue-seite-betrieb-laufzeit-topologie" title="Permanent link">&para;</a></h3>
+<p>Das bestehende Architektur-Diagramm zeigt die <strong>logischen Schichten</strong> („was ruft
+was") und enthält deshalb weder nginx noch gunicorn. Wie die Prozesse im Betrieb
+zusammenhängen, stand nirgends. Die neue Seite schließt diese Lücke:</p>
+<ul>
+<li><strong>Drei Diagramme</strong> — Produktion (nginx → gunicorn → PostgreSQL/Redis → Celery),
+  Einstiegspunkte nach Rolle, Entwicklung (<code>runserver</code> + EAGER).</li>
+<li><strong>Wer macht was</strong> — je Dienst die Aufgabe <em>und</em> deren Begründung: nginx puffert
+  gegen langsame Clients (3 sync-Worker), gunicorn übersetzt HTTP ↔ WSGI, Redis
+  ist Broker <em>und</em> Result-Backend, Celery entkoppelt lange Provisioning-Tasks.</li>
+<li><strong>Ports-Tabelle</strong> — nur nginx ist exponiert, alles dahinter lauscht auf Loopback.</li>
+<li><strong>TLS</strong> — der Installer erzeugt <strong>kein</strong> self-signed Zertifikat. Ohne passendes
+  Zertifikat existiert gar kein 443-Listener, es gibt also auch keine wegklickbare
+  Browser-Warnung, sondern <em>Connection refused</em>.</li>
+<li><strong>Zugriff vom Client</strong> — FQDN statt IP (<code>ALLOWED_HOSTS</code>), hosts-Eintrag für
+  Umgebungen ohne DNS, IP-Nachrüstung inkl. <code>CSRF_TRUSTED_ORIGINS</code>-Fallstrick.</li>
+</ul>
+<h3 id="build-nojekyll-uberlebt-den-build">Build: <code>.nojekyll</code> überlebt den Build<a class="headerlink" href="#build-nojekyll-uberlebt-den-build" title="Permanent link">&para;</a></h3>
+<p><code>step_zensical_build()</code> löscht <code>site/</code> komplett und riss dabei jedes Mal die
+getrackte <code>site/.nojekyll</code> mit — sie musste von Hand zurückgeholt werden
+(Commit <code>cb4095e</code>). Ohne die Datei ignoriert GitHub Pages Unterstrich-Verzeichnisse,
+<code>_data/project-activity.json</code> wäre auf gh-pages tot. Der Build legt sie jetzt selbst
+wieder an.</p>
 <h2 id="v131-panel-breite-frische-oberflachen-galerie-2026-07-18">v1.3.1 — Panel-Breite + frische Oberflächen-Galerie — 2026-07-18<a class="headerlink" href="#v131-panel-breite-frische-oberflachen-galerie-2026-07-18" title="Permanent link">&para;</a></h2>
 <p>Zwei Nachbesserungen nach dem CMP-Rename. <strong>PATCH</strong>: Bugfix + Doku, keine neuen
 Fähigkeiten.</p>
