@@ -1,17 +1,22 @@
 {
-  "generatedAt": "2026-07-20T12:27:05",
+  "generatedAt": "2026-07-20T12:49:06",
   "range": {
     "from": "2025-07-21",
     "to": "2026-07-20"
   },
   "byDay": {
     "2026-07-20": {
-      "commits": 2,
+      "commits": 3,
       "kinds": {
-        "other": 1,
-        "docs": 1
+        "docs": 2,
+        "other": 1
       },
       "list": [
+        {
+          "sha": "9bc7167",
+          "subject": "docs: Querverweise Architektur -> Laufzeit-Topologie",
+          "kind": "docs"
+        },
         {
           "sha": "b5e1c6e",
           "subject": "release: v1.3.2 — Doku-Release Laufzeit-Topologie + zwei Build-Fixes",
@@ -921,7 +926,7 @@
     }
   },
   "stats": {
-    "totalCommits": 149,
+    "totalCommits": 150,
     "activeDays": 18,
     "longestStreak": 3,
     "topKinds": [
@@ -931,7 +936,7 @@
       },
       {
         "kind": "docs",
-        "count": 41
+        "count": 42
       },
       {
         "kind": "fix",
