@@ -1,16 +1,39 @@
 {
-  "generatedAt": "2026-07-18T00:25:09",
+  "generatedAt": "2026-07-20T11:46:09",
   "range": {
-    "from": "2025-07-19",
-    "to": "2026-07-18"
+    "from": "2025-07-21",
+    "to": "2026-07-20"
   },
   "byDay": {
     "2026-07-18": {
-      "commits": 1,
+      "commits": 5,
       "kinds": {
+        "docs": 2,
+        "chore": 1,
+        "other": 1,
         "fix": 1
       },
       "list": [
+        {
+          "sha": "5bc3295",
+          "subject": "docs: Insight um v1.3.1-Nachtrag (selbst in die Ränder-Falle getappt)",
+          "kind": "docs"
+        },
+        {
+          "sha": "fe07170",
+          "subject": "docs: Handoff + KPI auf v1.3.1-Endstand (Panel-Fix + Galerie neu)",
+          "kind": "docs"
+        },
+        {
+          "sha": "cb4095e",
+          "subject": "chore: site/.nojekyll nach v1.3.1-Deploy",
+          "kind": "chore"
+        },
+        {
+          "sha": "e597853",
+          "subject": "release: v1.3.1 — Panel-Breite-Fix + frische Galerie + make_screenshots.py",
+          "kind": "other"
+        },
         {
           "sha": "824f495",
           "subject": "fix(installer): Panel-Breite dynamisch — lange Pfade/URLs/Titel nicht mehr gekürzt",
@@ -879,7 +902,7 @@
     }
   },
   "stats": {
-    "totalCommits": 143,
+    "totalCommits": 147,
     "activeDays": 17,
     "longestStreak": 3,
     "topKinds": [
@@ -889,7 +912,7 @@
       },
       {
         "kind": "docs",
-        "count": 38
+        "count": 40
       },
       {
         "kind": "fix",
@@ -897,11 +920,11 @@
       },
       {
         "kind": "chore",
-        "count": 11
+        "count": 12
       },
       {
         "kind": "other",
-        "count": 7
+        "count": 8
       },
       {
         "kind": "refactor",
