@@ -1,16 +1,22 @@
 {
-  "generatedAt": "2026-07-20T11:59:22",
+  "generatedAt": "2026-07-20T12:27:05",
   "range": {
     "from": "2025-07-21",
     "to": "2026-07-20"
   },
   "byDay": {
     "2026-07-20": {
-      "commits": 1,
+      "commits": 2,
       "kinds": {
+        "other": 1,
         "docs": 1
       },
       "list": [
+        {
+          "sha": "b5e1c6e",
+          "subject": "release: v1.3.2 — Doku-Release Laufzeit-Topologie + zwei Build-Fixes",
+          "kind": "other"
+        },
         {
           "sha": "310a08c",
           "subject": "docs: Laufzeit-Topologie — Prozesse, Ports, Rollen, Client-Zugriff",
@@ -915,7 +921,7 @@
     }
   },
   "stats": {
-    "totalCommits": 148,
+    "totalCommits": 149,
     "activeDays": 18,
     "longestStreak": 3,
     "topKinds": [
@@ -937,7 +943,7 @@
       },
       {
         "kind": "other",
-        "count": 8
+        "count": 9
       },
       {
         "kind": "refactor",

@@ -1411,6 +1411,15 @@
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    ↓
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>PostgreSQL
 </span></code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Das ist die logische Sicht</p>
+<p>Dieses Bild beantwortet <strong>„was ruft was"</strong>. Prozesse, Dienste und Ports kommen
+darin bewusst nicht vor — nginx und gunicorn tauchen hier nicht auf, weil sie
+keine Business-Logik aufrufen, sondern den gesamten Web-Layer <em>hosten</em>.</p>
+<p>Wie das im Betrieb zusammenhängt — welcher Prozess auf welchem Port lauscht,
+was nginx, gunicorn, Redis und Celery jeweils tun, wie der Zugriff vom Client
+aussieht — steht in der <a href="../../betrieb/laufzeit-topologie/">Laufzeit-Topologie</a>.</p>
+</div>
 <h2 id="schichtentrennung">Schichtentrennung<a class="headerlink" href="#schichtentrennung" title="Permanent link">&para;</a></h2>
 <h3 id="regel-views-sind-dunn">Regel: Views sind dünn<a class="headerlink" href="#regel-views-sind-dunn" title="Permanent link">&para;</a></h3>
 <p>Views delegieren an Services. Keine Business-Logik in Views, Forms oder Models.</p>
@@ -1616,6 +1625,7 @@
 </tr>
 </tbody>
 </table>
+<p>Ports, systemd-Units und die Aufgabenteilung der Dienste: siehe <a href="../../betrieb/laufzeit-topologie/">Laufzeit-Topologie</a>.</p>
 
 
 

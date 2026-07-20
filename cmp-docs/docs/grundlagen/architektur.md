@@ -18,6 +18,15 @@ Django ORM (Models)
 PostgreSQL
 ```
 
+!!! info "Das ist die logische Sicht"
+    Dieses Bild beantwortet **„was ruft was"**. Prozesse, Dienste und Ports kommen
+    darin bewusst nicht vor — nginx und gunicorn tauchen hier nicht auf, weil sie
+    keine Business-Logik aufrufen, sondern den gesamten Web-Layer *hosten*.
+
+    Wie das im Betrieb zusammenhängt — welcher Prozess auf welchem Port lauscht,
+    was nginx, gunicorn, Redis und Celery jeweils tun, wie der Zugriff vom Client
+    aussieht — steht in der [Laufzeit-Topologie](../betrieb/laufzeit-topologie.md).
+
 ## Schichtentrennung
 
 ### Regel: Views sind dünn
@@ -116,3 +125,5 @@ Terminale Zustände: `done`, `failed`, `rejected`
 | GitLab | Pipeline-Trigger | Stub (YAML) / Live |
 | CMDB | Locations, Networks | Stub (YAML) / Live |
 | LDAP/OAuth | django-allauth | Vorbereitet, nicht aktiv |
+
+Ports, systemd-Units und die Aufgabenteilung der Dienste: siehe [Laufzeit-Topologie](../betrieb/laufzeit-topologie.md).
