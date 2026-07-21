@@ -1,16 +1,22 @@
 {
-  "generatedAt": "2026-07-21T21:58:35",
+  "generatedAt": "2026-07-21T22:09:21",
   "range": {
     "from": "2025-07-22",
     "to": "2026-07-21"
   },
   "byDay": {
     "2026-07-21": {
-      "commits": 1,
+      "commits": 2,
       "kinds": {
+        "other": 1,
         "docs": 1
       },
       "list": [
+        {
+          "sha": "9c743f2",
+          "subject": "release: v1.3.3 — Analyse der Bestellportal-Fremddoku (intern)",
+          "kind": "other"
+        },
         {
           "sha": "6c12734",
           "subject": "docs: Bestellportal-Fremddoku (anonymisiert) unter analyse/",
@@ -944,7 +950,7 @@
     }
   },
   "stats": {
-    "totalCommits": 152,
+    "totalCommits": 153,
     "activeDays": 19,
     "longestStreak": 3,
     "topKinds": [
@@ -966,7 +972,7 @@
       },
       {
         "kind": "other",
-        "count": 9
+        "count": 10
       },
       {
         "kind": "refactor",

@@ -86,9 +86,18 @@ lucent-app-mpp-TDD-Django/
 │
 ├── cmp-docs/                         # Zensical-Dokumentation
 │   ├── docs/                        # Markdown-Quellen
+│   │   └── intern/                  # NICHT im Docs-ZIP (Ausschluss in
+│   │                                #   run.sh cmd_docs_zip: intern/ + intern-*.svg)
 │   ├── zensical.toml                # Konfiguration
 │   ├── build_docs.py
 │   └── run_cmp_docs.sh
+│
+├── analyse/                          # Fremddoku + Analysen (Arbeitsdokumente)
+│   ├── bestellportal_anon.md        # Bookstack-Export der Zielumgebung
+│   │                                #   (anonymisiert: <org>, <autor>, …)
+│   ├── anforderungen.md             # offene Fragen der Zielumgebung
+│   ├── analyse-bestellportal.md     # Auswertung → Doku-Seite unter „Intern"
+│   └── .gitignore                   # Screenshots (*.png) + gebaute HTML bleiben lokal
 │
 ├── docs/superpowers/                 # Design-Specs + Pläne
 │   ├── specs/

@@ -2,7 +2,7 @@
 
 **Quellen:** `analyse/bestellportal_anon.md` (Bookstack-Export, 2819 Zeilen, 8 Kapitel),
 `analyse/anforderungen.md`, `analyse/proto1.png`–`proto3.png`, `analyse/django.png`
-**Analysiert am:** 2026-07-21 · **CMP-Stand:** v1.3.2, 330 Tests
+**Analysiert am:** 2026-07-21 · **CMP-Stand:** analysiert gegen v1.3.2 (330 Tests), veröffentlicht mit v1.3.3
 **Methodik:** Jede Aussage über CMP ist gegen den echten Code geprüft, nicht gegen unsere
 eigene Doku und nicht aus dem Gedächtnis. Die Beleg-Spalten nennen Datei und Zeile.
 
