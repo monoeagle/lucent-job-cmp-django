@@ -1,5 +1,42 @@
 # Changelog
 
+## v1.3.3 — Analyse der Bestellportal-Fremddoku — 2026-07-21
+
+Reines Doku-Release. **PATCH**: keine Code-Änderung am Portal, kein neues
+Anwendungs-Artefakt — das Offline-ZIP von v1.3.1 bleibt gültig.
+
+### Neue interne Seite: Analyse der Bestellportal-Fremddoku
+
+Ein Bookstack-Buch der Zielumgebung beschreibt ein Bestellportal als
+**API-First-System mit DRF**. CMP ist der bewusste Gegenentwurf (rein SSR).
+Die neue Seite wertet die Fremddoku vollständig gegen den echten CMP-Code aus:
+
+- **Gap-Analyse** aller MUSS-/KANN-Anforderungen und des Domänenmodells,
+  jede Zeile mit Beleg (Datei:Zeile) statt aus dem Gedächtnis behauptet.
+- **Übersetzungstabelle** API-First → SSR, damit fremde Konzepte nicht
+  fälschlich als „passt nicht" abgetan werden.
+- **Antworten** auf die offenen Fragen der Zielumgebung: Installer-Idempotenz,
+  granulares Logging, Dev/Test-Schalter, HTMX-Fallstricke, `.env` vs. `uv`,
+  Absicherung, HA, Wartungsfenster (inkl. Mermaid-Prozesskette).
+- **Prototyp-Bewertung** — was übernehmbar ist und was Anti-Pattern.
+
+**Wichtigster Befund (CMP-intern):** Die Kette hinter der Genehmigung ist nicht
+verdrahtet. `AuditService.log` und `NotificationService.create` werden
+ausschließlich von `seed.py` aufgerufen, `SubscriptionService.create_from_order`
+und die Celery-Tasks nur von Tests. Audit-Log und Benachrichtigungen enthalten
+daher im laufenden Betrieb ausschließlich Seed-Daten. Aufgenommen als
+Arbeitspaket mit Vorrang.
+
+Zusätzlich gefunden und dokumentiert: `AuditLogListView` beantwortet
+HTMX-Anfragen mit der kompletten Seite statt mit einem Fragment (fehlender
+`get_template_names`-Zweig).
+
+### Auslieferung
+
+Die Seite liegt unter **Intern** und wird beim `docs-zip`-Bau **ausgeschlossen**
+(`run.sh cmd_docs_zip`, Ausschluss oberster Ordner `intern/`). Sie ist Teil der
+gh-pages-Doku, nicht des Kunden-Artefakts.
+
 ## v1.3.2 — Laufzeit-Topologie dokumentiert — 2026-07-20
 
 Reines Doku-Release. **PATCH**: keine Code-Änderung, kein neues Anwendungs-Artefakt

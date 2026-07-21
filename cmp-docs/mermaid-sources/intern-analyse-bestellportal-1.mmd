@@ -1,0 +1,18 @@
+flowchart TD
+    A[Feature-Branch im Repo] --> B[Testumgebung zieht Branch]
+    B --> C{Feature-Tests grün?}
+    C -- nein --> A
+    C -- ja --> D[Merge nach main]
+    D --> E[QR-Umgebung zieht neuen Stand]
+    E --> F{Funktionaltest QR bestanden?}
+    F -- nein --> A
+    F -- ja --> G[Wartungsfenster geplant]
+    G --> H[Wartungsmodus an: nginx liefert Wartungsseite]
+    H --> I[Dienste stoppen · Backup · install.sh --install]
+    I --> J[Automatisierter Test]
+    J --> K{grün?}
+    K -- nein --> L[Rollback: Vorversion + DB-Backup]
+    K -- ja --> M[Manueller Test]
+    M --> N[Wartungsmodus aus]
+    N --> O[Freigabe]
+    L --> G

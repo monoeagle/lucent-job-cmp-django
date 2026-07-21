@@ -1,6 +1,6 @@
 # MPP Django — Todo erledigt
 
-> Fertige Arbeitspakete (newest-first). Quelle offen: `todo.md`. Stand 2026-07-20, v1.3.2, 330 Tests grün.
+> Fertige Arbeitspakete (newest-first). Quelle offen: `todo.md`. Stand 2026-07-21, v1.3.3, 330 Tests grün.
 
 ## Deployment · VM-Installationsanleitung + Production-Settings ✅
 Env-basiertes `config.settings.production` (django-environ) + `.env.example`, Hardening

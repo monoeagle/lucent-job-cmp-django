@@ -1,0 +1,8 @@
+# Prototyp-Screenshots bewusst NICHT veroeffentlichen: proto3.png zeigt interne
+# Bezeichner (Standort, DNS-, Proxy-Namen), die sich in Bildern nicht per grep
+# pruefen lassen. Entscheidung vom 2026-07-21, siehe analyse-bestellportal.md §4.
+*.png
+
+# Gebauter HTML-Report (3,2 MB, Mermaid inline) — Build-Artefakt aus der .md.
+# Neu bauen statt versionieren.
+analyse-bestellportal.html

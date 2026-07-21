@@ -4,7 +4,7 @@
 
 [project]
 site_name        = "CMP Django — CloudMan Portal"
-site_description = "IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.2"
+site_description = "IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.3"
 site_author      = "LucentTools"
 copyright        = "Copyright &copy; 2026 LucentTools"
 
@@ -52,6 +52,10 @@ nav = [
   ]},
   { "Entscheidungen" = [
     { "ADR-0001 · Deployment (Native vs. Container)" = "decisions/0001-deployment-native-vs-container.md" },
+  ]},
+  # Intern: NICHT im ausgelieferten Docs-ZIP (Ausschluss in run.sh cmd_docs_zip).
+  { "Intern" = [
+    { "Analyse · Bestellportal-Fremddoku" = "intern/analyse-bestellportal.md" },
   ]},
 ]
 

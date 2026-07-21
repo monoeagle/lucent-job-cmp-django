@@ -371,13 +371,23 @@ import sys, zipfile, pathlib
 site, out = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
 if out.exists():
     out.unlink()
-n = 0
+# Interne Arbeitsdokumente gehoeren nicht ins ausgelieferte ZIP — weder die
+# Seiten selbst (intern/...) noch die aus ihnen gerenderten Assets, die der
+# Mermaid-Renderer nach dem Schema "<ordner>-<seite>-N.svg" ablegt.
+EXCLUDE_TOP = {"intern"}
+n = skipped = 0
 with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
     for p in sorted(site.rglob("*")):
-        if p.is_file():
-            z.write(p, p.relative_to(site))
-            n += 1
-print(f"{n} Dateien, {out.stat().st_size / 1_000_000:.1f} MB")
+        if not p.is_file():
+            continue
+        rel = p.relative_to(site)
+        if (rel.parts and rel.parts[0] in EXCLUDE_TOP) or p.name.startswith("intern-"):
+            skipped += 1
+            continue
+        z.write(p, rel)
+        n += 1
+print(f"{n} Dateien, {out.stat().st_size / 1_000_000:.1f} MB"
+      + (f" ({skipped} interne Dateien ausgeschlossen)" if skipped else ""))
 PYZIP
   cp -f "$out" "$PROJECT_DIR/release/$zipname"
   ok "HTML-ZIP: release/$zipname"
