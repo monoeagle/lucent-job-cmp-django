@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strukturvorschlag — CMP-Buch für Bookstack (SSR)</title>
+<style>
+:root {
+  --bg:#ffffff; --fg:#1c1e21; --muted:#5b6470; --rule:#e3e6ea;
+  --card:#f7f8fa; --accent:#2b6cb0; --code-bg:#f3f4f6;
+  --ok:#1a7f4b; --warn:#9a6700; --bad:#b42318; --new:#6b3fa0;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:#16181d; --fg:#e4e6eb; --muted:#9aa4b2; --rule:#2c313a;
+    --card:#1e2128; --accent:#7bb3f0; --code-bg:#22262e;
+    --ok:#4ade80; --warn:#fbbf24; --bad:#f87171; --new:#c4a2f0;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#16181d; --fg:#e4e6eb; --muted:#9aa4b2; --rule:#2c313a;
+  --card:#1e2128; --accent:#7bb3f0; --code-bg:#22262e;
+  --ok:#4ade80; --warn:#fbbf24; --bad:#f87171; --new:#c4a2f0;
+}
+:root[data-theme="light"] {
+  --bg:#ffffff; --fg:#1c1e21; --muted:#5b6470; --rule:#e3e6ea;
+  --card:#f7f8fa; --accent:#2b6cb0; --code-bg:#f3f4f6;
+  --ok:#1a7f4b; --warn:#9a6700; --bad:#b42318; --new:#6b3fa0;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; background:var(--bg); color:var(--fg);
+  font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  overflow-x:hidden;
+}
+.page { max-width:1040px; margin:0 auto; padding:2.5rem 1.5rem 6rem; }
+h1,h2,h3,h4 { line-height:1.25; font-weight:650; }
+h1 { font-size:2rem; margin:0 0 .5rem; letter-spacing:-.02em; }
+h2 { font-size:1.45rem; margin:3rem 0 1rem; padding-top:1.25rem; border-top:1px solid var(--rule); }
+h3 { font-size:1.13rem; margin:2rem 0 .6rem; }
+h4 { font-size:1rem; margin:1.4rem 0 .4rem; }
+p, li { color:var(--fg); }
+.lede { color:var(--muted); font-size:1.05rem; margin:0 0 2rem; }
+code, kbd { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.87em;
+  background:var(--code-bg); padding:.12em .38em; border-radius:4px; }
+a { color:var(--accent); }
+.card { background:var(--card); border:1px solid var(--rule); border-radius:10px; padding:1rem 1.25rem; margin:1.25rem 0; }
+.card.tight { padding:.75rem 1rem; }
+.grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1rem; }
+.tablewrap { overflow-x:auto; margin:1rem 0; border:1px solid var(--rule); border-radius:10px; }
+table { border-collapse:collapse; width:100%; font-size:.93rem; min-width:640px; }
+th, td { text-align:left; padding:.6rem .8rem; border-bottom:1px solid var(--rule); vertical-align:top; }
+th { background:var(--card); font-weight:650; white-space:nowrap; }
+tr:last-child td { border-bottom:none; }
+.chip { display:inline-block; font-size:.74rem; font-weight:700; letter-spacing:.02em;
+  padding:.15em .5em; border-radius:999px; border:1px solid currentColor; white-space:nowrap; }
+.c-take { color:var(--ok); }
+.c-adapt { color:var(--warn); }
+.c-drop { color:var(--bad); }
+.c-new { color:var(--new); }
+.legend { display:flex; flex-wrap:wrap; gap:.6rem 1.2rem; margin:1rem 0 0; font-size:.9rem; color:var(--muted); }
+.tree { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.88rem;
+  line-height:1.7; background:var(--card); border:1px solid var(--rule); border-radius:10px;
+  padding:1rem 1.25rem; overflow-x:auto; }
+.tree .ch { font-weight:700; color:var(--accent); }
+.tree .src { color:var(--muted); }
+.q { border-left:3px solid var(--accent); padding:.2rem 0 .2rem 1rem; margin:1rem 0; color:var(--muted); }
+.warnbox { border-left:3px solid var(--warn); background:var(--card); padding:.8rem 1rem; border-radius:0 8px 8px 0; margin:1.25rem 0; }
+ul.tight li { margin:.2rem 0; }
+.meta { color:var(--muted); font-size:.88rem; }
+hr { border:none; border-top:1px solid var(--rule); margin:2.5rem 0; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>CMP-Buch für Bookstack — Strukturvorschlag</h1>
+<p class="lede">Antwort auf: „Kannst du Dinge aus der Fremdstruktur sinnvoll übernehmen?“ —
+Kurz: <strong>ja, das Kapitelgerüst und die Seitenform</strong>. Nicht übernehmbar ist alles,
+was aus API-First/DRF folgt; dort steht bei uns die SSR-Entsprechung an derselben Stelle.<br>
+<span class="meta">Stand 2026-07-22 · Quellen: <code>analyse/bestellportal_anon.md</code> (2818 Z., 8 Kapitel) ·
+<code>cmp-docs/docs/</code> (21 Seiten) · Code unter <code>cmp/</code>. Noch nichts geschrieben — das hier ist der Bauplan.</span></p>
+
+<div class="card">
+<strong>Was ich übernehmen würde — in einem Satz:</strong> die <em>Reihenfolge der Kapitel</em>
+(Ziel → Architektur → Domäne → Rollen → Workflow → Schnittstelle → Logging → Deployment → CI/CD),
+die <em>Seitenform</em> („1. Ziel des Kapitels“ … „n. Zusammenfassung“) und die
+<em>Anforderungs-IDs</em> (FM_*/FK_*) — weil beide Bücher dann Seite für Seite vergleichbar sind.
+Übernehmen heißt <strong>Gerüst, nicht Text</strong>: jeder Satz wird gegen unseren Code geprüft.
+</div>
+
+<div class="legend">
+  <span><span class="chip c-take">ÜBERNEHMEN</span> Kapitel + Aufbau passen, Inhalt aus CMP</span>
+  <span><span class="chip c-adapt">ANPASSEN</span> Kapitelplatz bleibt, Inhalt ist bei uns anders</span>
+  <span><span class="chip c-drop">STREICHEN</span> gibt es bei uns nicht / gehört nicht ins Buch</span>
+  <span><span class="chip c-new">NEU</span> bei uns real, in der Fremddoku nicht vorgesehen</span>
+</div>
+
+<h2>1 · Fremdbuch → unser Buch (Kapitel für Kapitel)</h2>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>Fremdbuch (Bookstack)</th><th></th><th>Bei uns</th><th>Begründung</th></tr></thead>
+<tbody>
+<tr>
+  <td>Zieldefinition und Anforderungen<br><span class="meta">§1–5, FM_*/FK_*, Glossar</span></td>
+  <td><span class="chip c-take">ÜBERNEHMEN</span></td>
+  <td>Kap. 1 — Ziel &amp; Anforderungen</td>
+  <td>Struktur ist gut und die IDs sind das Bindeglied zur Gap-Analyse. Je Anforderung ergänze ich <strong>erfüllt / offen (AP-x)</strong> — grep-belegt, wie in <code>intern/analyse-bestellportal.md</code>.</td>
+</tr>
+<tr>
+  <td>Architektur &amp; Prozessübersicht<br><span class="meta">High-Level, Komponenten, E2E-Prozess</span></td>
+  <td><span class="chip c-adapt">ANPASSEN</span></td>
+  <td>Kap. 2 — Architektur &amp; Prozesse</td>
+  <td>Gleicher Platz, andere Zeichnung: kein Frontend/Backend-Schnitt, sondern <code>views → services → models</code> + HTMX-Partials. Quelle: <code>grundlagen/architektur.md</code>, <code>betrieb/laufzeit-topologie.md</code>.</td>
+</tr>
+<tr>
+  <td>A) Domänenmodell &amp; App-Struktur</td>
+  <td><span class="chip c-take">ÜBERNEHMEN</span></td>
+  <td>Kap. 3 — Domänenmodell &amp; Apps</td>
+  <td>Bestes Kapitel der Fremddoku. Bei uns 10 Apps statt 6, Felder aus <code>referenz/datenmodell.md</code> (am Code geprüft).</td>
+</tr>
+<tr>
+  <td>B) Rollen-, Rechte- &amp; AD-Integrationskonzept</td>
+  <td><span class="chip c-adapt">ANPASSEN</span></td>
+  <td>Kap. 4 — Rollen &amp; Rechte</td>
+  <td>Rollenmodell + Rechtematrix übernehmen. <strong>AD/LDAP haben wir nicht</strong> — django-allauth, Session-Auth, Admin legt User an. AD wird als <em>offener Ausblick</em> geführt, nicht als Ist-Zustand. JWT/Token-Strategie entfällt ersatzlos.</td>
+</tr>
+<tr>
+  <td>C) Approval Workflow</td>
+  <td><span class="chip c-take">ÜBERNEHMEN</span></td>
+  <td>Kap. 5 — Genehmigungs-Workflow</td>
+  <td>Statusmodell, Rollen, ein-/mehrstufig — 1:1 tragfähig. Unser Statusautomat (<code>core/domain/</code>) ist konkreter. <strong>Ehrlichkeitspflicht:</strong> die Kette ist heute nicht verdrahtet (AP-13) — das gehört als Status ins Kapitel, nicht weggelassen.</td>
+</tr>
+<tr>
+  <td>D) API-Design<br><span class="meta">DRF, Endpunkte, Versionierung, Token</span></td>
+  <td><span class="chip c-drop">STREICHEN</span> → <span class="chip c-new">NEU</span></td>
+  <td>Kap. 6 — <strong>Views, URLs &amp; HTMX-Kontrakt</strong></td>
+  <td>Der eine Kapitelplatz, an dem sich die Ansätze wirklich trennen. Statt Endpunkt-Tabellen: URL-Referenz, View→Template→Partial, <code>hx-target</code>/<code>hx-swap</code>-Konventionen, Formular-Validierung. Quelle: <code>referenz/url-referenz.md</code>, <code>.claude/rules/htmx.md</code>.</td>
+</tr>
+<tr>
+  <td>E) Logging, Monitoring &amp; Audit</td>
+  <td><span class="chip c-take">ÜBERNEHMEN</span></td>
+  <td>Kap. 7 — Logging, Monitoring &amp; Audit</td>
+  <td>Gliederung passt vollständig. Nur „API Request Logging“ → Request-Logging der Views.</td>
+</tr>
+<tr>
+  <td>F) Deployment &amp; Infrastruktur</td>
+  <td><span class="chip c-adapt">ANPASSEN</span></td>
+  <td>Kap. 8 — Deployment &amp; Betrieb</td>
+  <td>Dort Container/Pipeline-getrieben, bei uns <strong>native systemd-Installation</strong> (ADR-0001) + Offline-Wheelhouse. Celery/GitLab/OpenTofu-Kette bleibt als Kapitelabschnitt — bei uns über Stubs (<code>betrieb/stubs-mocks.md</code>), das wird so benannt.</td>
+</tr>
+<tr>
+  <td>G) CI/CD Pipeline &amp; Teststrategie</td>
+  <td><span class="chip c-adapt">ANPASSEN</span></td>
+  <td>Kap. 9 — Entwicklung, Tests &amp; Release</td>
+  <td>Teststrategie übernehmen (Unit/Integration/E2E) und um <strong>TDD-Pflicht</strong> + reale Testzahl erweitern. Branch-/Umgebungsweg (Test → QS → Prod, Wartungsfenster) aus <code>anforderungen.md</code> gehört hierher.</td>
+</tr>
+<tr>
+  <td>Dokumentation Prototyp Bestellportal<br><span class="meta">Dateiliste, HTMX-Feinheiten, W3.css</span></td>
+  <td><span class="chip c-drop">STREICHEN</span></td>
+  <td>—</td>
+  <td>Beschreibt ein fremdes Projekt. Der brauchbare Teil (HTMX-Fallstricke) wandert nach Kap. 6, die Dateiliste-Idee in den Anhang „Projektstruktur“.</td>
+</tr>
+<tr>
+  <td>Deployment des Bestellportals<br><span class="meta">Secrets im Code, .env</span></td>
+  <td><span class="chip c-adapt">ANPASSEN</span></td>
+  <td>Abschnitt in Kap. 8</td>
+  <td>Thema ist richtig (Secrets nie im Code → <code>django-environ</code>), Umfang ist ein Abschnitt, kein Kapitel.</td>
+</tr>
+<tr>
+  <td>— nicht vorgesehen —</td>
+  <td><span class="chip c-new">NEU</span></td>
+  <td>Kap. 10 — Oberfläche (Galerie)</td>
+  <td>Bei SSR ist die Oberfläche <em>die</em> Schnittstelle. Screenshots je Maske aus <code>referenz/oberflaeche.md</code>.</td>
+</tr>
+<tr>
+  <td>— nicht vorgesehen —</td>
+  <td><span class="chip c-new">NEU</span></td>
+  <td>Kap. 11 — Entscheidungen (ADRs)</td>
+  <td>Warum SSR statt API-First, warum nativ statt Container. Beantwortet die Frage, die beim Vergleich der beiden Bücher sofort kommt.</td>
+</tr>
+<tr>
+  <td>— nicht vorgesehen —</td>
+  <td><span class="chip c-new">NEU</span></td>
+  <td><strong>Anhang A — Neuen Service / neue Bestelloption anlegen</strong></td>
+  <td>Deine Kernanforderung. Details unten in Abschnitt 3.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h2>2 · Vorgeschlagene Bookstack-Struktur</h2>
+
+<p>Ein <strong>Buch</strong> „CloudMan Portal (CMP)“, 11 Kapitel + 3 Anhänge, ~45 Seiten.
+Rechts steht die Quelle je Seite — <span class="meta">grau = existiert schon, wird aufbereitet;
+<em>neu</em> = wird geschrieben und am Code geprüft.</span></p>
+
+<div class="tree">
+<span class="ch">📕 CloudMan Portal (CMP) — Betriebs- und Entwicklungshandbuch</span>
+│
+├─ <span class="ch">📂 1 Ziel &amp; Anforderungen</span>
+│   ├─ 1.1 Ziel des Systems &amp; Kernprinzipien        <span class="src">grundlagen/ueberblick.md</span>
+│   ├─ 1.2 Benutzerrollen &amp; Anwendungsfälle          <span class="src">entwicklung/credentials.md + neu</span>
+│   ├─ 1.3 Funktionale Anforderungen (FM_*)          <span class="src">intern/analyse (Status je ID)</span>
+│   ├─ 1.4 Nicht-funktionale Anforderungen (FK_*)    <span class="src">intern/analyse</span>
+│   └─ 1.5 Glossar                                   <span class="src">neu</span>
+│
+├─ <span class="ch">📂 2 Architektur &amp; Prozesse</span>
+│   ├─ 2.1 Architekturüberblick (SSR)                <span class="src">grundlagen/architektur.md</span>
+│   ├─ 2.2 Schichten: views → services → models      <span class="src">grundlagen/architektur.md</span>
+│   ├─ 2.3 Laufzeit-Topologie &amp; Ports               <span class="src">betrieb/laufzeit-topologie.md</span>
+│   ├─ 2.4 Komponenten &amp; Apps (10)                  <span class="src">entwicklung/projektstruktur.md</span>
+│   └─ 2.5 End-to-End: von der Bestellung zur VM     <span class="src">neu (Mermaid)</span>
+│
+├─ <span class="ch">📂 3 Domänenmodell &amp; Apps</span>
+│   ├─ 3.1 Domänenübersicht                          <span class="src">referenz/datenmodell.md</span>
+│   ├─ 3.2 Katalog: ServiceTemplate &amp; Parameter      <span class="src">datenmodell + Code</span>
+│   ├─ 3.3 Bestellung: Order &amp; OrderItem             <span class="src">datenmodell + Code</span>
+│   ├─ 3.4 Genehmigung: ApprovalRequest               <span class="src">datenmodell + Code</span>
+│   ├─ 3.5 Provisioning &amp; Subscription                <span class="src">datenmodell + Code</span>
+│   ├─ 3.6 Audit &amp; Notification                       <span class="src">datenmodell + Code</span>
+│   └─ 3.7 Service-Schicht im Überblick               <span class="src">referenz/services.md</span>
+│
+├─ <span class="ch">📂 4 Rollen &amp; Rechte</span>
+│   ├─ 4.1 Authentifizierung (allauth, Session)       <span class="src">neu</span>
+│   ├─ 4.2 Rollenmodell                               <span class="src">entwicklung/credentials.md</span>
+│   ├─ 4.3 Rechte-Matrix (Rolle × Aktion)             <span class="src">neu, am Code geprüft</span>
+│   ├─ 4.4 Objektbezogene Sichtbarkeit                <span class="src">neu</span>
+│   └─ 4.5 Ausblick AD/LDAP (nicht umgesetzt)         <span class="src">neu, als Ausblick markiert</span>
+│
+├─ <span class="ch">📂 5 Genehmigungs-Workflow</span>
+│   ├─ 5.1 Statusmodell &amp; Übergänge                  <span class="src">core/domain/ (Mermaid)</span>
+│   ├─ 5.2 Wer genehmigt was                          <span class="src">neu</span>
+│   ├─ 5.3 Ein- und mehrstufige Genehmigung           <span class="src">neu</span>
+│   ├─ 5.4 Technische Umsetzung (Services)            <span class="src">referenz/services.md</span>
+│   └─ 5.5 Ist-Stand &amp; Lücken (AP-13)                <span class="src">intern/analyse</span>
+│
+├─ <span class="ch">📂 6 Views, URLs &amp; HTMX-Kontrakt</span>  <span class="src">← ersetzt „D) API-Design“</span>
+│   ├─ 6.1 URL-Referenz                               <span class="src">referenz/url-referenz.md</span>
+│   ├─ 6.2 View-Typen &amp; Thin-View-Regel              <span class="src">entwicklung/conventions.md</span>
+│   ├─ 6.3 Templates, Partials, Vererbung             <span class="src">neu</span>
+│   ├─ 6.4 HTMX-Konventionen &amp; Fallstricke           <span class="src">neu (aus anforderungen.md)</span>
+│   ├─ 6.5 Formulare &amp; Validierung                   <span class="src">neu</span>
+│   └─ 6.6 Wann JS, wann HTMX — und Absicherung       <span class="src">neu (aus anforderungen.md)</span>
+│
+├─ <span class="ch">📂 7 Logging, Monitoring &amp; Audit</span>
+│   ├─ 7.1 Logging-Ebenen &amp; Konfiguration            <span class="src">neu</span>
+│   ├─ 7.2 Audit-Log: Zweck &amp; Events                 <span class="src">datenmodell + Code</span>
+│   ├─ 7.3 Healthchecks &amp; Metriken                   <span class="src">neu</span>
+│   └─ 7.4 Installationsprotokoll                     <span class="src">neu (aus anforderungen.md)</span>
+│
+├─ <span class="ch">📂 8 Deployment &amp; Betrieb</span>
+│   ├─ 8.1 Installation (Offline, systemd)            <span class="src">grundlagen/installation.md</span>
+│   ├─ 8.2 Konfiguration &amp; Secrets (.env)            <span class="src">neu</span>
+│   ├─ 8.3 TLS &amp; Zugriff                             <span class="src">betrieb/laufzeit-topologie.md</span>
+│   ├─ 8.4 Celery / GitLab / OpenTofu (Stubs)         <span class="src">betrieb/stubs-mocks.md</span>
+│   ├─ 8.5 Backup &amp; Recovery                         <span class="src">neu</span>
+│   ├─ 8.6 Wartungsmodus                              <span class="src">intern/analyse §2.10</span>
+│   ├─ 8.7 HA &amp; Skalierung                           <span class="src">neu</span>
+│   └─ 8.8 Troubleshooting                            <span class="src">betrieb/troubleshooting.md</span>
+│
+├─ <span class="ch">📂 9 Entwicklung, Tests &amp; Release</span>
+│   ├─ 9.1 Entwicklungsumgebung aufsetzen             <span class="src">grundlagen/schnellstart.md</span>
+│   ├─ 9.2 Konventionen (Python, Django, HTMX)        <span class="src">entwicklung/conventions.md</span>
+│   ├─ 9.3 TDD &amp; Teststrategie                       <span class="src">entwicklung/testing.md</span>
+│   ├─ 9.4 Branch- &amp; Umgebungsweg (Test→QS→Prod)     <span class="src">neu (aus anforderungen.md)</span>
+│   ├─ 9.5 Release &amp; Versionierung                   <span class="src">neu</span>
+│   └─ 9.6 Changelog                                  <span class="src">entwicklung/changelog.md</span>
+│
+├─ <span class="ch">📂 10 Oberfläche</span>
+│   └─ 10.1–10.n Galerie je Maske (Screenshots)       <span class="src">referenz/oberflaeche.md</span>
+│
+├─ <span class="ch">📂 11 Entscheidungen (ADR)</span>
+│   ├─ 11.1 SSR statt API-First                       <span class="src">referenz/architektur-vergleich.md</span>
+│   └─ 11.2 ADR-0001 nativ statt Container            <span class="src">decisions/0001-…</span>
+│
+├─ <span class="ch">📂 Anhang A — Neuen Service anlegen</span>   <span class="src">← siehe Abschnitt 3</span>
+├─ <span class="ch">📂 Anhang B — Projektstruktur (Dateibaum)</span>  <span class="src">entwicklung/projektstruktur.md</span>
+└─ <span class="ch">📂 Anhang C — Werkzeuge im Repo</span>            <span class="src">run.sh, seed, Doku-Tools</span>
+</div>
+
+<h2>3 · Anhang A — „Neuen Service / neue Bestelloption anlegen“</h2>
+
+<p>Der Teil, den du ausdrücklich willst: <strong>Kochbuch statt Konzept</strong>. Jede Seite ist eine
+Aufgabe mit Ausgangslage, nummerierten Schritten, kopierbarem Code und einer Probe am Ende
+(„so siehst du, dass es geklappt hat“). Alles hängt an echten Stellen im Code:</p>
+
+<div class="grid2">
+<div class="card tight">
+<h4>A.1 Wie ein Service technisch entsteht</h4>
+<p class="meta" style="margin:.3rem 0">Das Modell in 1 Seite: <code>ServiceTemplate</code> (Name, Kategorie,
+<code>parameters</code> als JSON) → Formular wird <em>zur Laufzeit</em> aus dem JSON gebaut →
+Validierung → Bestellung. Wer das verstanden hat, braucht A.2–A.5 nur noch als Rezept.</p>
+</div>
+<div class="card tight">
+<h4>A.2 Das Parameter-Schema</h4>
+<p class="meta" style="margin:.3rem 0">Feldreferenz mit je einem Beispiel:
+<code>key</code>, <code>label</code>, <code>type</code> (string/integer/boolean/enum),
+<code>required</code>, <code>default</code>, <code>group</code>, <code>display_order</code>,
+<code>constraints.options</code>, <code>depends_on</code>, <code>affects_options_of</code>,
+<code>tofu_variable_name</code>. Beleg: <code>apps/catalog/services.py:16</code> (<code>SHARED_PARAMS</code>).</p>
+</div>
+<div class="card tight">
+<h4>A.3 Rezept: neue Bestelloption zu bestehendem Service</h4>
+<p class="meta" style="margin:.3rem 0">Der häufigste Fall (z. B. „Backup-Zeitfenster“ zur Linux-VM).
+Schritte: Parameter-Block ergänzen → Gruppe/Reihenfolge setzen → Migration/Seed →
+im Formular prüfen → Test ergänzen. <strong>Mit TDD-Reihenfolge</strong>, wie im Projekt Pflicht.</p>
+</div>
+<div class="card tight">
+<h4>A.4 Rezept: kompletter neuer Service</h4>
+<p class="meta" style="margin:.3rem 0">Z. B. „PostgreSQL-Datenbank“: Template anlegen (Kategorie,
+Beschreibung, Parameter) → Katalog-Kachel &amp; Detailseite → Wizard-Schritte →
+Genehmigungsregel → Provisioning-Anbindung (heute Stub) → Seed → Tests.
+Ende-zu-Ende an einem durchgehenden Beispiel.</p>
+</div>
+<div class="card tight">
+<h4>A.5 Abhängige Optionen &amp; Validierung</h4>
+<p class="meta" style="margin:.3rem 0">Wenn Auswahl A die Optionen von B einschränkt
+(<code>depends_on</code>/<code>affects_options_of</code>) — und wie die Regeln in
+<code>core/domain/validators.py</code> greifen. Inkl. „was passiert bei ungültiger Eingabe“.</p>
+</div>
+<div class="card tight">
+<h4>A.6 Häufige Fehler</h4>
+<p class="meta" style="margin:.3rem 0">Feld erscheint nicht · Auswahl bleibt leer ·
+Default greift nicht · Parameter kommt nicht in der Bestellung an · vergessener Seed.
+Je Symptom: Ursache + Prüfbefehl.</p>
+</div>
+</div>
+
+<h2>4 · Was vorher zu entscheiden / zu prüfen ist</h2>
+
+<div class="warnbox">
+<strong>Ungeprüft — kein Rateschluss von mir:</strong> Wie importiert <em>euer</em> Bookstack?
+Es gibt (a) Seite-für-Seite Markdown einfügen, (b) Import über die Bookstack-API mit einem
+Skript, (c) die eingebaute Import-Funktion neuerer Bookstack-Versionen. Welche Wege eure
+Instanz kann, hängt von Version und Rechten ab — das muss <strong>an eurer Instanz</strong>
+nachgesehen werden, bevor ich das Ausgabeformat festlege. Bis dahin plane ich das
+robusteste Format: <strong>eine Markdown-Datei je Seite</strong>, nummeriert in Kapitel-Ordnern —
+das lässt sich in jedem der drei Wege verwenden.
+</div>
+
+<div class="card">
+<strong>Offene Punkte, die deine Entscheidung brauchen:</strong>
+<ul class="tight">
+<li><strong>Eine Quelle oder zwei?</strong> Empfehlung: <code>cmp-docs/</code> bleibt die Quelle,
+Bookstack-Markdown wird daraus <em>erzeugt</em> (Skript). Sonst driften beide Stände auseinander —
+diese Falle hatten wir im Projekt schon.</li>
+<li><strong>Mermaid:</strong> Bookstack rendert kein Mermaid. Diagramme werden beim Export zu
+PNG gerendert (Werkzeug ist da: <code>cmp-docs/tools/render_mermaid.sh</code>) und als Bild eingebettet.</li>
+<li><strong>Interna:</strong> Das Repo ist öffentlich. <code>intern/analyse-bestellportal.md</code> und
+alles aus der Fremddoku bleibt draußen bzw. wird auf Aussagen über <em>unseren</em> Code reduziert.</li>
+<li><strong>Umfang jetzt:</strong> alle 11 Kapitel auf einmal, oder erst Kapitel 1–3 + Anhang A
+als Muster zum Gegenlesen? Empfehlung: <strong>Muster zuerst</strong> — Form einmal treffen, dann skalieren.</li>
+</ul>
+</div>
+
+<p class="meta">Nächster Schritt nach deinem Go: Spec schreiben
+(<code>docs/superpowers/specs/2026-07-22-bookstack-doku-design.md</code>), dann Umsetzungsplan.</p>
+
+</div>
+</body>
+</html>
