@@ -10,10 +10,20 @@ nicht importiert.
 
 ```
 bookstack/
-├── 01-ziel-und-anforderungen/          Kapitel 1
-├── 02-architektur-und-prozesse/        Kapitel 2
-├── 03-domaenenmodell-und-apps/         Kapitel 3
-└── anhang-a-neuen-service-anlegen/     Anhang A
+├── 01-ziel-und-anforderungen/          Kapitel 1     5 Seiten
+├── 02-architektur-und-prozesse/        Kapitel 2     5 Seiten
+├── 03-domaenenmodell-und-apps/         Kapitel 3     7 Seiten
+├── 04-rollen-und-rechte/               Kapitel 4     5 Seiten
+├── 05-genehmigungs-workflow/           Kapitel 5     5 Seiten
+├── 06-views-urls-und-htmx/             Kapitel 6     6 Seiten
+├── 07-logging-monitoring-audit/        Kapitel 7     4 Seiten
+├── 08-deployment-und-betrieb/          Kapitel 8     8 Seiten
+├── 09-entwicklung-tests-release/       Kapitel 9     6 Seiten
+├── 10-oberflaeche/                     Kapitel 10   13 Seiten
+├── 11-entscheidungen-adr/              Kapitel 11    2 Seiten
+├── anhang-a-neuen-service-anlegen/     Anhang A      6 Seiten
+├── anhang-b-projektstruktur/           Anhang B      1 Seite
+└── anhang-c-werkzeuge-im-repo/         Anhang C      1 Seite
 ```
 
 Buch: „CloudMan Portal (CMP) — Betriebs- und Entwicklungshandbuch".
@@ -22,10 +32,15 @@ Der Seitentitel steht zusätzlich als erste Zeile (`# …`) in jeder Datei.
 
 ## Stand
 
-Umgesetzt ist der **Pilot** aus der Spec (`docs/superpowers/specs/2026-07-22-bookstack-doku-design.md`):
-Kapitel 1, 2, 3 und Anhang A. Die Kapitel 4 bis 11 (Rollen und Rechte, Genehmigungs-Workflow,
-Views/URLs/HTMX, Logging, Deployment, Entwicklung, Oberfläche, Entscheidungen) sowie die
-Anhänge B und C sind geplant, aber noch nicht geschrieben.
+**Vollständig** gegenüber der Spec (`docs/superpowers/specs/2026-07-22-bookstack-doku-design.md`):
+11 Kapitel und 3 Anhänge, 74 Seiten. Zuerst entstand der Pilot (Kapitel 1–3 + Anhang A), nach
+dessen Abnahme die übrigen Kapitel.
+
+Offen bleibt der **Importweg** (siehe unten) und ein Generator, der diesen Stand automatisch
+gegen `cmp-docs/docs/` abgleicht.
+
+Die Seiten beschreiben den Ist-Stand, nicht ein Zielbild: Wo eine Funktion fehlt oder eine
+Kette nicht verdrahtet ist, steht das als Lücke mit Verweis auf das Arbeitspaket in `todo.md`.
 
 ## Regeln für diese Dateien
 
@@ -34,7 +49,12 @@ Bookstack rendert kein MkDocs. Deshalb gilt in diesem Verzeichnis:
 - reines CommonMark und Markdown-Tabellen
 - keine Admonitions (`!!!`), keine Attributblöcke (`{: …}`), kein Frontmatter
 - keine Mermaid-Codeblöcke — Abläufe als Tabelle oder als ASCII-Skizze im Codeblock
+- Bilder als Markdown (`![alt](pfad)`), nie als `<img>`-Tag
 - jede Seite endet mit einer Quellenzeile, die die belegenden Code-Stellen nennt
+
+Kapitel 10 bindet die 14 Screenshots relativ aus `../../docs/images/screenshots/` ein. Beim
+Import müssen die Bilder mit hochgeladen und die Pfade auf die Bookstack-Ablage umgestellt
+werden — die relative Form gilt nur für das Repository und die lokale Vorschau.
 
 Prüfen lässt sich das so:
 
