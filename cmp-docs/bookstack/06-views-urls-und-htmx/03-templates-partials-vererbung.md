@@ -102,8 +102,8 @@ aber ausschließlich dem Seitengerüst selbst, nicht einzelnen Fach-Seiten.
 eigenem `<!DOCTYPE>`, `<html>` und Inline-`<style>` (Zeilen 1-12) — es erbt nicht
 von `base.html` und folgt keiner der Konventionen aus Abschnitt 4. Es gehört zur
 selben Diagnose-Seite `/debug-layout/`, die in Kapitel 6.1 als Route ohne
-Rollenprüfung auffiel; hier zeigt sich dieselbe Sonderstellung auch auf
-Template-Ebene.
+Rollenprüfung auffiel — seit AP-22 nur noch, solange `DEBUG=True` ist, siehe
+dort; hier zeigt sich dieselbe Sonderstellung auch auf Template-Ebene.
 
 ## 7. Zusammenfassung
 

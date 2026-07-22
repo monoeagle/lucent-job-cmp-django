@@ -1,8 +1,8 @@
 # Arbeitspakete & Roadmap
 
 Arbeitspaket-Quelle: `todo.md` (offen) / `todo-erledigt.md` (fertig) im Repo-Root.
-Status: **AP-0 … AP-10 fertig** (Backend B0–B9 + HTMX-Frontend, 330 Tests grün, v1.3.3),
-**AP-11 … AP-23 offen**.
+Status: **AP-0 … AP-10 fertig** (Backend B0–B9 + HTMX-Frontend) und **AP-22 erledigt**
+(Zugriffskontrolle) — 347 Tests grün, v1.4.0. **AP-11 … AP-21 und AP-23 offen**.
 
 ### Offene Arbeitspakete
 
@@ -19,15 +19,13 @@ Status: **AP-0 … AP-10 fertig** (Backend B0–B9 + HTMX-Frontend, 330 Tests gr
 | AP-19 | Security-Hardening (CSP + Rate Limiting) | keine CSP; Login-Brute-Force ungebremst |
 | AP-20 | Echter GitLab-/OpenTofu-Client | Provisioning ist ein In-Memory-Stub |
 | AP-21 | AD-/LDAP-Anbindung | kein `django-auth-ldap`; Rollen werden als Feld gepflegt |
-| **AP-22** | **Zugriffskontrolle schließen** *(Vorrang)* | fremde Bestellung mit HTTP 200 lesbar, `/debug-layout/` anonym erreichbar, `ApprovalRule.approver_role` wird nie geprüft — in einer Probe real ausgenutzt |
 | AP-23 | Rename-Reste und Doku-Drift | `npm run css:build` schlägt fehl und wird von `run.sh` verschluckt; URL-Referenz und Projektstruktur hinken dem Code hinterher |
 
-Empfohlene Reihenfolge: **22 → 13 → 15 → 14 → 16+17 → 18 → 19 → 20 → 21**, AP-23 nebenher —
-AP-22 steht vorn, weil es die einzige Gruppe ist, die vor einem Produktivgang zwingend
-geschlossen sein muss. AP-18 und AP-20 zahlen erst ein, wenn AP-13 die Auslösepunkte
-geschaffen hat.
+Empfohlene Reihenfolge: **13 → 15 → 14 → 16+17 → 18 → 19 → 20 → 21**, AP-23 nebenher.
+AP-18 und AP-20 zahlen erst ein, wenn AP-13 die Auslösepunkte geschaffen hat.
+AP-22 (Zugriffskontrolle) stand hier zuerst und ist mit v1.4.0 erledigt.
 AP-13 bis AP-21 stammen aus der [Analyse der Bestellportal-Fremddoku](../intern/analyse-bestellportal.md),
-AP-22 und AP-23 aus dem Code-Abgleich beim Schreiben des Bookstack-Handbuchs.
+AP-22 (erledigt) und AP-23 aus dem Code-Abgleich beim Schreiben des Bookstack-Handbuchs.
 
 Zusätzlich (nicht-AP):
 

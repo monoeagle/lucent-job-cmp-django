@@ -30,7 +30,7 @@ class NotificationListView(RequesterRequiredMixin, ListView):
 
 class NotificationMarkReadView(RequesterRequiredMixin, View):
     def post(self, request, pk):
-        NotificationService.mark_read(pk)
+        NotificationService.mark_read_for_user(pk, request.user)
         return redirect("notifications:list")
 
 

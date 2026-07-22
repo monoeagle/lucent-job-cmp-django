@@ -1,16 +1,27 @@
 {
-  "generatedAt": "2026-07-22T17:20:02",
+  "generatedAt": "2026-07-22T23:52:41",
   "range": {
     "from": "2025-07-23",
     "to": "2026-07-22"
   },
   "byDay": {
     "2026-07-22": {
-      "commits": 6,
+      "commits": 8,
       "kinds": {
-        "docs": 6
+        "fix": 1,
+        "docs": 7
       },
       "list": [
+        {
+          "sha": "011dd5f",
+          "subject": "fix: AP-22 — objektbezogene Zugriffskontrolle schliessen",
+          "kind": "fix"
+        },
+        {
+          "sha": "f55103d",
+          "subject": "docs: AP-22 + AP-23 aus dem Code-Abgleich des Handbuchs",
+          "kind": "docs"
+        },
         {
           "sha": "038af79",
           "subject": "docs: Bookstack-Handbuch vervollstaendigt — Kapitel 4-11 + Anhaenge B und C",
@@ -993,7 +1004,7 @@
     }
   },
   "stats": {
-    "totalCommits": 160,
+    "totalCommits": 162,
     "activeDays": 20,
     "longestStreak": 3,
     "topKinds": [
@@ -1003,11 +1014,11 @@
       },
       {
         "kind": "docs",
-        "count": 51
+        "count": 52
       },
       {
         "kind": "fix",
-        "count": 21
+        "count": 22
       },
       {
         "kind": "chore",
@@ -1022,7 +1033,7 @@
         "count": 4
       }
     ],
-    "testCount": 327
+    "testCount": 344
   },
   "phases": []
 }

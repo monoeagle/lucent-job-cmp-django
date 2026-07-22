@@ -653,8 +653,8 @@ Der wichtigste Befund kam nicht aus der Fremddoku, sondern aus dem Abgleich mit 
 hat alle Bausteine, aber die Bestellkette ist nicht verdrahtet** (§1c). Eine über die
 Oberfläche eingereichte Bestellung bleibt in `SUBMITTED` stehen und erreicht keinen
 Genehmiger; Audit-Log und Benachrichtigungen enthalten ausschließlich Seed-Daten. Das ist
-von außen unsichtbar, weil Seed-Daten die Oberfläche gefüllt aussehen lassen und 330 Tests
-grün sind.
+von außen unsichtbar, weil Seed-Daten die Oberfläche gefüllt aussehen lassen und die
+Testsuite grün ist.
 
 #### Die sechs fehlenden Aufrufe
 

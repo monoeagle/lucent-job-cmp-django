@@ -33,16 +33,32 @@ Tabellen unten schreiben deshalb einheitlich `requester+`.
 | Pfad | Name | View | Methode | Rolle |
 |---|---|---|---|---|
 | `/` | `dashboard:home` | `DashboardView` (`views.py:10`) | GET | requester+ |
-| `/debug-layout/` | `dashboard:debug_layout` | `TemplateView` (Django, inline in `urls.py:9`) | GET | **keine** |
+| `/debug-layout/` | `dashboard:debug_layout` | `TemplateView` (Django, inline in `urls.py:29-36`) | GET | **keine, nur wenn `DEBUG=True`** |
 | `/admin-panel/` | `dashboard:admin_dashboard` | `AdminDashboardView` (`admin_views.py:9`) | GET | admin+ |
 | `/admin-panel/config/` | `dashboard:admin_config` | `AdminConfigView` (`admin_views.py:21`) | GET | admin+ |
 | `/admin-panel/rules/` | `dashboard:admin_rules` | `AdminRulesView` (`admin_views.py:38`) | GET | superadmin |
 
-`/debug-layout/` wird in `dashboard/urls.py:9` direkt mit Djangos generischem
-`TemplateView.as_view(...)` verdrahtet, ohne eigene View-Klasse und ohne
-Rollen-Mixin. Anders als jede andere Seite im Portal ist sie ohne Login
-erreichbar — ein Diagnose-Template für das Sidebar-Layout, das beim Aufräumen
-entweder hinter `RequesterRequiredMixin` gehört oder entfernt werden sollte.
+Bis AP-22 war `/debug-layout/` unbedingt in `urlpatterns` verdrahtet — ohne
+eigene View-Klasse, ohne Rollen-Mixin, und damit als einzige Seite im Portal ganz
+ohne Login erreichbar. Seit AP-22 steht die Route hinter einer Bedingung
+(`dashboard/urls.py:29`):
+
+```python
+if settings.DEBUG:
+    urlpatterns += [
+        path(
+            "debug-layout/",
+            TemplateView.as_view(template_name="debug_layout.html"),
+            name="debug_layout",
+        ),
+    ]
+```
+
+In Produktion (`DEBUG=False`) wird die Route also gar nicht erst registriert —
+ein Aufruf von `/debug-layout/` liefert dort `404`, nicht etwa eine ungeschützte
+Seite. Immer noch ohne eigenes Rollen-Mixin, aber das ist in der Entwicklung
+(wo die Route existiert) bewusst so: ein reines Diagnose-Template für das
+Sidebar-Layout, nirgends verlinkt.
 
 ## 4. Katalog (`cmp/apps/catalog/urls.py`, Prefix `catalog/`)
 
@@ -139,8 +155,9 @@ der Django Admin an.
 
 CMP hat 21 anwendungseigene URLs über acht Apps plus die allauth-Login/Logout-Routen.
 Die Rollenprüfung läuft ausschließlich über die vier Mixins aus Abschnitt 2; eine
-Ausnahme ist `/debug-layout/`, die ganz ohne Login auskommt. Die bisherige
-Referenz-Doku war an sechs Stellen veraltet oder unvollständig — Abschnitt 10 zeigt
-die Korrekturen.
+Ausnahme ist `/debug-layout/`, die ganz ohne Login auskommt — seit AP-22 aber nur
+noch in der Entwicklung, weil die Route bei `DEBUG=False` gar nicht registriert
+wird. Die bisherige Referenz-Doku war an sechs Stellen veraltet oder unvollständig
+— Abschnitt 10 zeigt die Korrekturen.
 
 > Quelle: cmp/config/urls.py, cmp/apps/dashboard/urls.py, cmp/apps/dashboard/views.py, cmp/apps/dashboard/admin_views.py, cmp/apps/catalog/urls.py, cmp/apps/catalog/views.py, cmp/apps/orders/urls.py, cmp/apps/orders/views.py, cmp/apps/approvals/urls.py, cmp/apps/approvals/views.py, cmp/apps/subscriptions/urls.py, cmp/apps/subscriptions/views.py, cmp/apps/notifications/urls.py, cmp/apps/notifications/views.py, cmp/apps/audit/urls.py, cmp/apps/audit/views.py, cmp/apps/accounts/urls.py, cmp/apps/accounts/views.py, cmp/core/mixins.py, cmp/core/domain/enums.py, cmp/config/settings/base.py, venv/lib/python3.12/site-packages/allauth/account/urls.py, cmp-docs/docs/referenz/url-referenz.md — am Code geprüft 2026-07-22

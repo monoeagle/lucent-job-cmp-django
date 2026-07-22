@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 
+from core.domain.enums import UserRole
 from core.mixins import TimeStampedModel
 
 
@@ -13,7 +14,12 @@ class ApprovalRule(TimeStampedModel):
         related_name="approval_rules",
     )
     condition = models.JSONField(default=dict)
-    approver_role = models.CharField(max_length=20, default="approver")
+    # Freie Werte sind hier gefaehrlich: seit die Rolle bei der Entscheidung
+    # geprueft wird, macht ein Wert ausserhalb der Rollenhierarchie die Anfrage
+    # fuer niemanden entscheidbar.
+    approver_role = models.CharField(
+        max_length=20, choices=UserRole.choices, default=UserRole.APPROVER
+    )
     is_active = models.BooleanField(default=True)
 
     class Meta:

@@ -65,7 +65,9 @@ class OrderDetailView(RequesterRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         try:
-            return OrderService.get_order(self.kwargs["pk"])
+            return OrderService.get_order_for_user(
+                self.kwargs["pk"], self.request.user
+            )
         except NotFoundError:
             raise Http404
 

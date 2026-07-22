@@ -1,6 +1,19 @@
 # MPP Django — Todo erledigt
 
-> Fertige Arbeitspakete (newest-first). Quelle offen: `todo.md`. Stand 2026-07-21, v1.3.3, 330 Tests grün.
+> Fertige Arbeitspakete (newest-first). Quelle offen: `todo.md`. Stand 2026-07-22, v1.4.0, 347 Tests grün.
+
+## AP-22 · Zugriffskontrolle schließen ✅
+Objektbezogene Prüfung unterhalb der Rollen-Mixins: `get_order_for_user`,
+`get_subscription_for_user`, `cancel_for_user` (Kündigen bleibt Besitzerhandlung),
+`mark_read_for_user`. `/debug-layout/` nur noch bei `DEBUG` registriert.
+`ApprovalRule.approver_role` wird über `ApprovalService._load_pending` endlich geprüft
+(`ForbiddenError`); `RejectionForm` ersetzt den rohen `request.POST`-Zugriff.
+Alle Lücken waren vorher mit einer Probe real ausnutzbar (fremde Bestellung HTTP 200,
+`/debug-layout/` anonym HTTP 200, Genehmigung trotz zu schwacher Rolle) — je Lücke
+zuerst ein roter Test. Dazu die Regression des eigenen Fixes abgefangen:
+`approver_role` ist ein freies CharField — ein Wert ausserhalb der Rollenhierarchie
+haette die Anfrage fuer niemanden entscheidbar gemacht (`choices` + `ConflictError`).
+17 neue Tests (330 → 347).
 
 ## Deployment · VM-Installationsanleitung + Production-Settings ✅
 Env-basiertes `config.settings.production` (django-environ) + `.env.example`, Hardening

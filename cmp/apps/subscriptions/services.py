@@ -1,8 +1,10 @@
 """Service layer for the subscriptions app."""
 from django.utils import timezone
 
+from apps.accounts.services import AccountService
 from apps.orders.services import OrderService
 from apps.subscriptions.models import Subscription
+from core.domain.enums import UserRole
 from core.domain.value_objects import OrderStatus
 from core.exceptions import ConflictError, NotFoundError
 
@@ -41,6 +43,33 @@ class SubscriptionService:
             return Subscription.objects.get(pk=sub_id)
         except Subscription.DoesNotExist:
             raise NotFoundError(f"Subscription {sub_id} not found.")
+
+    @staticmethod
+    def get_subscription_for_user(sub_id, user):
+        """Get a subscription the given user may see.
+
+        Owners see their own, approvers and above see all. Everything else
+        raises NotFoundError — a foreign subscription must not be
+        distinguishable from a missing one.
+        """
+        sub = SubscriptionService.get_subscription(sub_id)
+        if sub.user_id == user.pk:
+            return sub
+        if AccountService.is_at_least_role(user.role, UserRole.APPROVER):
+            return sub
+        raise NotFoundError(f"Subscription {sub_id} not found.")
+
+    @staticmethod
+    def cancel_for_user(sub_id, user):
+        """Cancel a subscription on behalf of its owner.
+
+        Cancelling is an owner action — unlike reading, a higher role does not
+        substitute for ownership here.
+        """
+        sub = SubscriptionService.get_subscription(sub_id)
+        if sub.user_id != user.pk:
+            raise NotFoundError(f"Subscription {sub_id} not found.")
+        return SubscriptionService.cancel(sub_id)
 
     @staticmethod
     def cancel(sub_id):

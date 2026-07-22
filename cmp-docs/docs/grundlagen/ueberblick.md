@@ -44,7 +44,7 @@ Das **CloudMan Portal** ermöglicht Benutzern, IT-Services (VMs, Datenbanken, Co
 | Django Apps | 10 |
 | Datenbank-Tabellen | 15 |
 | Services | 10 |
-| Tests | 330 |
+| Tests | 347 |
 | TDD-Phasen | B0–B9 |
 
 ## Schnellstart

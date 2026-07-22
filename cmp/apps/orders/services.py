@@ -1,6 +1,8 @@
 """Service layer for the orders app."""
+from apps.accounts.services import AccountService
 from apps.catalog.services import CatalogService
 from apps.orders.models import Order, OrderItem
+from core.domain.enums import UserRole
 from core.domain.value_objects import OrderStatus, StatusMachine
 from core.exceptions import ConflictError, NotFoundError, ValidationError
 
@@ -20,6 +22,21 @@ class OrderService:
             return Order.objects.get(pk=order_id)
         except Order.DoesNotExist:
             raise NotFoundError(f"Order with id={order_id} not found.")
+
+    @staticmethod
+    def get_order_for_user(order_id, user):
+        """Get an order the given user may see.
+
+        Owners see their own orders, approvers and above see all — anything
+        else raises NotFoundError, so a foreign order stays indistinguishable
+        from a missing one.
+        """
+        order = OrderService.get_order(order_id)
+        if order.user_id == user.pk:
+            return order
+        if AccountService.is_at_least_role(user.role, UserRole.APPROVER):
+            return order
+        raise NotFoundError(f"Order with id={order_id} not found.")
 
     @staticmethod
     def list_user_orders(user_id):

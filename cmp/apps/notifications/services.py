@@ -21,6 +21,13 @@ class NotificationService:
         Notification.objects.filter(pk=notification_id).update(is_read=True)
 
     @staticmethod
+    def mark_read_for_user(notification_id, user):
+        """Mark a notification read — only the recipient may do so."""
+        Notification.objects.filter(pk=notification_id, user=user).update(
+            is_read=True
+        )
+
+    @staticmethod
     def mark_all_read(user_id):
         Notification.objects.filter(user_id=user_id, is_read=False).update(
             is_read=True
