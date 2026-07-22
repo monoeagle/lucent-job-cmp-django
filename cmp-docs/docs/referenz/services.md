@@ -34,7 +34,8 @@
 | Methode | Parameter | Rückgabe | Beschreibung |
 |---------|-----------|----------|-------------|
 | `create_order(user, notes="")` | User, str | `Order` | Neue Bestellung (Draft) |
-| `get_order(order_id)` | int | `Order` | Order by ID, NotFoundError |
+| `get_order(order_id)` | int | `Order` | Order by ID, NotFoundError — **ohne** Zugriffsprüfung, nur für Service-zu-Service |
+| `get_order_for_user(order_id, user)` | int, User | `Order` | Wie oben, aber nur Besitzer oder Approver+; sonst `NotFoundError` (→ 404). Von den Views zu verwenden |
 | `list_user_orders(user_id)` | int | `list[Order]` | Bestellungen eines Users |
 | `add_item(order_id, template_id, parameters)` | int, int, dict | `OrderItem` | Item hinzufügen (nur Draft) |
 | `remove_item(item_id)` | int | `None` | Item entfernen (nur Draft) |
@@ -68,8 +69,9 @@
 |---------|-----------|----------|-------------|
 | `needs_approval(order_id)` | int | `bool` | Prüft ob Approval nötig |
 | `create_approval_requests(order_id)` | int | `list[ApprovalRequest]` | Erstellt Requests (Submitted → Pending) |
-| `approve(request_id, approver)` | int, User | `None` | Genehmigen |
-| `reject(request_id, approver, comment)` | int, User, str | `None` | Ablehnen |
+| `approve(request_id, approver)` | int, User | `None` | Genehmigen — prüft `rule.approver_role` |
+| `reject(request_id, approver, comment)` | int, User, str | `None` | Ablehnen — prüft `rule.approver_role` |
+| `_load_pending(request_id, approver)` | int, User | `ApprovalRequest` | Intern: lädt die offene Anfrage und prüft die von der Regel verlangte Rolle (`ForbiddenError`); unbekannter Rollenwert → `ConflictError` |
 | `list_pending_requests()` | — | `list[ApprovalRequest]` | Offene Requests |
 
 ## NotificationService
@@ -81,7 +83,8 @@
 | `create(user, title, message, category)` | User, str, str, str | `Notification` | Erstellt Benachrichtigung |
 | `list_unread(user_id)` | int | `list[Notification]` | Ungelesene Notifications |
 | `list_all(user_id)` | int | `list[Notification]` | Alle Notifications |
-| `mark_read(notification_id)` | int | `None` | Als gelesen markieren |
+| `mark_read(notification_id)` | int | `None` | Als gelesen markieren — **ohne** Empfängerprüfung |
+| `mark_read_for_user(notification_id, user)` | int, User | `None` | Als gelesen markieren, nur für den Empfänger. Von den Views zu verwenden |
 | `mark_all_read(user_id)` | int | `None` | Alle als gelesen |
 | `unread_count(user_id)` | int | `int` | Anzahl ungelesene |
 
@@ -103,8 +106,10 @@
 |---------|-----------|----------|-------------|
 | `create_from_order(order_id)` | int | `list[Subscription]` | Subscriptions aus fertigem Order |
 | `list_user_subscriptions(user_id)` | int | `list[Subscription]` | User-Subscriptions |
-| `get_subscription(sub_id)` | int | `Subscription` | Subscription by ID |
-| `cancel(sub_id)` | int | `None` | Kündigen |
+| `get_subscription(sub_id)` | int | `Subscription` | Subscription by ID — **ohne** Zugriffsprüfung |
+| `get_subscription_for_user(sub_id, user)` | int, User | `Subscription` | Nur Besitzer oder Approver+; sonst `NotFoundError` |
+| `cancel(sub_id)` | int | `None` | Kündigen — **ohne** Besitzprüfung |
+| `cancel_for_user(sub_id, user)` | int, User | `None` | Kündigen, nur durch den Besitzer. Von den Views zu verwenden |
 
 ## DashboardService
 

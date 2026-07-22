@@ -61,7 +61,7 @@ lucent-job-mpp-TDD-Django/                  # Projektwurzel
 │   ├── stubs/cmdb/*.yml                    # Entwicklungs-Stubs (locations/networks/tenants)
 │   └── manage.py
 │
-├── tests/                                  # pytest-django-Tests (~230, RequestFactory statt Client)
+├── tests/                                  # pytest-django-Tests (347; View-Tests fast durchweg client-Fixture)
 │   ├── conftest.py, factories.py           # Shared Fixtures / factory_boy
 │   ├── unit/                               # Services, Domain, Installer (lib.sh/ui.sh via Python-Tests)
 │   ├── integration/                        # Views, Models
@@ -135,9 +135,11 @@ ausnahmslos. Am echten Dateibestand geprüft (`find cmp/apps/<app> -maxdepth 1 -
 | `cmdb/` | kein `urls.py`, kein `views.py`, kein `forms.py` — reine Backend-/Stub-Schicht; zusätzlich `clients.py` | nicht in `cmp/config/urls.py` includiert |
 | `dashboard/` | **kein** `models.py`, **kein** `forms.py`, **kein** `admin.py` — dafür `admin_views.py` statt `admin.py` | `find cmp/apps/dashboard -maxdepth 1 -type f` |
 | `accounts/` | zusätzlich `management/commands/seed.py` **und** `seed_users.py` (zwei Seed-Kommandos, nicht nur eines) | `find cmp/apps/accounts/management/commands` |
+| `notifications/`, `audit/`, `subscriptions/` | kein `forms.py` — diese Apps nehmen keine Formulareingaben entgegen, ihre Schreibpfade sind einfache POST-Aktionen | `find cmp/apps/<app> -maxdepth 1 -name forms.py` ohne Treffer |
 
-Alle übrigen Apps (`catalog`, `orders`, `approvals`, `audit`, `subscriptions`,
-`notifications`) folgen dem Standardmuster unverändert.
+Nur `accounts/`, `catalog/`, `orders/` und `approvals/` bringen alle sechs Kerndateien mit.
+`approvals/forms.py` ist die jüngste davon: es kam mit v1.4.0 hinzu, als der
+Ablehnungskommentar von `request.POST` auf ein Formular umgestellt wurde.
 
 ## 4. Generierte und nicht versionierte Verzeichnisse
 

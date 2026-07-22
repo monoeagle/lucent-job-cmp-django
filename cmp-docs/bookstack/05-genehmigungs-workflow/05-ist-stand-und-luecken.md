@@ -57,7 +57,7 @@ Aufbau wiederholt sich in `test_rejected_order_workflow` (Zeilen 107-111).
 `test_failed_provisioning_workflow` (Zeilen 116-127) geht noch weiter: Dort
 setzt der Test `order.status = OrderStatus.APPROVED` **direkt per Zuweisung**
 (Zeile 126-127), weil es keinen Ablauf gibt, der eine Order ohne manuellen
-Eingriff dorthin bringt. Die 330 Tests des Projekts sind grün — sie testen die
+Eingriff dorthin bringt. Die 347 Tests des Projekts sind grün — sie testen die
 Bausteine einzeln korrekt, nicht ihre Verkettung im Betrieb.
 
 ## 5. Was ein Nutzer heute real erlebt

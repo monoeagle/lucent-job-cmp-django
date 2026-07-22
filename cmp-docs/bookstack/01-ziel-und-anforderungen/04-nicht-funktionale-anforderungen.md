@@ -75,7 +75,7 @@ noch nicht eingebaut (AP-12, `CLAUDE.md`) — bis dahin ist der Server WSGI, nic
 ## 7. Teststrategie als Qualitätssicherung
 
 TDD ist projektweit Pflicht (`.claude/rules/testing.md`). Stand 2026-07-22 zählt die
-Testsuite **330 Tests** (`pytest --collect-only`, Projektwurzel). Externe Abhängigkeiten
+Testsuite **347 Tests** (`pytest --collect-only`, Projektwurzel). Externe Abhängigkeiten
 (GitLab-Pipeline, CMDB) sind über Stub-Clients ersetzt, keine echten Netzwerkaufrufe in
 Tests (`cmp/apps/provisioning/clients.py`, `cmp-docs/docs/betrieb/stubs-mocks.md`).
 

@@ -78,14 +78,20 @@ class UserFactory(factory.django.DjangoModelFactory):
 hinweg, `PostGenerationMethodCall` sorgt für ein echtes gehashtes Passwort
 statt eines Klartextfelds.
 
-## 7. Ist-Stand: `client`-Fixture statt `RequestFactory`
+## 7. Ist-Stand: überwiegend `client`-Fixture, `rf` nur für die Mixin-Tests
 
 `.claude/rules/testing.md` schreibt **„RequestFactory für View-Tests
-(nicht Client)"** vor. Der reale Code folgt dem **nicht**: eine
-Volltextsuche über `tests/` und `cmp/` nach `RequestFactory` ergibt
-**null** Treffer (Stand 2026-07-22). Stattdessen wird durchgehend der
-pytest-django-`client`-Fixture (Djangos Test-`Client`) verwendet — allein
-in `tests/integration/test_order_views.py` **49** Aufrufe von
+(nicht Client)"** vor. Der reale Code folgt dem überwiegend **nicht** — aber
+die Suche danach ist eine Falle: Die Klasse `RequestFactory` wird nirgends
+importiert (`grep -r RequestFactory tests/ cmp/` → null Treffer), pytest-django
+stellt sie jedoch als Fixture **`rf`** bereit. Und die wird benutzt: in
+`tests/integration/test_role_access.py` in **11** Tests — der einzigen Datei,
+die die Rollen-Mixins isoliert prüft, wo eine echte Request-Instanz ohne
+URL-Routing genau passt.
+
+Alle übrigen View-Tests nehmen den `client`-Fixture (Djangos Test-`Client`):
+**54** Testfunktionen gegenüber 11 mit `rf`, allein in
+`tests/integration/test_order_views.py` **49** Aufrufe von
 `client.get(...)`/`client.post(...)`. Beispiel (Zeilen 1-17):
 
 ```python
@@ -175,7 +181,7 @@ Entspricht den Optionen a–d in `scripts/run.sh:277-301` (Menüpunkt 3).
 ## 11. Zusammenfassung
 
 TDD ist Pflicht und wird für neue Bestelloptionen nachweislich so gelebt
-(Anhang A.3). Die Suite umfasst real **330 Tests** (2026-07-22), ohne
+(Anhang A.3). Die Suite umfasst real **347 Tests** (2026-07-23), ohne
 Coverage-Kennzahl, da `pytest-cov` fehlt. Zwei Regeln aus
 `.claude/rules/testing.md` sind Zielbild, nicht Ist-Stand: View-Tests
 laufen über den `client`-Fixture statt `RequestFactory`, und externe

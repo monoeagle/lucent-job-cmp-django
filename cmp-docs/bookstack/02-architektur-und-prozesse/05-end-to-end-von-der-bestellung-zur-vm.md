@@ -67,7 +67,7 @@ und `OrderService.submit_order`, die diese Prüfung nutzen.
 
 ## 4. Warum das im Alltag nicht auffällt
 
-330 Tests sind grün, und Seed-Daten füllen Queue, Audit-Log und
+347 Tests sind grün, und Seed-Daten füllen Queue, Audit-Log und
 Benachrichtigungen — die Oberfläche wirkt dadurch vollständig, obwohl die reale
 Kette hinter dem ersten Klick abbricht. Jeder einzelne Baustein (Statusmaschine,
 `ApprovalService`, Celery-Task, `SubscriptionService`) ist für sich getestet und

@@ -1611,7 +1611,13 @@
 <td><code>get_order(order_id)</code></td>
 <td>int</td>
 <td><code>Order</code></td>
-<td>Order by ID, NotFoundError</td>
+<td>Order by ID, NotFoundError — <strong>ohne</strong> Zugriffsprüfung, nur für Service-zu-Service</td>
+</tr>
+<tr>
+<td><code>get_order_for_user(order_id, user)</code></td>
+<td>int, User</td>
+<td><code>Order</code></td>
+<td>Wie oben, aber nur Besitzer oder Approver+; sonst <code>NotFoundError</code> (→ 404). Von den Views zu verwenden</td>
 </tr>
 <tr>
 <td><code>list_user_orders(user_id)</code></td>
@@ -1731,13 +1737,19 @@
 <td><code>approve(request_id, approver)</code></td>
 <td>int, User</td>
 <td><code>None</code></td>
-<td>Genehmigen</td>
+<td>Genehmigen — prüft <code>rule.approver_role</code></td>
 </tr>
 <tr>
 <td><code>reject(request_id, approver, comment)</code></td>
 <td>int, User, str</td>
 <td><code>None</code></td>
-<td>Ablehnen</td>
+<td>Ablehnen — prüft <code>rule.approver_role</code></td>
+</tr>
+<tr>
+<td><code>_load_pending(request_id, approver)</code></td>
+<td>int, User</td>
+<td><code>ApprovalRequest</code></td>
+<td>Intern: lädt die offene Anfrage und prüft die von der Regel verlangte Rolle (<code>ForbiddenError</code>); unbekannter Rollenwert → <code>ConflictError</code></td>
 </tr>
 <tr>
 <td><code>list_pending_requests()</code></td>
@@ -1781,7 +1793,13 @@
 <td><code>mark_read(notification_id)</code></td>
 <td>int</td>
 <td><code>None</code></td>
-<td>Als gelesen markieren</td>
+<td>Als gelesen markieren — <strong>ohne</strong> Empfängerprüfung</td>
+</tr>
+<tr>
+<td><code>mark_read_for_user(notification_id, user)</code></td>
+<td>int, User</td>
+<td><code>None</code></td>
+<td>Als gelesen markieren, nur für den Empfänger. Von den Views zu verwenden</td>
 </tr>
 <tr>
 <td><code>mark_all_read(user_id)</code></td>
@@ -1857,13 +1875,25 @@
 <td><code>get_subscription(sub_id)</code></td>
 <td>int</td>
 <td><code>Subscription</code></td>
-<td>Subscription by ID</td>
+<td>Subscription by ID — <strong>ohne</strong> Zugriffsprüfung</td>
+</tr>
+<tr>
+<td><code>get_subscription_for_user(sub_id, user)</code></td>
+<td>int, User</td>
+<td><code>Subscription</code></td>
+<td>Nur Besitzer oder Approver+; sonst <code>NotFoundError</code></td>
 </tr>
 <tr>
 <td><code>cancel(sub_id)</code></td>
 <td>int</td>
 <td><code>None</code></td>
-<td>Kündigen</td>
+<td>Kündigen — <strong>ohne</strong> Besitzprüfung</td>
+</tr>
+<tr>
+<td><code>cancel_for_user(sub_id, user)</code></td>
+<td>int, User</td>
+<td><code>None</code></td>
+<td>Kündigen, nur durch den Besitzer. Von den Views zu verwenden</td>
 </tr>
 </tbody>
 </table>

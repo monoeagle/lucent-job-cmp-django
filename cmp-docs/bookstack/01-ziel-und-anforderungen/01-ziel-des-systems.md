@@ -75,7 +75,7 @@ der Logik für einen Mobile- oder Drittsystem-Client
 - **`ACCOUNT_SIGNUP_ENABLED=False`** — Self-Signup ist deaktiviert, Benutzer werden von
   einem Admin angelegt (`cmp/config/settings/base.py:99`).
 - **TDD ist Pflicht** — jede Änderung entsteht test-first
-  (`.claude/rules/testing.md`), belegt durch 330 Tests
+  (`.claude/rules/testing.md`), belegt durch 347 Tests
   (`pytest --collect-only`, Stand 2026-07-22).
 - **HTMX statt SPA** — HTMX liefert punktuelle Updates ohne Full-Page-Reload, ersetzt
   aber keinen API-Layer (`.claude/rules/htmx.md`).
