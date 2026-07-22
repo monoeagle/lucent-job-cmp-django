@@ -1,10 +1,11 @@
 """Service layer for the approvals app."""
 from django.utils import timezone
 
+from apps.accounts.services import AccountService
 from apps.approvals.models import ApprovalRequest, ApprovalRule
 from apps.orders.services import OrderService
 from core.domain.value_objects import OrderStatus, StatusMachine
-from core.exceptions import ConflictError, NotFoundError
+from core.exceptions import ConflictError, ForbiddenError, NotFoundError
 
 
 class ApprovalService:
@@ -46,10 +47,15 @@ class ApprovalService:
         return requests
 
     @staticmethod
-    def approve(request_id, approver):
-        """Approve an approval request. Advances order if all approved."""
+    def _load_pending(request_id, approver):
+        """Load a pending request and check the approver against its rule.
+
+        `ApprovalRule.approver_role` names the role the decision requires.
+        A lower role must not decide, no matter that the view-level mixin
+        already let it through.
+        """
         try:
-            req = ApprovalRequest.objects.select_related("order").get(
+            req = ApprovalRequest.objects.select_related("order", "rule").get(
                 pk=request_id
             )
         except ApprovalRequest.DoesNotExist:
@@ -58,6 +64,17 @@ class ApprovalService:
             )
         if req.status != "pending":
             raise ConflictError(f"Request already decided: {req.status}")
+        verlangt = req.rule.approver_role
+        if not AccountService.is_at_least_role(approver.role, verlangt):
+            raise ForbiddenError(
+                f"Diese Entscheidung verlangt die Rolle '{verlangt}'."
+            )
+        return req
+
+    @staticmethod
+    def approve(request_id, approver):
+        """Approve an approval request. Advances order if all approved."""
+        req = ApprovalService._load_pending(request_id, approver)
         req.status = "approved"
         req.decided_by = approver
         req.decided_at = timezone.now()
@@ -74,16 +91,7 @@ class ApprovalService:
     @staticmethod
     def reject(request_id, approver, comment=""):
         """Reject an approval request. Immediately rejects the order."""
-        try:
-            req = ApprovalRequest.objects.select_related("order").get(
-                pk=request_id
-            )
-        except ApprovalRequest.DoesNotExist:
-            raise NotFoundError(
-                f"ApprovalRequest {request_id} not found."
-            )
-        if req.status != "pending":
-            raise ConflictError(f"Request already decided: {req.status}")
+        req = ApprovalService._load_pending(request_id, approver)
         req.status = "rejected"
         req.decided_by = approver
         req.decided_at = timezone.now()

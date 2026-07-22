@@ -24,8 +24,10 @@ class TestOrderListView:
         OrderFactory(user=other)
         client.force_login(user)
         response = client.get(reverse("orders:list"))
-        # Should only see 1 order (own), not 2
         assert response.status_code == 200
+        sichtbar = list(response.context["orders"])
+        assert len(sichtbar) == 1
+        assert sichtbar[0].user_id == user.pk
 
 
 @pytest.mark.django_db

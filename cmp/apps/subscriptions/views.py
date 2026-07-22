@@ -31,7 +31,9 @@ class SubscriptionDetailView(RequesterRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         try:
-            return SubscriptionService.get_subscription(self.kwargs["pk"])
+            return SubscriptionService.get_subscription_for_user(
+                self.kwargs["pk"], self.request.user
+            )
         except NotFoundError:
             raise Http404
 
@@ -41,7 +43,7 @@ class SubscriptionCancelView(RequesterRequiredMixin, View):
 
     def post(self, request, pk):
         try:
-            SubscriptionService.cancel(pk)
+            SubscriptionService.cancel_for_user(pk, request.user)
             messages.success(request, "Subscription gekuendigt.")
         except (ConflictError, NotFoundError) as e:
             messages.error(request, e.message)
