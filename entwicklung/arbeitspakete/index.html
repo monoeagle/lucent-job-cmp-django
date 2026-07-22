@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.3">
+        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.4.0">
       
       
         <meta name="author" content="LucentTools">
@@ -1319,8 +1319,8 @@
 
 <h1 id="arbeitspakete-roadmap">Arbeitspakete &amp; Roadmap<a class="headerlink" href="#arbeitspakete-roadmap" title="Permanent link">&para;</a></h1>
 <p>Arbeitspaket-Quelle: <code>todo.md</code> (offen) / <code>todo-erledigt.md</code> (fertig) im Repo-Root.
-Status: <strong>AP-0 … AP-10 fertig</strong> (Backend B0–B9 + HTMX-Frontend, 330 Tests grün, v1.3.3),
-<strong>AP-11 … AP-21 offen</strong>.</p>
+Status: <strong>AP-0 … AP-10 fertig</strong> (Backend B0–B9 + HTMX-Frontend) und <strong>AP-22 erledigt</strong>
+(Zugriffskontrolle) — 347 Tests grün, v1.4.0. <strong>AP-11 … AP-21 und AP-23 offen</strong>.</p>
 <h3 id="offene-arbeitspakete">Offene Arbeitspakete<a class="headerlink" href="#offene-arbeitspakete" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -1386,11 +1386,18 @@ Status: <strong>AP-0 … AP-10 fertig</strong> (Backend B0–B9 + HTMX-Frontend,
 <td>AD-/LDAP-Anbindung</td>
 <td>kein <code>django-auth-ldap</code>; Rollen werden als Feld gepflegt</td>
 </tr>
+<tr>
+<td>AP-23</td>
+<td>Rename-Reste und Doku-Drift</td>
+<td><code>npm run css:build</code> schlägt fehl und wird von <code>run.sh</code> verschluckt; URL-Referenz und Projektstruktur hinken dem Code hinterher</td>
+</tr>
 </tbody>
 </table>
-<p>Empfohlene Reihenfolge: <strong>13 → 15 → 14 → 16+17 → 18 → 19 → 20 → 21</strong> — AP-18 und AP-20
-zahlen erst ein, wenn AP-13 die Auslösepunkte geschaffen hat.
-AP-13 bis AP-21 stammen aus der <a href="../../intern/analyse-bestellportal/">Analyse der Bestellportal-Fremddoku</a>.</p>
+<p>Empfohlene Reihenfolge: <strong>13 → 15 → 14 → 16+17 → 18 → 19 → 20 → 21</strong>, AP-23 nebenher.
+AP-18 und AP-20 zahlen erst ein, wenn AP-13 die Auslösepunkte geschaffen hat.
+AP-22 (Zugriffskontrolle) stand hier zuerst und ist mit v1.4.0 erledigt.
+AP-13 bis AP-21 stammen aus der <a href="../../intern/analyse-bestellportal/">Analyse der Bestellportal-Fremddoku</a>,
+AP-22 (erledigt) und AP-23 aus dem Code-Abgleich beim Schreiben des Bookstack-Handbuchs.</p>
 <p>Zusätzlich (nicht-AP):</p>
 <ul>
 <li>env-basierte Produktions-Settings + VM-Deployment-Anleitungen (online + offline)</li>

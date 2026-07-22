@@ -1,16 +1,47 @@
 {
-  "generatedAt": "2026-07-22T05:56:23",
+  "generatedAt": "2026-07-22T23:52:41",
   "range": {
     "from": "2025-07-23",
     "to": "2026-07-22"
   },
   "byDay": {
     "2026-07-22": {
-      "commits": 2,
+      "commits": 8,
       "kinds": {
-        "docs": 2
+        "fix": 1,
+        "docs": 7
       },
       "list": [
+        {
+          "sha": "011dd5f",
+          "subject": "fix: AP-22 — objektbezogene Zugriffskontrolle schliessen",
+          "kind": "fix"
+        },
+        {
+          "sha": "f55103d",
+          "subject": "docs: AP-22 + AP-23 aus dem Code-Abgleich des Handbuchs",
+          "kind": "docs"
+        },
+        {
+          "sha": "038af79",
+          "subject": "docs: Bookstack-Handbuch vervollstaendigt — Kapitel 4-11 + Anhaenge B und C",
+          "kind": "docs"
+        },
+        {
+          "sha": "86fe40f",
+          "subject": "docs: Bookstack-Handbuch — Pilot (Kapitel 1-3 + Anhang A)",
+          "kind": "docs"
+        },
+        {
+          "sha": "16c5736",
+          "subject": "docs: Spec + Strukturvorschlag fuer das CMP-Bookstack-Handbuch",
+          "kind": "docs"
+        },
+        {
+          "sha": "3694c68",
+          "subject": "docs: Handoff + Insight + KPI-Zeile fuer Session 9 (v1.3.3 getaggt)",
+          "kind": "docs"
+        },
         {
           "sha": "e6589cd",
           "subject": "docs: AP-13 … AP-21 aus der Fremddoku-Analyse aufgenommen",
@@ -973,7 +1004,7 @@
     }
   },
   "stats": {
-    "totalCommits": 156,
+    "totalCommits": 162,
     "activeDays": 20,
     "longestStreak": 3,
     "topKinds": [
@@ -983,11 +1014,11 @@
       },
       {
         "kind": "docs",
-        "count": 47
+        "count": 52
       },
       {
         "kind": "fix",
-        "count": 21
+        "count": 22
       },
       {
         "kind": "chore",
@@ -1002,7 +1033,7 @@
         "count": 4
       }
     ],
-    "testCount": 327
+    "testCount": 344
   },
   "phases": []
 }
