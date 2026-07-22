@@ -1,16 +1,21 @@
 {
-  "generatedAt": "2026-07-22T04:50:28",
+  "generatedAt": "2026-07-22T05:56:23",
   "range": {
     "from": "2025-07-23",
     "to": "2026-07-22"
   },
   "byDay": {
     "2026-07-22": {
-      "commits": 1,
+      "commits": 2,
       "kinds": {
-        "docs": 1
+        "docs": 2
       },
       "list": [
+        {
+          "sha": "e6589cd",
+          "subject": "docs: AP-13 … AP-21 aus der Fremddoku-Analyse aufgenommen",
+          "kind": "docs"
+        },
         {
           "sha": "e1d180a",
           "subject": "docs: Nachtrag zur Analyse — die Bestellkette bricht frueher als beschrieben",
@@ -968,7 +973,7 @@
     }
   },
   "stats": {
-    "totalCommits": 155,
+    "totalCommits": 156,
     "activeDays": 20,
     "longestStreak": 3,
     "topKinds": [
@@ -978,7 +983,7 @@
       },
       {
         "kind": "docs",
-        "count": 46
+        "count": 47
       },
       {
         "kind": "fix",

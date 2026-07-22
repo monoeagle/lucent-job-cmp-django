@@ -683,16 +683,16 @@ wird aber nirgends genutzt.
 
 ### Priorisierung
 
-| Rang | Thema | Warum diese Reihenfolge |
-|---|---|---|
-| **1** | **Workflow verdrahten** — alle sechs Aufrufe oben, von `submit` bis Subscription | Ohne das zahlt keine andere Anbindung ein: das Portal nimmt heute Bestellungen entgegen, die nie jemand sieht. Braucht einen E2E-Test, der die Kette **durch die Views** anstößt statt Services selbst aufzurufen |
-| **2** | **Logging** (§2.2) | Keine Konfiguration, kein einziger Logger-Aufruf. Voraussetzung, um Punkt 1 im Betrieb überhaupt beobachten zu können |
-| **3** | **HTMX-Fallstrick im Audit-Log** (§2.5.1) | Aktiver Fehler, Fix ist ein Partial + 4 Zeilen `get_template_names` — Vorlage steht in `catalog/views.py:25` |
-| **4** | **Installer: Abräumzweig + Protokoll** (§2.1, §2.4) | Direkt angefordert; Voraussetzung für wiederholbare VM-Tests. Zusammen mit der offenen VM-Verifikation erledigen |
-| **5** | **E-Mail-Versand** (FM_AG03) | Echte Lücke gegenüber der Anforderung; klein, sobald Punkt 1 die Auslösepunkte liefert |
-| **6** | **CSP + Rate Limiting** (§2.6, §2.8) | Günstig, weil alle Assets lokal liegen |
-| **7** | **Echter GitLab-Client statt Stub** (FM_AG02) | Groß, extern abhängig (Token, Netzwerk, Projekt) — erst sinnvoll, wenn 1 steht |
-| **8** | **AD/LDAP** (FM_BA07) | Größte Fremdabhängigkeit; nur mit echter AD-Testumgebung sinnvoll |
+| Rang | AP | Thema | Warum diese Reihenfolge |
+|---|---|---|---|
+| **1** | **AP-13** | **Workflow verdrahten** — alle sechs Aufrufe oben, von `submit` bis Subscription | Ohne das zahlt keine andere Anbindung ein: das Portal nimmt heute Bestellungen entgegen, die nie jemand sieht. Braucht einen E2E-Test, der die Kette **durch die Views** anstößt statt Services selbst aufzurufen |
+| **2** | **AP-14** | **Logging** (§2.2) | Keine Konfiguration, kein einziger Logger-Aufruf. Voraussetzung, um Punkt 1 im Betrieb überhaupt beobachten zu können |
+| **3** | **AP-15** | **HTMX-Fallstrick im Audit-Log** (§2.5.1) | Aktiver Fehler, Fix ist ein Partial + 4 Zeilen `get_template_names` — Vorlage steht in `catalog/views.py:25` |
+| **4** | **AP-16 + AP-17** | **Installer: Abräumzweig + Protokoll** (§2.1, §2.4) | Direkt angefordert; Voraussetzung für wiederholbare VM-Tests. Zusammen mit der offenen VM-Verifikation erledigen |
+| **5** | **AP-18** | **E-Mail-Versand** (FM_AG03) | Echte Lücke gegenüber der Anforderung; klein, sobald Punkt 1 die Auslösepunkte liefert |
+| **6** | **AP-19** | **CSP + Rate Limiting** (§2.6, §2.8) | Günstig, weil alle Assets lokal liegen |
+| **7** | **AP-20** | **Echter GitLab-Client statt Stub** (FM_AG02) | Groß, extern abhängig (Token, Netzwerk, Projekt) — erst sinnvoll, wenn 1 steht |
+| **8** | **AP-21** | **AD/LDAP** (FM_BA07) | Größte Fremdabhängigkeit; nur mit echter AD-Testumgebung sinnvoll |
 
 ### Bewusst außerhalb des Scopes
 
