@@ -37,6 +37,39 @@ Die Seite liegt unter **Intern** und wird beim `docs-zip`-Bau **ausgeschlossen**
 (`run.sh cmd_docs_zip`, Ausschluss oberster Ordner `intern/`). Sie ist Teil der
 gh-pages-Doku, nicht des Kunden-Artefakts.
 
+### Nachtrag — die Bestellkette bricht früher als zunächst beschrieben
+
+Beim Ausarbeiten der Arbeitspakete zeigte sich, dass §1c unvollständig war: Nicht erst
+`approve()` beendet die Kette, sondern bereits `submit_order()`. **Niemand ruft
+`create_approval_requests`** — es entsteht kein `ApprovalRequest`, die Approval-Queue
+bleibt leer, und eine über die Oberfläche eingereichte Bestellung hängt dauerhaft in
+`SUBMITTED`, ohne je einen Genehmiger zu erreichen. Der Report enthält jetzt die
+vollständige Liste der **sechs** fehlenden Aufrufe.
+
+Ursache des ersten Fehlschlusses: Die Prüfung folgte der Kette rückwärts von den
+ungenutzten Bausteinen aus, statt vorwärts vom Klick des Nutzers her.
+
+### Neue Arbeitspakete AP-13 … AP-21
+
+Aus der Analyse abgeleitet und in `todo.md`, Roadmap-Tabelle, Board und Gantt aufgenommen —
+jedes AP einzeln, keine Sammel-Einträge:
+
+**AP-13** Bestellkette verdrahten *(Vorrang)* · **AP-14** Logging-Fundament ·
+**AP-15** HTMX-Fragment-Fix Audit-Log · **AP-16** Installer-Abräumzweig + Protokoll ·
+**AP-17** VM-Verifikation · **AP-18** E-Mail-Benachrichtigungen ·
+**AP-19** Security-Hardening (CSP + Rate Limiting) · **AP-20** Echter GitLab-/OpenTofu-Client ·
+**AP-21** AD-/LDAP-Anbindung
+
+Reihenfolge **13 → 15 → 14 → 16+17 → 18 → 19 → 20 → 21**: AP-18 und AP-20 zahlen erst ein,
+wenn AP-13 die Auslösepunkte geschaffen hat.
+
+**Entwurfsentscheidung in AP-13:** Ein schmales `transition(order, to_status, actor, **details)`
+kapselt Übergangsprüfung, Statuswechsel und Audit-Eintrag — **ohne** Benachrichtigungen, deren
+Empfänger und Text je Übergang verschieden sind und am Aufrufort bleiben. Bewusst **keine**
+Signals und kein überschriebenes `save()`: Beides würde I/O verstecken und bei Fixtures,
+Migrationen und `seed.py` ungewollt auslösen. Ein Wächter-Test verbietet direkte
+`order.status = …`-Zuweisungen außerhalb dieser Funktion.
+
 ## v1.3.2 — Laufzeit-Topologie dokumentiert — 2026-07-20
 
 Reines Doku-Release. **PATCH**: keine Code-Änderung, kein neues Anwendungs-Artefakt

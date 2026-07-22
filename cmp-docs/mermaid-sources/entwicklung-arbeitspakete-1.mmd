@@ -31,9 +31,30 @@ flowchart LR
         AP11["AP-11 · Container (Podman/Quadlets)"]:::plan
         AP12["AP-12 · Live-Updates (Channels)"]:::plan
     end
+    subgraph FIX["Funktion & Betrieb"]
+        direction TB
+        AP13["AP-13 · Bestellkette verdrahten"]:::plan
+        AP15["AP-15 · HTMX-Fragment-Fix Audit"]:::plan
+        AP14["AP-14 · Logging-Fundament"]:::plan
+        AP16["AP-16 · Installer Abraeumzweig"]:::plan
+        AP17["AP-17 · VM-Verifikation"]:::plan
+    end
+    subgraph EXT["Anbindung & Haertung"]
+        direction TB
+        AP18["AP-18 · E-Mail-Benachrichtigungen"]:::plan
+        AP19["AP-19 · Security (CSP + Rate Limit)"]:::plan
+        AP20["AP-20 · GitLab/OpenTofu-Client"]:::plan
+        AP21["AP-21 · AD-/LDAP-Anbindung"]:::plan
+    end
 
     AP0 --> AP1 --> AP2 --> AP3 --> AP4
     AP4 --> AP5 --> AP6
     AP6 --> AP7 --> AP8 --> AP9 --> AP10
     AP9 -.-> AP11
     AP10 -.-> AP12
+    AP10 -.-> AP13
+    AP13 --> AP15 --> AP14 --> AP16 --> AP17
+    AP13 --> AP18
+    AP13 --> AP20
+    AP17 -.-> AP19
+    AP20 -.-> AP21
