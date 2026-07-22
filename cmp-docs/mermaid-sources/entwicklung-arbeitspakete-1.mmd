@@ -46,6 +46,11 @@ flowchart LR
         AP20["AP-20 · GitLab/OpenTofu-Client"]:::plan
         AP21["AP-21 · AD-/LDAP-Anbindung"]:::plan
     end
+    subgraph FIX["Korrekturen aus dem Code-Abgleich"]
+        direction TB
+        AP22["AP-22 · Zugriffskontrolle schliessen"]:::plan
+        AP23["AP-23 · Rename-Reste und Doku-Drift"]:::plan
+    end
 
     AP0 --> AP1 --> AP2 --> AP3 --> AP4
     AP4 --> AP5 --> AP6
@@ -58,3 +63,5 @@ flowchart LR
     AP13 --> AP20
     AP17 -.-> AP19
     AP20 -.-> AP21
+    AP10 -.-> AP22
+    AP10 -.-> AP23

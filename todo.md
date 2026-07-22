@@ -139,3 +139,34 @@
 - [ ] Fehlerfälle: AD nicht erreichbar → Login verweigern; Rolle fehlt → Minimalrechte; deaktivierter AD-User → lokal deaktiviert
 - [ ] Lokaler Fallback-Login für Dev/Notfall bleibt erhalten
 - **DoD:** Login gegen AD-Testumgebung · Rollen aus Gruppen · Fehlerfälle getestet · kein Passwort lokal gespeichert
+
+---
+
+> **AP-22 … AP-23** ergänzt am 2026-07-22 beim Schreiben des Bookstack-Handbuchs.
+> Die Befunde entstanden, weil jede Doku-Aussage am Code geprüft wurde; die drei
+> Zugriffslücken in AP-22 wurden mit einer Wegwerf-Probe real ausgenutzt, nicht nur gelesen.
+
+## AP-22 · Zugriffskontrolle schließen (Vorrang, vor jedem Prod-Deployment)
+> **Befund (real ausgenutzt, Probe-Lauf 2026-07-22):** Ein zweiter Requester öffnet die
+> Bestellung eines fremden Nutzers mit **HTTP 200**; `/debug-layout/` antwortet **anonym
+> mit HTTP 200**; ein einfacher `approver` genehmigt eine Anfrage, deren `ApprovalRule`
+> ausdrücklich `superadmin` verlangt. Die Rollen-Mixins greifen — die Objekt- und
+> Regelprüfung dahinter fehlt.
+- [ ] `OrderDetailView.get_object` (`cmp/apps/orders/views.py:66-70`) auf den Besteller filtern; Approver+ dürfen weiter alles sehen (Regel wie in `OrderListView._can_see_all`, `views.py:30-36`)
+- [ ] Dieselbe Prüfung für Subscription-Detail/Cancel und `Notification`-MarkRead — die List-Views filtern, die Detail-/Schreib-Views nicht
+- [ ] `/debug-layout/` (`cmp/apps/dashboard/urls.py:9`): entfernen oder hinter `LoginRequired` + `DEBUG`-Schalter legen; das Template erbt zudem nicht von `base.html`
+- [ ] `ApprovalService.approve/reject` (`cmp/apps/approvals/services.py:49,78`): `rule.approver_role` gegen die Rolle des Genehmigenden prüfen — das Feld wird heute nur in Admin und Seed verwendet, in keiner Prüfung
+- [ ] `ApprovalRejectView`: `comment` über ein Form validieren statt roh aus `request.POST` (Projektregel „Forms für Validierung")
+- [ ] Je Lücke zuerst einen roten Test (TDD-Pflicht) — die Wegwerf-Probe der Doku-Session taugt als Vorlage
+- **DoD:** Fremdzugriff liefert 404 · `/debug-layout/` nicht mehr anonym erreichbar · regelwidrige Genehmigung wird abgewiesen · je Lücke ein Test, der ohne Fix rot ist
+
+## AP-23 · Rename-Reste und Doku-Drift bereinigen
+> **Befund:** Beim Abgleich Handbuch ↔ Code fiel auf, dass die Umbenennung MPP → CMP
+> an mehreren Rändern liegen geblieben ist und die Referenz-Doku dem Code hinterherhinkt.
+- [ ] `package.json` zeigt auf `mpp/static/css/…` — `npm run css:build` schlägt real fehl, und `scripts/run.sh` unterdrückt den Fehler und meldet trotzdem Erfolg (beides fixen: Pfad **und** die verschluckte Fehlermeldung)
+- [ ] `.env.example` trägt noch „MPP"
+- [ ] `cmp-docs/docs/referenz/url-referenz.md`: zwei falsche Pfade (Subscription-Detail/Cancel) und acht fehlende URLs (u. a. das gesamte Admin-Panel, `/audit/export/`, die Wizard-Routen)
+- [ ] `cmp-docs/docs/entwicklung/projektstruktur.md` kennt `cmp/config/settings/production.py` nicht — ausgerechnet die Datei mit der FATAL-Regel
+- [ ] Docstring in `cmp/config/settings/production.py` nennt `ALLOWED_HOSTS` als Pflicht-Variable; real hat sie einen stillen `[]`-Default, nur `SECRET_KEY` und `DATABASE_URL` erzwingen den Abbruch
+- [ ] `.wheels/` (git-getrackt) wird von keinem Skript referenziert — klären, ob Altartefakt, dann entfernen
+- **DoD:** `npm run css:build` läuft durch und scheitert sichtbar, wenn es scheitert · url-referenz.md und projektstruktur.md stimmen mit dem Code überein (grep-belegt) · kein „MPP" mehr außerhalb der History

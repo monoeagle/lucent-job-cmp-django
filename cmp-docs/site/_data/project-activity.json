@@ -1,16 +1,36 @@
 {
-  "generatedAt": "2026-07-22T05:56:23",
+  "generatedAt": "2026-07-22T17:20:02",
   "range": {
     "from": "2025-07-23",
     "to": "2026-07-22"
   },
   "byDay": {
     "2026-07-22": {
-      "commits": 2,
+      "commits": 6,
       "kinds": {
-        "docs": 2
+        "docs": 6
       },
       "list": [
+        {
+          "sha": "038af79",
+          "subject": "docs: Bookstack-Handbuch vervollstaendigt — Kapitel 4-11 + Anhaenge B und C",
+          "kind": "docs"
+        },
+        {
+          "sha": "86fe40f",
+          "subject": "docs: Bookstack-Handbuch — Pilot (Kapitel 1-3 + Anhang A)",
+          "kind": "docs"
+        },
+        {
+          "sha": "16c5736",
+          "subject": "docs: Spec + Strukturvorschlag fuer das CMP-Bookstack-Handbuch",
+          "kind": "docs"
+        },
+        {
+          "sha": "3694c68",
+          "subject": "docs: Handoff + Insight + KPI-Zeile fuer Session 9 (v1.3.3 getaggt)",
+          "kind": "docs"
+        },
         {
           "sha": "e6589cd",
           "subject": "docs: AP-13 … AP-21 aus der Fremddoku-Analyse aufgenommen",
@@ -973,7 +993,7 @@
     }
   },
   "stats": {
-    "totalCommits": 156,
+    "totalCommits": 160,
     "activeDays": 20,
     "longestStreak": 3,
     "topKinds": [
@@ -983,7 +1003,7 @@
       },
       {
         "kind": "docs",
-        "count": 47
+        "count": 51
       },
       {
         "kind": "fix",
