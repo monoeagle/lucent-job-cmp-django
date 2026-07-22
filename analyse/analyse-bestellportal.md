@@ -152,13 +152,35 @@ sie in der laufenden Anwendung auf.** Belege:
 
 | Baustein | Definiert in | Aufgerufen von |
 |---|---|---|
+| `ApprovalService.needs_approval` / `create_approval_requests` | `cmp/apps/approvals/services.py:14,25` | **nur Tests** — in `cmp/` kein einziger Aufruf |
 | `dispatch_provisioning` / `complete_provisioning` (Celery) | `cmp/apps/provisioning/tasks.py:7,13` | **niemandem** — `grep -rn 'tasks\.' cmp/apps` liefert außerhalb der Datei selbst nichts |
 | `SubscriptionService.create_from_order` | `cmp/apps/subscriptions/services.py:14` | **nur Tests** (`tests/unit/test_subscription_service.py`, `tests/e2e/test_order_workflow.py:56`) |
 | `AuditService.log` | `cmp/apps/audit/services.py:5` | **nur `seed.py`** (7×, Zeilen 377–407) |
 | `NotificationService.create` / `Notification.objects.create` | `cmp/apps/notifications/services.py:7` | **nur `seed.py`** (6×) und Tests |
 
+!!! danger "Nachtrag 2026-07-22 — die Kette bricht noch früher"
+    Die erste Fassung dieses Abschnitts setzte bei `approve()` an. Beim Ausarbeiten des
+    Arbeitspakets zeigte sich: **schon der Schritt davor fehlt.**
+
+    `OrderService.submit_order` (`cmp/apps/orders/services.py:61-77`) setzt
+    DRAFT → VALIDATED → SUBMITTED und endet. **Niemand ruft danach
+    `create_approval_requests`** — es entsteht also gar kein `ApprovalRequest`.
+    `ApprovalQueueView` (`cmp/apps/approvals/views.py:12`) filtert aber genau darauf.
+
+    **Folge:** Eine über die Oberfläche eingereichte Bestellung bleibt dauerhaft in
+    `SUBMITTED` und erscheint bei **keinem** Genehmiger. Die Approval-Queue zeigt
+    ausschließlich die von `seed.py` erzeugten Requests (Zeilen 178, 349).
+    `approve()` wird im laufenden System nie erreicht — der ursprünglich als
+    „Endpunkt der Kette" beschriebene Bruch ist erst der zweite von sechs.
+
+    Warum das beim ersten Durchgang durchrutschte: Die Prüfung folgte der Kette
+    **rückwärts** von den ungenutzten Bausteinen aus, statt sie **vorwärts** vom
+    Klick des Nutzers her durchzugehen. Die vollständige Liste der sechs Lücken
+    steht in §5.
+
 `ApprovalService.approve()` (`cmp/apps/approvals/services.py:49-72`) setzt den Order-Status
-auf `APPROVED` und endet. Danach passiert im laufenden System **nichts mehr**.
+auf `APPROVED` und endet ebenfalls — erreichbar ist es derzeit aber nur über per Hand
+oder von `seed.py` angelegte Requests.
 
 Konsequenz für den Betrieb:
 
@@ -636,16 +658,34 @@ laut §1c fehlt.
 ### Was diese Analyse über CMP gezeigt hat
 
 Der wichtigste Befund kam nicht aus der Fremddoku, sondern aus dem Abgleich mit ihr: **CMP
-hat alle Bausteine, aber die Kette hinter der Genehmigung ist nicht verdrahtet** (§1c).
-Audit-Log und Benachrichtigungen enthalten ausschließlich Seed-Daten, eine genehmigte
-Bestellung wird nie zur Subscription, die Celery-Tasks ruft niemand auf. Das ist von außen
-unsichtbar, weil Seed-Daten die Oberfläche gefüllt aussehen lassen und 330 Tests grün sind.
+hat alle Bausteine, aber die Bestellkette ist nicht verdrahtet** (§1c). Eine über die
+Oberfläche eingereichte Bestellung bleibt in `SUBMITTED` stehen und erreicht keinen
+Genehmiger; Audit-Log und Benachrichtigungen enthalten ausschließlich Seed-Daten. Das ist
+von außen unsichtbar, weil Seed-Daten die Oberfläche gefüllt aussehen lassen und 330 Tests
+grün sind.
+
+#### Die sechs fehlenden Aufrufe
+
+| # | Fehlender Aufruf | Gehört ans Ende von | Folge heute |
+|---|---|---|---|
+| 1 | `create_approval_requests` — bzw. direkt `APPROVED`, wenn keine Regel greift | `OrderService.submit_order` | Order hängt in `SUBMITTED`, Queue bleibt leer |
+| 2 | `dispatch_provisioning.delay(order_id)` | `ApprovalService.approve`, sobald alle Requests genehmigt sind | Nie `PROVISIONING` |
+| 3 | Rückmeldung → `complete_dispatch` | Stub: sofort abschließen · echter Client: Polling (siehe Rang 7) | Nie `DONE`/`FAILED` |
+| 4 | `SubscriptionService.create_from_order` | Übergang nach `DONE` | Genehmigte Bestellung wird nie zur Subscription |
+| 5 | `AuditService.log` | **jedem** Statuswechsel | Audit-Log nur Seed-Daten |
+| 6 | `NotificationService.create` | eingereicht → Genehmiger · entschieden → Besteller · fertig/fehlgeschlagen → Besteller | Glocke nur Seed-Daten |
+
+Zwei Fallstricke bei der Umsetzung, die heute niemand sieht: Der Celery-Start gehört in
+`transaction.on_commit(...)` — sonst läuft der Task vor dem Commit und findet die Order
+nicht (in dev/test durch `CELERY_TASK_ALWAYS_EAGER` unsichtbar). Und der Übergang
+`SUBMITTED → APPROVED` ohne Regel ist bereits erlaubt (`core/domain/value_objects.py:22`),
+wird aber nirgends genutzt.
 
 ### Priorisierung
 
 | Rang | Thema | Warum diese Reihenfolge |
 |---|---|---|
-| **1** | **Workflow verdrahten** (approve → dispatch → done → Subscription; `AuditService.log` und `NotificationService.create` an jedem Statuswechsel) | Ohne das zahlt keine andere Anbindung ein. Braucht einen E2E-Test, der die Kette **durch die Views** anstößt statt Services selbst aufzurufen |
+| **1** | **Workflow verdrahten** — alle sechs Aufrufe oben, von `submit` bis Subscription | Ohne das zahlt keine andere Anbindung ein: das Portal nimmt heute Bestellungen entgegen, die nie jemand sieht. Braucht einen E2E-Test, der die Kette **durch die Views** anstößt statt Services selbst aufzurufen |
 | **2** | **Logging** (§2.2) | Keine Konfiguration, kein einziger Logger-Aufruf. Voraussetzung, um Punkt 1 im Betrieb überhaupt beobachten zu können |
 | **3** | **HTMX-Fallstrick im Audit-Log** (§2.5.1) | Aktiver Fehler, Fix ist ein Partial + 4 Zeilen `get_template_names` — Vorlage steht in `catalog/views.py:25` |
 | **4** | **Installer: Abräumzweig + Protokoll** (§2.1, §2.4) | Direkt angefordert; Voraussetzung für wiederholbare VM-Tests. Zusammen mit der offenen VM-Verifikation erledigen |
