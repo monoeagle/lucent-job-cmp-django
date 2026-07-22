@@ -752,6 +752,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#offene-arbeitspakete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Offene Arbeitspakete
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#ap-uberblick" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1259,6 +1270,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#offene-arbeitspakete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Offene Arbeitspakete
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#ap-uberblick" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1297,8 +1319,79 @@
 
 <h1 id="arbeitspakete-roadmap">Arbeitspakete &amp; Roadmap<a class="headerlink" href="#arbeitspakete-roadmap" title="Permanent link">&para;</a></h1>
 <p>Arbeitspaket-Quelle: <code>todo.md</code> (offen) / <code>todo-erledigt.md</code> (fertig) im Repo-Root.
-Status: <strong>AP-0 … AP-10 fertig</strong> (Backend B0–B9 + HTMX-Frontend, 330 Tests grün, v1.3.3), <strong>AP-11 Container (Podman/Quadlets) offen</strong> — Abwägung Native-vs-Container siehe <a href="../../decisions/0001-deployment-native-vs-container/">ADR-0001</a> —, <strong>AP-12 Live-Updates (Django Channels) offen</strong> — Channels stand im v1-Zielbild, ist aber noch nicht gebaut (kein <code>channels</code> in den Requirements, <code>asgi.py</code> Django-Default); Benachrichtigungen aktualisieren bis dahin per Seiten-Reload.
-Zusätzlich (nicht-AP):</p>
+Status: <strong>AP-0 … AP-10 fertig</strong> (Backend B0–B9 + HTMX-Frontend, 330 Tests grün, v1.3.3),
+<strong>AP-11 … AP-21 offen</strong>.</p>
+<h3 id="offene-arbeitspakete">Offene Arbeitspakete<a class="headerlink" href="#offene-arbeitspakete" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>AP</th>
+<th>Titel</th>
+<th>Auslöser</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AP-11</td>
+<td>Container (Podman/Quadlets)</td>
+<td>bewusst optional — Abwägung siehe <a href="../../decisions/0001-deployment-native-vs-container/">ADR-0001</a></td>
+</tr>
+<tr>
+<td>AP-12</td>
+<td>Live-Updates (Django Channels)</td>
+<td>stand im v1-Zielbild, nie gebaut (kein <code>channels</code> in den Requirements, <code>asgi.py</code> Django-Default); Benachrichtigungen aktualisieren bis dahin per Seiten-Reload</td>
+</tr>
+<tr>
+<td><strong>AP-13</strong></td>
+<td><strong>Bestellkette verdrahten</strong> <em>(Vorrang)</em></td>
+<td>eingereichte Bestellungen erreichen keinen Genehmiger; Audit-Log und Benachrichtigungen zeigen nur Seed-Daten — <a href="../../intern/analyse-bestellportal/">Analyse §1c</a></td>
+</tr>
+<tr>
+<td>AP-14</td>
+<td>Logging-Fundament</td>
+<td>keine <code>LOGGING</code>-Konfiguration und kein einziger Logger-Aufruf im Projekt</td>
+</tr>
+<tr>
+<td>AP-15</td>
+<td>HTMX-Fragment-Fix Audit-Log</td>
+<td>Filter liefert die komplette Seite statt eines Fragments</td>
+</tr>
+<tr>
+<td>AP-16</td>
+<td>Installer: Abräumzweig + Protokoll</td>
+<td>kein <code>--uninstall</code>/<code>--purge</code>; Installation hinterlässt kein Protokoll</td>
+</tr>
+<tr>
+<td>AP-17</td>
+<td>VM-Verifikation</td>
+<td><code>install.sh</code> lief nie auf echter Hardware; Idempotenz ist behauptet, nicht bewiesen</td>
+</tr>
+<tr>
+<td>AP-18</td>
+<td>E-Mail-Benachrichtigungen</td>
+<td>kein <code>send_mail</code>/<code>EMAIL_BACKEND</code> im Projekt</td>
+</tr>
+<tr>
+<td>AP-19</td>
+<td>Security-Hardening (CSP + Rate Limiting)</td>
+<td>keine CSP; Login-Brute-Force ungebremst</td>
+</tr>
+<tr>
+<td>AP-20</td>
+<td>Echter GitLab-/OpenTofu-Client</td>
+<td>Provisioning ist ein In-Memory-Stub</td>
+</tr>
+<tr>
+<td>AP-21</td>
+<td>AD-/LDAP-Anbindung</td>
+<td>kein <code>django-auth-ldap</code>; Rollen werden als Feld gepflegt</td>
+</tr>
+</tbody>
+</table>
+<p>Empfohlene Reihenfolge: <strong>13 → 15 → 14 → 16+17 → 18 → 19 → 20 → 21</strong> — AP-18 und AP-20
+zahlen erst ein, wenn AP-13 die Auslösepunkte geschaffen hat.
+AP-13 bis AP-21 stammen aus der <a href="../../intern/analyse-bestellportal/">Analyse der Bestellportal-Fremddoku</a>.</p>
+<p>Zusätzlich (nicht-AP):</p>
 <ul>
 <li>env-basierte Produktions-Settings + VM-Deployment-Anleitungen (online + offline)</li>
 <li>Doku-Veröffentlichung auf <strong>GitHub Pages</strong> inkl. <strong>Oberflächen-Galerie</strong> (13 Screenshots)</li>
@@ -1310,8 +1403,9 @@ Zusätzlich (nicht-AP):</p>
 <h2 id="roadmap-gantt">Roadmap-Gantt<a class="headerlink" href="#roadmap-gantt" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Spannen <strong>schematisch</strong>: Die Git-Historie wurde zu v1.0.0 (2026-03-29) gestaucht — die
-AP-<strong>Reihenfolge</strong> ist real, die Tagesspannen illustrieren nur den Ablauf.
-AP-11 (Container/Podman) und AP-12 (Live-Updates/Channels) offen.</p>
+AP-<strong>Reihenfolge</strong> ist real, die Tagesspannen illustrieren nur den Ablauf. Für AP-13 … AP-21
+sind die Spannen <strong>Schätzungen</strong>, keine Zusagen.
+Offen: AP-11, AP-12 sowie AP-13 … AP-21 (siehe Tabelle oben).</p>
 </blockquote>
 <p><img src="../../images/mermaid/entwicklung-arbeitspakete-2.svg" alt="Diagramm 2 aus entwicklung/arbeitspakete.md"></p>
 

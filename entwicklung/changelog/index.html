@@ -897,6 +897,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#nachtrag-die-bestellkette-bricht-fruher-als-zunachst-beschrieben" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nachtrag — die Bestellkette bricht früher als zunächst beschrieben
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neue-arbeitspakete-ap-13-ap-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neue Arbeitspakete AP-13 … AP-21
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1702,6 +1724,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#nachtrag-die-bestellkette-bricht-fruher-als-zunachst-beschrieben" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nachtrag — die Bestellkette bricht früher als zunächst beschrieben
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neue-arbeitspakete-ap-13-ap-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neue Arbeitspakete AP-13 … AP-21
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2146,6 +2190,31 @@ HTMX-Anfragen mit der kompletten Seite statt mit einem Fragment (fehlender
 <p>Die Seite liegt unter <strong>Intern</strong> und wird beim <code>docs-zip</code>-Bau <strong>ausgeschlossen</strong>
 (<code>run.sh cmd_docs_zip</code>, Ausschluss oberster Ordner <code>intern/</code>). Sie ist Teil der
 gh-pages-Doku, nicht des Kunden-Artefakts.</p>
+<h3 id="nachtrag-die-bestellkette-bricht-fruher-als-zunachst-beschrieben">Nachtrag — die Bestellkette bricht früher als zunächst beschrieben<a class="headerlink" href="#nachtrag-die-bestellkette-bricht-fruher-als-zunachst-beschrieben" title="Permanent link">&para;</a></h3>
+<p>Beim Ausarbeiten der Arbeitspakete zeigte sich, dass §1c unvollständig war: Nicht erst
+<code>approve()</code> beendet die Kette, sondern bereits <code>submit_order()</code>. <strong>Niemand ruft
+<code>create_approval_requests</code></strong> — es entsteht kein <code>ApprovalRequest</code>, die Approval-Queue
+bleibt leer, und eine über die Oberfläche eingereichte Bestellung hängt dauerhaft in
+<code>SUBMITTED</code>, ohne je einen Genehmiger zu erreichen. Der Report enthält jetzt die
+vollständige Liste der <strong>sechs</strong> fehlenden Aufrufe.</p>
+<p>Ursache des ersten Fehlschlusses: Die Prüfung folgte der Kette rückwärts von den
+ungenutzten Bausteinen aus, statt vorwärts vom Klick des Nutzers her.</p>
+<h3 id="neue-arbeitspakete-ap-13-ap-21">Neue Arbeitspakete AP-13 … AP-21<a class="headerlink" href="#neue-arbeitspakete-ap-13-ap-21" title="Permanent link">&para;</a></h3>
+<p>Aus der Analyse abgeleitet und in <code>todo.md</code>, Roadmap-Tabelle, Board und Gantt aufgenommen —
+jedes AP einzeln, keine Sammel-Einträge:</p>
+<p><strong>AP-13</strong> Bestellkette verdrahten <em>(Vorrang)</em> · <strong>AP-14</strong> Logging-Fundament ·
+<strong>AP-15</strong> HTMX-Fragment-Fix Audit-Log · <strong>AP-16</strong> Installer-Abräumzweig + Protokoll ·
+<strong>AP-17</strong> VM-Verifikation · <strong>AP-18</strong> E-Mail-Benachrichtigungen ·
+<strong>AP-19</strong> Security-Hardening (CSP + Rate Limiting) · <strong>AP-20</strong> Echter GitLab-/OpenTofu-Client ·
+<strong>AP-21</strong> AD-/LDAP-Anbindung</p>
+<p>Reihenfolge <strong>13 → 15 → 14 → 16+17 → 18 → 19 → 20 → 21</strong>: AP-18 und AP-20 zahlen erst ein,
+wenn AP-13 die Auslösepunkte geschaffen hat.</p>
+<p><strong>Entwurfsentscheidung in AP-13:</strong> Ein schmales <code>transition(order, to_status, actor, **details)</code>
+kapselt Übergangsprüfung, Statuswechsel und Audit-Eintrag — <strong>ohne</strong> Benachrichtigungen, deren
+Empfänger und Text je Übergang verschieden sind und am Aufrufort bleiben. Bewusst <strong>keine</strong>
+Signals und kein überschriebenes <code>save()</code>: Beides würde I/O verstecken und bei Fixtures,
+Migrationen und <code>seed.py</code> ungewollt auslösen. Ein Wächter-Test verbietet direkte
+<code>order.status = …</code>-Zuweisungen außerhalb dieser Funktion.</p>
 <h2 id="v132-laufzeit-topologie-dokumentiert-2026-07-20">v1.3.2 — Laufzeit-Topologie dokumentiert — 2026-07-20<a class="headerlink" href="#v132-laufzeit-topologie-dokumentiert-2026-07-20" title="Permanent link">&para;</a></h2>
 <p>Reines Doku-Release. <strong>PATCH</strong>: keine Code-Änderung, kein neues Anwendungs-Artefakt
 — das Offline-ZIP von v1.3.1 bleibt gültig.</p>
