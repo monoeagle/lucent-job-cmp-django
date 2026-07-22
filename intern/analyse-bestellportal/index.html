@@ -1559,6 +1559,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Was diese Analyse über CMP gezeigt hat">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#die-sechs-fehlenden-aufrufe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Die sechs fehlenden Aufrufe
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2046,6 +2063,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Was diese Analyse über CMP gezeigt hat">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#die-sechs-fehlenden-aufrufe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Die sechs fehlenden Aufrufe
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -2546,6 +2580,11 @@ sie in der laufenden Anwendung auf.</strong> Belege:</p>
 </thead>
 <tbody>
 <tr>
+<td><code>ApprovalService.needs_approval</code> / <code>create_approval_requests</code></td>
+<td><code>cmp/apps/approvals/services.py:14,25</code></td>
+<td><strong>nur Tests</strong> — in <code>cmp/</code> kein einziger Aufruf</td>
+</tr>
+<tr>
 <td><code>dispatch_provisioning</code> / <code>complete_provisioning</code> (Celery)</td>
 <td><code>cmp/apps/provisioning/tasks.py:7,13</code></td>
 <td><strong>niemandem</strong> — <code>grep -rn 'tasks\.' cmp/apps</code> liefert außerhalb der Datei selbst nichts</td>
@@ -2567,8 +2606,27 @@ sie in der laufenden Anwendung auf.</strong> Belege:</p>
 </tr>
 </tbody>
 </table>
+<div class="admonition danger">
+<p class="admonition-title">Nachtrag 2026-07-22 — die Kette bricht noch früher</p>
+<p>Die erste Fassung dieses Abschnitts setzte bei <code>approve()</code> an. Beim Ausarbeiten des
+Arbeitspakets zeigte sich: <strong>schon der Schritt davor fehlt.</strong></p>
+<p><code>OrderService.submit_order</code> (<code>cmp/apps/orders/services.py:61-77</code>) setzt
+DRAFT → VALIDATED → SUBMITTED und endet. <strong>Niemand ruft danach
+<code>create_approval_requests</code></strong> — es entsteht also gar kein <code>ApprovalRequest</code>.
+<code>ApprovalQueueView</code> (<code>cmp/apps/approvals/views.py:12</code>) filtert aber genau darauf.</p>
+<p><strong>Folge:</strong> Eine über die Oberfläche eingereichte Bestellung bleibt dauerhaft in
+<code>SUBMITTED</code> und erscheint bei <strong>keinem</strong> Genehmiger. Die Approval-Queue zeigt
+ausschließlich die von <code>seed.py</code> erzeugten Requests (Zeilen 178, 349).
+<code>approve()</code> wird im laufenden System nie erreicht — der ursprünglich als
+„Endpunkt der Kette" beschriebene Bruch ist erst der zweite von sechs.</p>
+<p>Warum das beim ersten Durchgang durchrutschte: Die Prüfung folgte der Kette
+<strong>rückwärts</strong> von den ungenutzten Bausteinen aus, statt sie <strong>vorwärts</strong> vom
+Klick des Nutzers her durchzugehen. Die vollständige Liste der sechs Lücken
+steht in §5.</p>
+</div>
 <p><code>ApprovalService.approve()</code> (<code>cmp/apps/approvals/services.py:49-72</code>) setzt den Order-Status
-auf <code>APPROVED</code> und endet. Danach passiert im laufenden System <strong>nichts mehr</strong>.</p>
+auf <code>APPROVED</code> und endet ebenfalls — erreichbar ist es derzeit aber nur über per Hand
+oder von <code>seed.py</code> angelegte Requests.</p>
 <p>Konsequenz für den Betrieb:</p>
 <ul>
 <li>Das <strong>Audit-Log enthält ausschließlich Seed-Demodaten.</strong> Eine echte Genehmigung in der
@@ -2922,7 +2980,7 @@ außerhalb des Scopes. Die Architektur verbaut es nicht — der ehrliche Satz f�
 <h3 id="210-mermaid-fur-die-entwicklungs-release-kette">2.10 Mermaid für die Entwicklungs-/Release-Kette<a class="headerlink" href="#210-mermaid-fur-die-entwicklungs-release-kette" title="Permanent link">&para;</a></h3>
 <p><code>anforderungen.md:16-33</code> beschreibt die Kette Repo → Test → QR → Produktion mit
 Wartungsfenster. Als Diagramm-Vorschlag (noch nicht in <code>cmp-docs/</code> eingebaut):</p>
-<p><img src="../../images/mermaid/intern-analyse-bestellportal-1.svg" alt="Diagramm 1 aus intern/analyse-bestellportal.md"></p>
+<p><img src="../../images/mermaid/intern-analyse-bestellportal-2.svg" alt="Diagramm 2 aus intern/analyse-bestellportal.md"></p>
 <p>Zur Frage „Wie umschalten auf Wartung? Einfach nur Dienste deaktivieren?" aus
 <code>anforderungen.md:27</code>: <strong>Dienste zu stoppen reicht nicht</strong> — dann liefert nginx <code>502 Bad
 Gateway</code>, was für Nutzer wie ein Ausfall aussieht und Support-Anrufe erzeugt. Sauber ist eine
@@ -3175,10 +3233,65 @@ laut §1c fehlt.</p>
 <h2 id="5-fazit-und-empfehlung">5. Fazit und Empfehlung<a class="headerlink" href="#5-fazit-und-empfehlung" title="Permanent link">&para;</a></h2>
 <h3 id="was-diese-analyse-uber-cmp-gezeigt-hat">Was diese Analyse über CMP gezeigt hat<a class="headerlink" href="#was-diese-analyse-uber-cmp-gezeigt-hat" title="Permanent link">&para;</a></h3>
 <p>Der wichtigste Befund kam nicht aus der Fremddoku, sondern aus dem Abgleich mit ihr: <strong>CMP
-hat alle Bausteine, aber die Kette hinter der Genehmigung ist nicht verdrahtet</strong> (§1c).
-Audit-Log und Benachrichtigungen enthalten ausschließlich Seed-Daten, eine genehmigte
-Bestellung wird nie zur Subscription, die Celery-Tasks ruft niemand auf. Das ist von außen
-unsichtbar, weil Seed-Daten die Oberfläche gefüllt aussehen lassen und 330 Tests grün sind.</p>
+hat alle Bausteine, aber die Bestellkette ist nicht verdrahtet</strong> (§1c). Eine über die
+Oberfläche eingereichte Bestellung bleibt in <code>SUBMITTED</code> stehen und erreicht keinen
+Genehmiger; Audit-Log und Benachrichtigungen enthalten ausschließlich Seed-Daten. Das ist
+von außen unsichtbar, weil Seed-Daten die Oberfläche gefüllt aussehen lassen und 330 Tests
+grün sind.</p>
+<h4 id="die-sechs-fehlenden-aufrufe">Die sechs fehlenden Aufrufe<a class="headerlink" href="#die-sechs-fehlenden-aufrufe" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Fehlender Aufruf</th>
+<th>Gehört ans Ende von</th>
+<th>Folge heute</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>create_approval_requests</code> — bzw. direkt <code>APPROVED</code>, wenn keine Regel greift</td>
+<td><code>OrderService.submit_order</code></td>
+<td>Order hängt in <code>SUBMITTED</code>, Queue bleibt leer</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>dispatch_provisioning.delay(order_id)</code></td>
+<td><code>ApprovalService.approve</code>, sobald alle Requests genehmigt sind</td>
+<td>Nie <code>PROVISIONING</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Rückmeldung → <code>complete_dispatch</code></td>
+<td>Stub: sofort abschließen · echter Client: Polling (siehe Rang 7)</td>
+<td>Nie <code>DONE</code>/<code>FAILED</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>SubscriptionService.create_from_order</code></td>
+<td>Übergang nach <code>DONE</code></td>
+<td>Genehmigte Bestellung wird nie zur Subscription</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>AuditService.log</code></td>
+<td><strong>jedem</strong> Statuswechsel</td>
+<td>Audit-Log nur Seed-Daten</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>NotificationService.create</code></td>
+<td>eingereicht → Genehmiger · entschieden → Besteller · fertig/fehlgeschlagen → Besteller</td>
+<td>Glocke nur Seed-Daten</td>
+</tr>
+</tbody>
+</table>
+<p>Zwei Fallstricke bei der Umsetzung, die heute niemand sieht: Der Celery-Start gehört in
+<code>transaction.on_commit(...)</code> — sonst läuft der Task vor dem Commit und findet die Order
+nicht (in dev/test durch <code>CELERY_TASK_ALWAYS_EAGER</code> unsichtbar). Und der Übergang
+<code>SUBMITTED → APPROVED</code> ohne Regel ist bereits erlaubt (<code>core/domain/value_objects.py:22</code>),
+wird aber nirgends genutzt.</p>
 <h3 id="priorisierung">Priorisierung<a class="headerlink" href="#priorisierung" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -3191,8 +3304,8 @@ unsichtbar, weil Seed-Daten die Oberfläche gefüllt aussehen lassen und 330 Tes
 <tbody>
 <tr>
 <td><strong>1</strong></td>
-<td><strong>Workflow verdrahten</strong> (approve → dispatch → done → Subscription; <code>AuditService.log</code> und <code>NotificationService.create</code> an jedem Statuswechsel)</td>
-<td>Ohne das zahlt keine andere Anbindung ein. Braucht einen E2E-Test, der die Kette <strong>durch die Views</strong> anstößt statt Services selbst aufzurufen</td>
+<td><strong>Workflow verdrahten</strong> — alle sechs Aufrufe oben, von <code>submit</code> bis Subscription</td>
+<td>Ohne das zahlt keine andere Anbindung ein: das Portal nimmt heute Bestellungen entgegen, die nie jemand sieht. Braucht einen E2E-Test, der die Kette <strong>durch die Views</strong> anstößt statt Services selbst aufzurufen</td>
 </tr>
 <tr>
 <td><strong>2</strong></td>
