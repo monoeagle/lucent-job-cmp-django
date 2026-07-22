@@ -4,6 +4,7 @@ from django.utils import timezone
 from apps.accounts.services import AccountService
 from apps.approvals.models import ApprovalRequest, ApprovalRule
 from apps.orders.services import OrderService
+from core.domain.enums import UserRole
 from core.domain.value_objects import OrderStatus, StatusMachine
 from core.exceptions import ConflictError, ForbiddenError, NotFoundError
 
@@ -65,6 +66,13 @@ class ApprovalService:
         if req.status != "pending":
             raise ConflictError(f"Request already decided: {req.status}")
         verlangt = req.rule.approver_role
+        if verlangt not in UserRole.values:
+            # Sonst haengt die Anfrage fuer immer: is_at_least_role liefert fuer
+            # unbekannte Werte stumm False, auch fuer den Superadmin.
+            raise ConflictError(
+                f"Regel {req.rule_id} nennt die unbekannte Rolle '{verlangt}' — "
+                "die Anfrage ist so von niemandem entscheidbar."
+            )
         if not AccountService.is_at_least_role(approver.role, verlangt):
             raise ForbiddenError(
                 f"Diese Entscheidung verlangt die Rolle '{verlangt}'."

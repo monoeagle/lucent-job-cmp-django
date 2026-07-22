@@ -72,8 +72,10 @@ in `views.py` steht statt einmal in `CatalogService`. Wer die Gruppierregel änd
 halten. Kein Arbeitspaket in `todo.md` erfasst das bisher — es ist ein offener
 Befund dieses Kapitels, kein bekanntes AP.
 
-Der in Kapitel 6.1 genannte Fall `/debug-layout/` ist eine andere Art von
-Regelverstoß (fehlende Rollenprüfung, kein Schichtproblem) und gehört nicht hierher.
+Der in Kapitel 6.1 genannte Fall `/debug-layout/` war bis AP-22 eine andere Art
+von Regelverstoß (fehlende Rollenprüfung, kein Schichtproblem); seit AP-22
+existiert die Route in Produktion gar nicht mehr und gehört ohnehin nicht
+hierher.
 
 ## 5. Zusammenfassung
 

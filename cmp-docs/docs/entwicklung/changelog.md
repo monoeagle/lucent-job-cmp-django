@@ -1,5 +1,60 @@
 # Changelog
 
+## v1.4.0 — Zugriffskontrolle unterhalb der Rollen — 2026-07-22
+
+**MINOR**: Verhaltensänderung an der Zugriffsprüfung. Bestehende Rollen und
+URLs bleiben gleich, aber fremde Objekte sind nicht mehr erreichbar.
+
+### Warum
+
+Beim Schreiben des Bookstack-Handbuchs wurde jede Doku-Aussage am Code geprüft.
+Dabei fiel auf, dass die Rollen-Mixins zwar überall greifen, die Ebene darunter
+aber fehlte: *welcher* Nutzer *welches* Objekt sehen oder ändern darf. Eine
+Wegwerf-Probe hat das bestätigt — nicht behauptet, sondern ausgeführt:
+
+| Probe | Ergebnis vorher |
+|---|---|
+| Fremder Requester öffnet fremde Bestellung | HTTP 200 |
+| Anonymer Zugriff auf `/debug-layout/` | HTTP 200 |
+| `approver` genehmigt trotz Regel `superadmin` | `approved` |
+
+### Geändert
+
+- **Bestellungen:** `OrderService.get_order_for_user()` — Besitzer oder
+  Approver+; sonst `NotFoundError` und damit 404, das die Existenz nicht verrät.
+  `get_order()` bleibt unverändert, weil sechs Service-zu-Service-Aufrufer
+  keinen Request-Kontext haben.
+- **Abonnements:** `get_subscription_for_user()` zum Lesen,
+  `cancel_for_user()` zum Kündigen — Kündigen bleibt bewusst eine
+  Besitzerhandlung, eine höhere Rolle ersetzt sie nicht.
+- **Benachrichtigungen:** `mark_read_for_user()` filtert auf den Empfänger.
+- **`/debug-layout/`:** nur noch bei `DEBUG` registriert. In Produktion
+  existiert die Route nicht mehr; verlinkt war sie nirgends.
+- **Genehmigungen:** `ApprovalRule.approver_role` wird endlich ausgewertet.
+  `ApprovalService._load_pending()` wirft `ForbiddenError` — die Exception gab
+  es seit jeher, benutzt hat sie niemand.
+- **Ablehnungen:** `RejectionForm` (max. 2000 Zeichen) statt
+  `request.POST.get("comment")`; das Modellfeld hat keine Längengrenze.
+
+### Nachtrag: eine Regression des eigenen Fixes
+
+Die Rollenprüfung hat ein Folgeproblem sichtbar gemacht: `approver_role` ist ein
+freies `CharField`. Solange niemand es las, war ein Wert wie `"netzwerk"`
+folgenlos — seit der Prüfung macht er die Anfrage für **niemanden**
+entscheidbar, auch nicht für den Superadmin, weil `is_at_least_role` für
+unbekannte Werte stumm `False` liefert. Zwei Verteidigungslinien dagegen:
+`choices=UserRole.choices` am Feld (Migration `0002`) und ein `ConflictError`
+im Service, der bestehende Altdaten als Konfigurationsfehler meldet, statt sie
+ewig hängen zu lassen.
+
+### Tests
+
+**+17 Tests** (330 → 347). Jede Lücke hat zuerst einen roten Test. Zusätzlich
+repariert: `test_shows_only_own_orders` versprach im Namen eine Besitzprüfung,
+verglich aber nur den Statuscode — jetzt prüft er den Inhalt, per
+Fehlerinjektion belegt.
+
+
 ## v1.3.3 — Analyse der Bestellportal-Fremddoku — 2026-07-21
 
 Reines Doku-Release. **PATCH**: keine Code-Änderung am Portal, kein neues

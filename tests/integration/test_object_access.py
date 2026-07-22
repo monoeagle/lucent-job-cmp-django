@@ -214,6 +214,42 @@ class TestGenehmigerRolle:
         assert req.status == "rejected"
         assert req.comment == "Budget nicht freigegeben."
 
+    def test_unbekannte_rolle_blockiert_die_anfrage_nicht_stillschweigend(self):
+        """Ein Rollenwert ausserhalb der Hierarchie ist ein Konfigurationsfehler.
+
+        `approver_role` ist ein freies CharField. Seit die Rolle geprueft wird,
+        wuerde ein Wert wie "netzwerk" die Anfrage fuer *niemanden* entscheidbar
+        machen — `is_at_least_role` liefert dafuer stumm False. Das muss als
+        Fehler auffallen, nicht als ewige Warteschlange enden.
+        """
+        from apps.approvals.services import ApprovalService
+        from core.exceptions import ConflictError
+
+        req = self._anfrage("netzwerk")
+        superadmin = UserFactory(role=UserRole.SUPERADMIN)
+
+        with pytest.raises(ConflictError):
+            ApprovalService.approve(req.pk, superadmin)
+
+    def test_unbekannte_rolle_laesst_sich_gar_nicht_erst_speichern(self):
+        """Die zweite Verteidigungslinie: das Feld nimmt sie nicht an."""
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        from apps.approvals.models import ApprovalRule
+        from tests.factories import ServiceTemplateFactory
+
+        rule = ApprovalRule(
+            template=ServiceTemplateFactory(),
+            approver_role="netzwerk",
+            condition={},
+            is_active=True,
+        )
+
+        with pytest.raises(DjangoValidationError) as exc:
+            rule.full_clean()
+        # Nicht irgendein Feld darf meckern, sondern genau dieses.
+        assert "approver_role" in exc.value.message_dict
+
     def test_hoehere_rolle_genuegt_ebenfalls(self):
         from apps.approvals.services import ApprovalService
 

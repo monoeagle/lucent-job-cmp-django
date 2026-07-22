@@ -83,19 +83,48 @@ beiden Schichten weg, bleibt die andere als Netz bestehen.
 
 ## 5. Wo direkt auf `request.POST` zugegriffen wird
 
-Zwei Stellen lesen Werte roh aus `request.POST`, ohne Form:
+Eine Stelle liest Werte weiterhin roh aus `request.POST`, ohne Form:
 
 | Stelle | Wert | Grund |
 |---|---|---|
 | `OrderCreateView.post` (`orders/views.py:180,190`) | `action`, `target_step` | Wizard-Navigationssteuerung (welcher Button wurde gedrückt), keine Domänendaten |
-| `ApprovalRejectView.post` (`approvals/views.py:43`) | `comment` | Freitext-Ablehnungsgrund, landet ungeprüft in `ApprovalService.reject()` |
 
-Die ersten beiden sind reine Steuerwerte für die View-interne Zustandsmaschine des
-Wizards, keine Werte, die validiert oder persistiert würden — vertretbar. `comment`
-in `ApprovalRejectView` dagegen wird an den Service durchgereicht und landet in
-der Datenbank, ganz ohne Längen- oder Inhaltsprüfung durch ein Form-Feld. Das ist
-eine echte Abweichung von der Regel „Forms fuer Validierung", nicht nur eine
-Steuergröße — in `todo.md` bisher nicht als eigenes Arbeitspaket erfasst.
+Das ist eine reine Steuergröße für die View-interne Zustandsmaschine des Wizards,
+kein Wert, der validiert oder persistiert würde — vertretbar.
+
+Bis AP-22 griff auch `ApprovalRejectView.post` roh auf `request.POST.get("comment", "")`
+zu, und der Wert landete ungeprüft in `ApprovalService.reject()` — eine echte
+Abweichung von der Regel „Forms fuer Validierung", weil er anders als die
+Wizard-Steuerwerte tatsächlich persistiert wird. Seit AP-22 validiert
+`RejectionForm` (`apps/approvals/forms.py:10-22`) den Kommentar, bevor er den
+Service erreicht:
+
+```python
+class RejectionForm(forms.Form):
+    comment = forms.CharField(
+        max_length=COMMENT_MAX_LENGTH,  # 2000
+        required=False,
+        strip=True,
+        widget=forms.Textarea,
+        label="Begruendung",
+    )
+```
+
+`ApprovalRejectView.post` (`approvals/views.py:44-49`) instanziiert das Form aus
+`request.POST`, verwirft ungültige Eingaben mit einer Django-Message statt sie
+weiterzureichen, und liest den Kommentar erst danach aus `cleaned_data`:
+
+```python
+form = RejectionForm(request.POST)
+if not form.is_valid():
+    messages.error(request, "Begruendung ungueltig — Ablehnung verworfen.")
+    return redirect("approvals:queue")
+comment = form.cleaned_data["comment"]
+```
+
+Die Grenze von 2000 Zeichen sitzt bewusst im Form, nicht im Modell — `comment`
+ist ein `TextField` ohne eigene Längenbegrenzung (Kapitel 3.4); ein Form kann eine
+Grenze melden, ein reines `TextField` nicht.
 
 ## 6. Zusammenfassung
 
@@ -104,8 +133,9 @@ Formular-Felder für Bestellparameter entstehen zur Laufzeit aus
 welcher der drei parameterbasierten Formen dieselbe Typ-zu-Feld-Logik dreimal
 dupliziert im Modul steht. Validiert wird zweistufig — die Form an der
 HTTP-Grenze, `TemplateValidator` über den Service an der Business-Grenze vor dem
-Schreiben. Zwei Stellen greifen roh auf `request.POST` zu: die Wizard-Steuerwerte
-sind unkritisch, der Ablehnungskommentar in `ApprovalRejectView` ist eine
-unvalidierte Ausnahme von der Form-Pflicht.
+Schreiben. Eine Stelle greift weiterhin roh auf `request.POST` zu — die
+unkritischen Wizard-Steuerwerte in `OrderCreateView`. Der frühere Ablehnungskommentar
+in `ApprovalRejectView` war bis AP-22 dieselbe Art Ausnahme, ist aber seit AP-22
+über `RejectionForm` validiert.
 
-> Quelle: cmp/apps/orders/forms.py, cmp/apps/catalog/forms.py, cmp/apps/orders/services.py, cmp/apps/catalog/services.py, cmp/core/domain/validators.py, cmp/apps/orders/views.py, cmp/apps/approvals/views.py, .claude/rules/django.md — am Code geprüft 2026-07-22
+> Quelle: cmp/apps/orders/forms.py, cmp/apps/catalog/forms.py, cmp/apps/approvals/forms.py, cmp/apps/orders/services.py, cmp/apps/catalog/services.py, cmp/core/domain/validators.py, cmp/apps/orders/views.py, cmp/apps/approvals/views.py, .claude/rules/django.md — am Code geprüft 2026-07-22

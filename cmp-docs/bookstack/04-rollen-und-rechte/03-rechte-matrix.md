@@ -72,28 +72,51 @@ Modell `has_change_permission`/`has_view_permission` und die verlangen bei
 Admin frei angelegter `admin`-Benutzer hat also nicht automatisch dieselben Rechte
 wie `test-admin` aus dem Seed, wenn dabei keine Permissions gesetzt werden.
 
-## 5. Lücke: Genehmigen prüft nicht, wer laut Regel genehmigen dürfte
+## 5. `approver_role` wird seit AP-22 vor jeder Entscheidung geprüft
 
-`ApprovalRule` hat ein Feld `approver_role` (Default `"approver"`,
-`cmp/apps/approvals/models.py:16`), das nach Namen suggeriert, welche Rolle eine
-konkrete Regel genehmigen darf. `ApprovalService.approve` und `.reject` lesen dieses
-Feld jedoch nicht — sie prüfen nur, dass die `ApprovalRequest` den Status `pending`
-hat, und setzen `decided_by` auf den übergebenen Benutzer, ohne dessen Rolle gegen
-`rule.approver_role` abzugleichen (`cmp/apps/approvals/services.py:49-64` für
-`approve`, `74-90` für `reject`). Die einzige Zugriffsprüfung ist
-`ApproverRequiredMixin` auf der View-Ebene (Abschnitt 3) — jeder Benutzer mit Rolle
-`approver`, `admin` oder `superadmin` kann jede offene Anfrage entscheiden,
-unabhängig davon, welchen Wert `approver_role` bei der zugehörigen Regel trägt.
+`ApprovalRule` hat ein Feld `approver_role` (Default `approver`,
+`cmp/apps/approvals/models.py:20-22`), das festlegt, welche Rolle eine
+konkrete Regel genehmigen darf. Bis AP-22 lasen `ApprovalService.approve` und
+`.reject` dieses Feld nicht — jeder Benutzer mit Rolle `approver`, `admin` oder
+`superadmin` konnte jede offene Anfrage entscheiden, unabhängig vom Regelwert.
+
+Seit AP-22 laden beide Methoden die Anfrage über die private Hilfsmethode
+`ApprovalService._load_pending` (`cmp/apps/approvals/services.py:51-80`), die
+zusätzlich zur bisherigen `pending`-Prüfung die Rolle des Entscheiders gegen
+`req.rule.approver_role` abgleicht:
+
+```python
+verlangt = req.rule.approver_role
+if not AccountService.is_at_least_role(approver.role, verlangt):
+    raise ForbiddenError(
+        f"Diese Entscheidung verlangt die Rolle '{verlangt}'."
+    )
+```
+
+Reicht die Rolle nicht, wirft `_load_pending` `ForbiddenError`
+(`cmp/core/exceptions.py:24-25`) — `approve` (`services.py:83-97`) und `reject`
+(`services.py:100-109`) rufen beide zuerst `_load_pending` auf, bevor sie den
+Status ändern. Die Views fangen `ForbiddenError` neben `ConflictError` und
+`NotFoundError` ab und zeigen sie als Django-Message
+(`cmp/apps/approvals/views.py:38`, `:53`). `ApproverRequiredMixin` bleibt die
+View-Ebene (Abschnitt 3) und reicht für sich allein nicht mehr aus — die
+Regel-Rolle ist jetzt eine zweite, service-seitige Schranke.
+
+Eine zweite, spätere Korrektur schließt eine Lücke, die diese Prüfung selbst
+aufriss: `approver_role` trägt jetzt `choices=UserRole.choices` statt Freitext,
+und `_load_pending` weist einen Regelwert außerhalb der vier Rollen vor der
+Rollenprüfung mit `ConflictError` zurück (`services.py:68-75`) — Details in
+[Kapitel 5.3](../05-genehmigungs-workflow/03-ein-und-mehrstufige-genehmigung.md).
 
 ## 6. Zusammenfassung
 
 Die Rollen-Durchsetzung in den Fach-Views ist konsistent über vier Mixins gelöst und
-lässt sich lückenlos auf `required_roles`-Listen zurückführen. Zwei Stellen weichen
-davon ab: Erstens hängt „Katalog/Regeln/Benutzer pflegen" faktisch an Django-Admin-
+lässt sich lückenlos auf `required_roles`-Listen zurückführen. Eine Stelle weicht
+davon ab: „Katalog/Regeln/Benutzer pflegen" hängt faktisch an Django-Admin-
 Permissions, nicht an `role` — für `admin` (im Unterschied zu `superadmin`) ist das
-nur im Seed abgesichert, nicht als Modell-Regel. Zweitens liest `ApprovalService`
-das Feld `ApprovalRule.approver_role` nicht aus — jede Rolle ab `approver` darf jede
-Anfrage entscheiden. Welche Objekte eine Rolle darüber hinaus sieht oder bearbeiten
-kann, zeigt die folgende Seite.
+nur im Seed abgesichert, nicht als Modell-Regel. Die frühere zweite Lücke —
+`ApprovalService` prüfte `ApprovalRule.approver_role` nicht — ist seit AP-22
+geschlossen: `_load_pending` erzwingt sie vor jeder Entscheidung. Welche Objekte
+eine Rolle darüber hinaus sieht oder bearbeiten kann, zeigt die folgende Seite.
 
-> Quelle: cmp/core/mixins.py, cmp/apps/catalog/views.py, cmp/apps/catalog/admin.py, cmp/apps/orders/views.py, cmp/apps/approvals/views.py, cmp/apps/approvals/services.py, cmp/apps/approvals/models.py, cmp/apps/approvals/admin.py, cmp/apps/cmdb/admin.py, cmp/apps/dashboard/admin_views.py, cmp/apps/audit/views.py, cmp/apps/accounts/admin.py, cmp/apps/accounts/services.py, cmp/apps/accounts/migrations/0001_initial.py, cmp/templates/admin_panel/rules.html — am Code geprüft 2026-07-22
+> Quelle: cmp/core/mixins.py, cmp/apps/catalog/views.py, cmp/apps/catalog/admin.py, cmp/apps/orders/views.py, cmp/apps/approvals/views.py, cmp/apps/approvals/services.py, cmp/apps/approvals/models.py, cmp/apps/approvals/admin.py, cmp/apps/cmdb/admin.py, cmp/apps/dashboard/admin_views.py, cmp/apps/audit/views.py, cmp/apps/accounts/admin.py, cmp/apps/accounts/services.py, cmp/apps/accounts/migrations/0001_initial.py, cmp/core/exceptions.py, cmp/templates/admin_panel/rules.html — am Code geprüft 2026-07-22

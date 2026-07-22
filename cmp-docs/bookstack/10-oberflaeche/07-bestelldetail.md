@@ -23,12 +23,14 @@ Bereitstellung → Aktiv).
 ## 3. Rolle und Zugriff
 
 Geschützt durch `RequesterRequiredMixin` (`cmp/core/mixins.py:61`) — alle vier
-Rollen dürfen eine Bestelldetailseite öffnen, sofern sie die ID kennen; die
-View selbst schränkt den Zugriff nicht auf den Besteller ein (kein
-`user=request.user`-Filter in `OrderDetailView.get_object`,
-`cmp/apps/orders/views.py:66-70`). Existiert die Bestellung nicht, wirft
-`OrderService.get_order` einen `NotFoundError`, den die View in `Http404`
-übersetzt.
+Rollen dürfen die View grundsätzlich aufrufen. Bis AP-22 schränkte die View den
+Zugriff darüber hinaus nicht auf den Besteller ein; seit AP-22 nutzt
+`OrderDetailView.get_object` (`cmp/apps/orders/views.py:66-70`)
+`OrderService.get_order_for_user(order_id, user)`
+(`cmp/apps/orders/services.py:27-39`): Besitzer sehen ihre eigene Bestellung,
+Rollen ab `approver` sehen jede — jeder andere Fall wirft `NotFoundError`, den
+die View in `Http404` übersetzt, damit sich eine fremde Bestellung nicht von
+einer nicht existierenden unterscheiden lässt.
 
 ## 4. URL und View
 
@@ -46,4 +48,4 @@ Der Kontext liefert zusätzlich die Liste aktiver Templates, wenn die
 Bestellung noch im Status `draft` ist (`cmp/apps/orders/views.py:76-77`) — nur
 dann macht ein „weitere Position hinzufügen" in der Oberfläche Sinn.
 
-> Quelle: cmp-docs/docs/images/screenshots/Screenshot_07_cmp.png, cmp/apps/orders/views.py, cmp/apps/orders/urls.py, cmp/core/mixins.py — am Code geprüft 2026-07-22
+> Quelle: cmp-docs/docs/images/screenshots/Screenshot_07_cmp.png, cmp/apps/orders/views.py, cmp/apps/orders/services.py, cmp/apps/orders/urls.py, cmp/core/mixins.py — am Code geprüft 2026-07-22

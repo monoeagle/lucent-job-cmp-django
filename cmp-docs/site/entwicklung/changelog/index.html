@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.3.3">
+        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.4.0">
       
       
         <meta name="author" content="LucentTools">
@@ -864,6 +864,67 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v140-zugriffskontrolle-unterhalb-der-rollen-2026-07-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.4.0 — Zugriffskontrolle unterhalb der Rollen — 2026-07-22
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.4.0 — Zugriffskontrolle unterhalb der Rollen — 2026-07-22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#warum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geandert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geändert
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nachtrag-eine-regression-des-eigenen-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nachtrag: eine Regression des eigenen Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v133-analyse-der-bestellportal-fremddoku-2026-07-21" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1691,6 +1752,67 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v140-zugriffskontrolle-unterhalb-der-rollen-2026-07-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.4.0 — Zugriffskontrolle unterhalb der Rollen — 2026-07-22
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.4.0 — Zugriffskontrolle unterhalb der Rollen — 2026-07-22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#warum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geandert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geändert
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nachtrag-eine-regression-des-eigenen-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nachtrag: eine Regression des eigenen Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v133-analyse-der-bestellportal-fremddoku-2026-07-21" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2160,6 +2282,68 @@
                   
 
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h2 id="v140-zugriffskontrolle-unterhalb-der-rollen-2026-07-22">v1.4.0 — Zugriffskontrolle unterhalb der Rollen — 2026-07-22<a class="headerlink" href="#v140-zugriffskontrolle-unterhalb-der-rollen-2026-07-22" title="Permanent link">&para;</a></h2>
+<p><strong>MINOR</strong>: Verhaltensänderung an der Zugriffsprüfung. Bestehende Rollen und
+URLs bleiben gleich, aber fremde Objekte sind nicht mehr erreichbar.</p>
+<h3 id="warum">Warum<a class="headerlink" href="#warum" title="Permanent link">&para;</a></h3>
+<p>Beim Schreiben des Bookstack-Handbuchs wurde jede Doku-Aussage am Code geprüft.
+Dabei fiel auf, dass die Rollen-Mixins zwar überall greifen, die Ebene darunter
+aber fehlte: <em>welcher</em> Nutzer <em>welches</em> Objekt sehen oder ändern darf. Eine
+Wegwerf-Probe hat das bestätigt — nicht behauptet, sondern ausgeführt:</p>
+<table>
+<thead>
+<tr>
+<th>Probe</th>
+<th>Ergebnis vorher</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fremder Requester öffnet fremde Bestellung</td>
+<td>HTTP 200</td>
+</tr>
+<tr>
+<td>Anonymer Zugriff auf <code>/debug-layout/</code></td>
+<td>HTTP 200</td>
+</tr>
+<tr>
+<td><code>approver</code> genehmigt trotz Regel <code>superadmin</code></td>
+<td><code>approved</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="geandert">Geändert<a class="headerlink" href="#geandert" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Bestellungen:</strong> <code>OrderService.get_order_for_user()</code> — Besitzer oder
+  Approver+; sonst <code>NotFoundError</code> und damit 404, das die Existenz nicht verrät.
+  <code>get_order()</code> bleibt unverändert, weil sechs Service-zu-Service-Aufrufer
+  keinen Request-Kontext haben.</li>
+<li><strong>Abonnements:</strong> <code>get_subscription_for_user()</code> zum Lesen,
+  <code>cancel_for_user()</code> zum Kündigen — Kündigen bleibt bewusst eine
+  Besitzerhandlung, eine höhere Rolle ersetzt sie nicht.</li>
+<li><strong>Benachrichtigungen:</strong> <code>mark_read_for_user()</code> filtert auf den Empfänger.</li>
+<li><strong><code>/debug-layout/</code>:</strong> nur noch bei <code>DEBUG</code> registriert. In Produktion
+  existiert die Route nicht mehr; verlinkt war sie nirgends.</li>
+<li><strong>Genehmigungen:</strong> <code>ApprovalRule.approver_role</code> wird endlich ausgewertet.
+  <code>ApprovalService._load_pending()</code> wirft <code>ForbiddenError</code> — die Exception gab
+  es seit jeher, benutzt hat sie niemand.</li>
+<li><strong>Ablehnungen:</strong> <code>RejectionForm</code> (max. 2000 Zeichen) statt
+  <code>request.POST.get("comment")</code>; das Modellfeld hat keine Längengrenze.</li>
+</ul>
+<h3 id="nachtrag-eine-regression-des-eigenen-fixes">Nachtrag: eine Regression des eigenen Fixes<a class="headerlink" href="#nachtrag-eine-regression-des-eigenen-fixes" title="Permanent link">&para;</a></h3>
+<p>Die Rollenprüfung hat ein Folgeproblem sichtbar gemacht: <code>approver_role</code> ist ein
+freies <code>CharField</code>. Solange niemand es las, war ein Wert wie <code>"netzwerk"</code>
+folgenlos — seit der Prüfung macht er die Anfrage für <strong>niemanden</strong>
+entscheidbar, auch nicht für den Superadmin, weil <code>is_at_least_role</code> für
+unbekannte Werte stumm <code>False</code> liefert. Zwei Verteidigungslinien dagegen:
+<code>choices=UserRole.choices</code> am Feld (Migration <code>0002</code>) und ein <code>ConflictError</code>
+im Service, der bestehende Altdaten als Konfigurationsfehler meldet, statt sie
+ewig hängen zu lassen.</p>
+<h3 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">&para;</a></h3>
+<p><strong>+17 Tests</strong> (330 → 347). Jede Lücke hat zuerst einen roten Test. Zusätzlich
+repariert: <code>test_shows_only_own_orders</code> versprach im Namen eine Besitzprüfung,
+verglich aber nur den Statuscode — jetzt prüft er den Inhalt, per
+Fehlerinjektion belegt.</p>
 <h2 id="v133-analyse-der-bestellportal-fremddoku-2026-07-21">v1.3.3 — Analyse der Bestellportal-Fremddoku — 2026-07-21<a class="headerlink" href="#v133-analyse-der-bestellportal-fremddoku-2026-07-21" title="Permanent link">&para;</a></h2>
 <p>Reines Doku-Release. <strong>PATCH</strong>: keine Code-Änderung am Portal, kein neues
 Anwendungs-Artefakt — das Offline-ZIP von v1.3.1 bleibt gültig.</p>
