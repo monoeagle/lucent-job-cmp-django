@@ -435,7 +435,7 @@ class OrderSubmitView(RequesterRequiredMixin, View):
 
     def post(self, request, pk):
         try:
-            OrderService.submit_order(order_id=pk)
+            OrderService.submit_order(order_id=pk, actor=request.user)
             messages.success(request, "Bestellung eingereicht.")
         except (ValidationError, ConflictError) as e:
             messages.error(request, e.message)

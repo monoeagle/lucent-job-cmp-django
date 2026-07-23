@@ -81,11 +81,11 @@ class TestTransition:
 
     def test_merges_extra_details(self):
         actor = UserFactory()
-        order = OrderFactory(status=OrderStatus.SUBMITTED)
+        order = OrderFactory(status=OrderStatus.PENDING_APPROVAL)
         transition(order, OrderStatus.REJECTED, actor, comment="zu teuer")
         log = AuditLog.objects.get(resource_type="order", resource_id=order.pk)
         assert log.details["comment"] == "zu teuer"
-        assert log.details["from"] == "submitted"
+        assert log.details["from"] == "pending_approval"
 
     def test_rejects_invalid_transition(self):
         actor = UserFactory()

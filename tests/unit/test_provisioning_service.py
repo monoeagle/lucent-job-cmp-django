@@ -80,3 +80,51 @@ class TestProvisioningServiceComplete:
         ProvisioningService.complete_dispatch(log2.pk, success=False)
         order.refresh_from_db()
         assert order.status == OrderStatus.FAILED
+
+
+@pytest.mark.django_db
+class TestProvisioningWiring:
+    def _approved_order(self):
+        from tests.factories import UserFactory, ServiceTemplateFactory, OrderFactory, OrderItemFactory
+        from core.domain.value_objects import OrderStatus
+        user = UserFactory(role="requester")
+        template = ServiceTemplateFactory()
+        order = OrderFactory(user=user, status=OrderStatus.APPROVED)
+        OrderItemFactory(order=order, template=template)
+        return order, user
+
+    def test_complete_done_creates_subscription_and_notifies(self):
+        from apps.provisioning.services import ProvisioningService
+        from apps.provisioning.models import DispatchLog
+        from apps.subscriptions.models import Subscription
+        from apps.notifications.models import Notification
+        from core.domain.value_objects import OrderStatus
+        order, user = self._approved_order()
+        ProvisioningService.dispatch_order(order.pk)
+        log = DispatchLog.objects.get(order_item__order=order)
+        ProvisioningService.complete_dispatch(log.pk, success=True)
+        order.refresh_from_db()
+        assert order.status == OrderStatus.DONE
+        assert Subscription.objects.filter(user=user).exists()
+        assert Notification.objects.filter(user=user, title="Bestellung abgeschlossen").exists()
+
+    def test_complete_failed_notifies_error(self):
+        from apps.provisioning.services import ProvisioningService
+        from apps.provisioning.models import DispatchLog
+        from apps.notifications.models import Notification
+        from core.domain.value_objects import OrderStatus
+        order, user = self._approved_order()
+        ProvisioningService.dispatch_order(order.pk)
+        log = DispatchLog.objects.get(order_item__order=order)
+        ProvisioningService.complete_dispatch(log.pk, success=False)
+        order.refresh_from_db()
+        assert order.status == OrderStatus.FAILED
+        assert Notification.objects.filter(user=user, title="Bereitstellung fehlgeschlagen").exists()
+
+    def test_dispatch_task_completes_chain(self):
+        from apps.provisioning.tasks import dispatch_provisioning
+        from core.domain.value_objects import OrderStatus
+        order, user = self._approved_order()
+        dispatch_provisioning(order.pk)   # eager: dispatch + sofort abschliessen
+        order.refresh_from_db()
+        assert order.status == OrderStatus.DONE

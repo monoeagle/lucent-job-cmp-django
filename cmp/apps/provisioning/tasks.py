@@ -6,8 +6,16 @@ from .services import ProvisioningService
 
 @shared_task
 def dispatch_provisioning(order_id):
-    """Dispatch all items of an approved order."""
+    """Dispatch all items of an approved order and (Stub) complete them at once."""
     ProvisioningService.dispatch_order(order_id)
+    # Stub: keine echte Pipeline -> Rueckmeldung sofort simulieren.
+    # AP-20 ersetzt das durch echtes Polling (complete_provisioning).
+    from apps.provisioning.models import DispatchLog
+
+    for log in DispatchLog.objects.filter(
+        order_item__order_id=order_id, status="running"
+    ):
+        ProvisioningService.complete_dispatch(log.pk, success=True)
 
 
 @shared_task

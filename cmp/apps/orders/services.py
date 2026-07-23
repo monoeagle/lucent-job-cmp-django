@@ -1,9 +1,11 @@
 """Service layer for the orders app."""
 from apps.accounts.services import AccountService
 from apps.catalog.services import CatalogService
+from apps.notifications.services import NotificationService
 from apps.orders.models import Order, OrderItem
+from apps.orders.transitions import transition
 from core.domain.enums import UserRole
-from core.domain.value_objects import OrderStatus, StatusMachine
+from core.domain.value_objects import OrderStatus
 from core.exceptions import ConflictError, NotFoundError, ValidationError
 
 
@@ -75,8 +77,11 @@ class OrderService:
         item.delete()
 
     @staticmethod
-    def submit_order(order_id):
-        """Submit a draft order (draft -> validated -> submitted)."""
+    def submit_order(order_id, actor):
+        """Submit a draft order and route it into the approval workflow."""
+        # lazy: bricht den orders<->approvals-Importzyklus
+        from apps.approvals.services import ApprovalService
+
         order = OrderService.get_order(order_id)
         if order.status != OrderStatus.DRAFT:
             raise ConflictError(
@@ -84,10 +89,26 @@ class OrderService:
             )
         if order.items.count() == 0:
             raise ValidationError("Cannot submit an order without items.")
-        StatusMachine.validate_transition(order.status, OrderStatus.VALIDATED)
-        order.status = OrderStatus.VALIDATED
-        order.save()
-        StatusMachine.validate_transition(order.status, OrderStatus.SUBMITTED)
-        order.status = OrderStatus.SUBMITTED
-        order.save()
+        transition(order, OrderStatus.VALIDATED, actor)
+        transition(order, OrderStatus.SUBMITTED, actor)
+        if ApprovalService.needs_approval(order.pk):
+            requests = ApprovalService.create_approval_requests(order.pk, actor)
+            OrderService._notify_approvers(order, requests)
+        else:
+            transition(order, OrderStatus.APPROVED, actor)
         return order
+
+    @staticmethod
+    def _notify_approvers(order, requests):
+        """Notify every user eligible to decide one of the created requests."""
+        empfaenger = {}
+        for role in {req.rule.approver_role for req in requests}:
+            for user in AccountService.list_users_with_min_role(role):
+                empfaenger[user.pk] = user
+        for user in empfaenger.values():
+            NotificationService.create(
+                user,
+                "Neue Genehmigung erforderlich",
+                f"Bestellung #{order.pk} wartet auf Ihre Genehmigung.",
+                category="info",
+            )

@@ -191,7 +191,7 @@ class TestOrderSubmitView:
         response = client.post(reverse("orders:submit", kwargs={"pk": order.pk}))
         assert response.status_code == 302
         order.refresh_from_db()
-        assert order.status == OrderStatus.SUBMITTED
+        assert order.status == OrderStatus.APPROVED
 
     def test_submit_empty_order_stays_draft(self, client):
         user = UserFactory()

@@ -41,3 +41,28 @@ class TestAccountService:
         assert AccountService.is_at_least_role(UserRole.APPROVER, UserRole.ADMIN) is False
         assert AccountService.is_at_least_role(UserRole.ADMIN, UserRole.ADMIN) is True
         assert AccountService.is_at_least_role(UserRole.SUPERADMIN, UserRole.ADMIN) is True
+
+
+@pytest.mark.django_db
+class TestListUsersWithMinRole:
+    def test_returns_users_at_or_above_role(self):
+        from apps.accounts.services import AccountService
+        from tests.factories import UserFactory
+        UserFactory(role="requester")
+        appr = UserFactory(role="approver")
+        admin = UserFactory(role="admin")
+        result = AccountService.list_users_with_min_role("approver")
+        pks = {u.pk for u in result}
+        assert appr.pk in pks
+        assert admin.pk in pks
+        assert len(result) == 2
+
+    def test_unknown_role_returns_empty(self):
+        from apps.accounts.services import AccountService
+        assert AccountService.list_users_with_min_role("bogus") == []
+
+    def test_excludes_inactive_users(self):
+        from apps.accounts.services import AccountService
+        from tests.factories import UserFactory
+        UserFactory(role="approver", is_active=False)
+        assert AccountService.list_users_with_min_role("approver") == []

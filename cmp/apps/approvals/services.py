@@ -1,11 +1,15 @@
 """Service layer for the approvals app."""
+from django.db import transaction
 from django.utils import timezone
 
 from apps.accounts.services import AccountService
 from apps.approvals.models import ApprovalRequest, ApprovalRule
+from apps.notifications.services import NotificationService
 from apps.orders.services import OrderService
+from apps.orders.transitions import transition
+from apps.provisioning.tasks import dispatch_provisioning
 from core.domain.enums import UserRole
-from core.domain.value_objects import OrderStatus, StatusMachine
+from core.domain.value_objects import OrderStatus
 from core.exceptions import ConflictError, ForbiddenError, NotFoundError
 
 
@@ -24,7 +28,7 @@ class ApprovalService:
         ).exists()
 
     @staticmethod
-    def create_approval_requests(order_id):
+    def create_approval_requests(order_id, actor):
         """Create pending approval requests for all matching rules."""
         order = OrderService.get_order(order_id)
         template_ids = order.items.values_list(
@@ -40,11 +44,7 @@ class ApprovalService:
             )
             requests.append(req)
         if requests:
-            StatusMachine.validate_transition(
-                order.status, OrderStatus.PENDING_APPROVAL
-            )
-            order.status = OrderStatus.PENDING_APPROVAL
-            order.save()
+            transition(order, OrderStatus.PENDING_APPROVAL, actor)
         return requests
 
     @staticmethod
@@ -93,8 +93,17 @@ class ApprovalService:
             not all_reqs.filter(status="pending").exists()
             and not all_reqs.filter(status="rejected").exists()
         ):
-            order.status = OrderStatus.APPROVED
-            order.save()
+            transition(order, OrderStatus.APPROVED, approver)
+            transaction.on_commit(
+                lambda: dispatch_provisioning.delay(order.pk)
+            )
+            NotificationService.create(
+                order.user,
+                "Bestellung genehmigt",
+                f"Ihre Bestellung #{order.pk} wurde genehmigt und wird "
+                "bereitgestellt.",
+                category="success",
+            )
 
     @staticmethod
     def reject(request_id, approver, comment=""):
@@ -105,8 +114,13 @@ class ApprovalService:
         req.decided_at = timezone.now()
         req.comment = comment
         req.save()
-        req.order.status = OrderStatus.REJECTED
-        req.order.save()
+        transition(req.order, OrderStatus.REJECTED, approver, comment=comment)
+        NotificationService.create(
+            req.order.user,
+            "Bestellung abgelehnt",
+            f"Ihre Bestellung #{req.order.pk} wurde abgelehnt: {comment}",
+            category="warning",
+        )
 
     @staticmethod
     def list_pending_requests():

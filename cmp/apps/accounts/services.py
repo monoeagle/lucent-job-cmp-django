@@ -48,3 +48,13 @@ class AccountService:
             return user_level >= min_level
         except ValueError:
             return False
+
+    @staticmethod
+    def list_users_with_min_role(minimum_role):
+        """Return active users whose role is at or above minimum_role."""
+        try:
+            min_level = ROLE_HIERARCHY.index(minimum_role)
+        except ValueError:
+            return []
+        eligible = ROLE_HIERARCHY[min_level:]
+        return list(User.objects.filter(role__in=eligible, is_active=True))

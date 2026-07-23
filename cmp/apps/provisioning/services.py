@@ -1,10 +1,13 @@
 """Service layer for provisioning operations."""
 from django.utils import timezone
 
+from apps.notifications.services import NotificationService
 from apps.orders.services import OrderService
+from apps.orders.transitions import transition
 from apps.provisioning.clients import GitLabStubClient
 from apps.provisioning.models import DispatchLog
-from core.domain.value_objects import OrderStatus, StatusMachine
+from apps.subscriptions.services import SubscriptionService
+from core.domain.value_objects import OrderStatus
 from core.exceptions import ConflictError, NotFoundError
 
 
@@ -19,9 +22,7 @@ class ProvisioningService:
             raise ConflictError(
                 f"Cannot dispatch order in status '{order.status}'."
             )
-        StatusMachine.validate_transition(order.status, OrderStatus.PROVISIONING)
-        order.status = OrderStatus.PROVISIONING
-        order.save()
+        transition(order, OrderStatus.PROVISIONING, None)
 
         client = GitLabStubClient()
         for item in order.items.select_related("template").all():
@@ -61,7 +62,20 @@ class ProvisioningService:
             return
 
         if all_logs.filter(status="failed").exists():
-            order.status = OrderStatus.FAILED
+            transition(order, OrderStatus.FAILED, None)
+            NotificationService.create(
+                order.user,
+                "Bereitstellung fehlgeschlagen",
+                f"Die Bereitstellung Ihrer Bestellung #{order.pk} ist "
+                "fehlgeschlagen.",
+                category="error",
+            )
         else:
-            order.status = OrderStatus.DONE
-        order.save()
+            transition(order, OrderStatus.DONE, None)
+            SubscriptionService.create_from_order(order.pk)
+            NotificationService.create(
+                order.user,
+                "Bestellung abgeschlossen",
+                f"Ihre Bestellung #{order.pk} wurde erfolgreich bereitgestellt.",
+                category="success",
+            )

@@ -11,6 +11,7 @@ from django.urls import reverse
 from apps.notifications.models import Notification
 from apps.subscriptions.models import Subscription
 from core.domain.enums import UserRole
+from core.domain.value_objects import OrderStatus
 from tests.factories import (
     OrderFactory,
     OrderItemFactory,
@@ -146,7 +147,11 @@ class TestGenehmigerRolle:
             is_active=True,
         )
         return ApprovalRequest.objects.create(
-            order=OrderFactory(user=UserFactory()), rule=rule, status="pending"
+            order=OrderFactory(
+                user=UserFactory(), status=OrderStatus.PENDING_APPROVAL
+            ),
+            rule=rule,
+            status="pending",
         )
 
     def test_zu_schwache_rolle_darf_nicht_genehmigen(self):
