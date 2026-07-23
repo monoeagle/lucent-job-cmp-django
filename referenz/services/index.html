@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.4.0">
+        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.5.0">
       
       
         <meta name="author" content="LucentTools">
@@ -613,6 +613,17 @@
     <span class="md-ellipsis">
       
         Übersicht
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bestellkette-zentraler-ubergang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bestellkette &amp; zentraler Übergang
       
     </span>
   </a>
@@ -1380,6 +1391,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#bestellkette-zentraler-ubergang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bestellkette &amp; zentraler Übergang
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#accountservice" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1519,6 +1541,24 @@
 <h2 id="ubersicht">Übersicht<a class="headerlink" href="#ubersicht" title="Permanent link">&para;</a></h2>
 <p>10 Service-Klassen kapseln die Business-Logik. Alle Services sind statische Klassen ohne Zustand — sie werden nicht instanziiert, sondern direkt aufgerufen.</p>
 <p><strong>Regel:</strong> Views rufen Services auf. Services rufen Models auf. Kein direkter Model-Zugriff aus Views.</p>
+<h2 id="bestellkette-zentraler-ubergang">Bestellkette &amp; zentraler Übergang<a class="headerlink" href="#bestellkette-zentraler-ubergang" title="Permanent link">&para;</a></h2>
+<p>Seit <strong>v1.5.0</strong> ist die komplette Kette verdrahtet: eine über die Oberfläche
+eingereichte Bestellung läuft bis zum Abonnement durch. Jeder Order-Statuswechsel
+geht über <strong>einen</strong> zentralen Übergang:</p>
+<p><code>apps/orders/transitions.py::transition(order, to_status, actor, **details)</code> prüft
+den Übergang (<code>StatusMachine</code>), setzt den Status und schreibt den Audit-Eintrag
+(<code>action = "order.&lt;status&gt;"</code>). Es ist der <strong>einzige</strong> erlaubte Ort für
+<code>order.status = …</code>; ein AST-Wächter-Test verbietet direkte Zuweisungen überall
+sonst. Benachrichtigungen bleiben <strong>bewusst</strong> außerhalb von <code>transition()</code> — ihre
+Empfänger und Texte sind je Übergang verschieden und stehen an der jeweiligen
+Aufrufstelle. Der Übergang liegt in <code>apps/orders/</code> statt <code>core/domain/</code>, weil er
+<code>AuditService</code> aus <code>apps/</code> aufruft und <code>core/ → apps/</code> nicht rückwärts zeigen darf;
+<code>StatusMachine</code> bleibt rein in <code>core/domain</code>.</p>
+<p><img src="../images/mermaid/referenz-services-1.svg" alt="Diagramm 1 aus referenz/services.md"></p>
+<p>Jeder durchgezogene Übergang schreibt über <code>transition()</code> einen Audit-Eintrag; die
+gestrichelten Kanten sind die Benachrichtigungen (<code>NotificationService.create</code>) am
+jeweiligen Aufrufort. Der Provisioning-Rückkanal ist bis AP-20 ein Stub, der sofort
+abschließt.</p>
 <h2 id="accountservice">AccountService<a class="headerlink" href="#accountservice" title="Permanent link">&para;</a></h2>
 <p><strong>Datei:</strong> <code>apps/accounts/services.py</code></p>
 <table>
@@ -1542,6 +1582,12 @@
 <td>str, str</td>
 <td><code>bool</code></td>
 <td>Prüft Rollen-Hierarchie</td>
+</tr>
+<tr>
+<td><code>list_users_with_min_role(minimum_role)</code></td>
+<td>str</td>
+<td><code>list[User]</code></td>
+<td>Aktive User mit Rolle ≥ <code>minimum_role</code>; wählt die Genehmiger-Empfänger für Benachrichtigungen</td>
 </tr>
 </tbody>
 </table>
@@ -1638,10 +1684,10 @@
 <td>Item entfernen (nur Draft)</td>
 </tr>
 <tr>
-<td><code>submit_order(order_id)</code></td>
-<td>int</td>
+<td><code>submit_order(order_id, actor)</code></td>
+<td>int, User</td>
 <td><code>Order</code></td>
-<td>Bestellung einreichen (Draft → Submitted)</td>
+<td>Bestellung einreichen: Draft → Validated → Submitted, dann je nach Regel <code>create_approval_requests</code> (→ Pending Approval, Genehmiger benachrichtigt) oder Auto-Approve (→ Approved). <code>actor</code> landet im Audit-Log</td>
 </tr>
 </tbody>
 </table>
@@ -1699,13 +1745,13 @@
 <td><code>dispatch_order(order_id)</code></td>
 <td>int</td>
 <td><code>None</code></td>
-<td>Provisioning starten (Approved → Provisioning)</td>
+<td>Provisioning starten (Approved → Provisioning via <code>transition</code>, actor=System)</td>
 </tr>
 <tr>
 <td><code>complete_dispatch(dispatch_log_id, success)</code></td>
 <td>int, bool</td>
 <td><code>None</code></td>
-<td>Dispatch abschließen, Order-Status aktualisieren</td>
+<td>Dispatch abschließen: sind alle Logs fertig → Done (dann <code>create_from_order</code>) bzw. Failed; Besteller benachrichtigt</td>
 </tr>
 </tbody>
 </table>
@@ -1728,22 +1774,22 @@
 <td>Prüft ob Approval nötig</td>
 </tr>
 <tr>
-<td><code>create_approval_requests(order_id)</code></td>
-<td>int</td>
+<td><code>create_approval_requests(order_id, actor)</code></td>
+<td>int, User</td>
 <td><code>list[ApprovalRequest]</code></td>
-<td>Erstellt Requests (Submitted → Pending)</td>
+<td>Erstellt Requests (Submitted → Pending Approval via <code>transition</code>)</td>
 </tr>
 <tr>
 <td><code>approve(request_id, approver)</code></td>
 <td>int, User</td>
 <td><code>None</code></td>
-<td>Genehmigen — prüft <code>rule.approver_role</code></td>
+<td>Genehmigen — prüft <code>rule.approver_role</code>. Sind alle Requests genehmigt: → Approved, <code>transaction.on_commit(dispatch_provisioning.delay)</code>, Besteller benachrichtigt</td>
 </tr>
 <tr>
 <td><code>reject(request_id, approver, comment)</code></td>
 <td>int, User, str</td>
 <td><code>None</code></td>
-<td>Ablehnen — prüft <code>rule.approver_role</code></td>
+<td>Ablehnen — prüft <code>rule.approver_role</code>; → Rejected via <code>transition</code>, Besteller benachrichtigt</td>
 </tr>
 <tr>
 <td><code>_load_pending(request_id, approver)</code></td>

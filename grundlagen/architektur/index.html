@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.4.0">
+        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.5.0">
       
       
         <meta name="author" content="LucentTools">
@@ -1569,6 +1569,12 @@ aussieht — steht in der <a href="../../betrieb/laufzeit-topologie/">Laufzeit-T
 </tr>
 </tbody>
 </table>
+<p>Diese Regel bestimmt, wo der zentrale Statusübergang wohnt: <code>transition(order,
+to_status, actor, **details)</code> (seit v1.5.0) bündelt Übergangsprüfung + Statuswechsel
++ Audit-Log und liegt in <code>apps/orders/transitions.py</code>, <strong>nicht</strong> in <code>core/domain/</code> —
+denn er ruft <code>AuditService</code> aus <code>apps/</code> auf, und <code>core/ → apps/</code> ist verboten. Die
+reine Regeltabelle <code>StatusMachine</code> bleibt in <code>core/domain/value_objects.py</code>. Details
+und Ablaufdiagramm: <a href="../../referenz/services/">Services → Bestellkette</a>.</p>
 <h2 id="app-struktur-hybrid-pattern">App-Struktur (Hybrid-Pattern)<a class="headerlink" href="#app-struktur-hybrid-pattern" title="Permanent link">&para;</a></h2>
 <p>Jede Django-App folgt dem gleichen Aufbau:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>apps/{name}/
@@ -1599,7 +1605,7 @@ aussieht — steht in der <a href="../../betrieb/laufzeit-topologie/">Laufzeit-T
 </tr>
 <tr>
 <td><code>orders</code></td>
-<td>Bestellungen, Items, Groups, Status-Machine</td>
+<td>Bestellungen, Items, Groups, zentraler Statusübergang (<code>transitions.py</code>)</td>
 </tr>
 <tr>
 <td><code>approvals</code></td>
