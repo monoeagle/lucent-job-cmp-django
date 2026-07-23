@@ -51,6 +51,13 @@ View → Form → Service → Model → Template
 | core/ | apps/ | ✗ |
 | core/domain/ | Django | ✗ (nur TextChoices) |
 
+Diese Regel bestimmt, wo der zentrale Statusübergang wohnt: `transition(order,
+to_status, actor, **details)` (seit v1.5.0) bündelt Übergangsprüfung + Statuswechsel
++ Audit-Log und liegt in `apps/orders/transitions.py`, **nicht** in `core/domain/` —
+denn er ruft `AuditService` aus `apps/` auf, und `core/ → apps/` ist verboten. Die
+reine Regeltabelle `StatusMachine` bleibt in `core/domain/value_objects.py`. Details
+und Ablaufdiagramm: [Services → Bestellkette](../referenz/services.md).
+
 ## App-Struktur (Hybrid-Pattern)
 
 Jede Django-App folgt dem gleichen Aufbau:
@@ -72,7 +79,7 @@ apps/{name}/
 |-----|---------------|
 | `accounts` | Custom User, Rollen, Auth (allauth) |
 | `catalog` | Service-Templates, Parameter-Schemas |
-| `orders` | Bestellungen, Items, Groups, Status-Machine |
+| `orders` | Bestellungen, Items, Groups, zentraler Statusübergang (`transitions.py`) |
 | `approvals` | Approval-Regeln, Genehmigungs-Requests |
 | `provisioning` | Celery-Tasks, GitLab-Client, DispatchLog |
 | `cmdb` | CMDB-Stub, Verfügbarkeits-Regeln, Context |

@@ -1,16 +1,110 @@
 {
-  "generatedAt": "2026-07-23T00:43:15",
+  "generatedAt": "2026-07-23T12:13:19",
   "range": {
     "from": "2025-07-24",
     "to": "2026-07-23"
   },
   "byDay": {
     "2026-07-23": {
-      "commits": 2,
+      "commits": 20,
       "kinds": {
-        "other": 2
+        "other": 3,
+        "docs": 5,
+        "refactor": 1,
+        "test": 5,
+        "feat": 6
       },
       "list": [
+        {
+          "sha": "f5ab238",
+          "subject": "merge: AP-13 Bestellkette verdrahtet",
+          "kind": "other"
+        },
+        {
+          "sha": "39c5e31",
+          "subject": "docs: AP-13 als erledigt markiert (Bestellkette verdrahtet)",
+          "kind": "docs"
+        },
+        {
+          "sha": "8820fc4",
+          "subject": "refactor: AP-13 ungenutzte StatusMachine-Importe entfernt",
+          "kind": "refactor"
+        },
+        {
+          "sha": "8bc9e72",
+          "subject": "test: AP-13 DoD-E2E durch die Views (submit -> approve -> DONE)",
+          "kind": "test"
+        },
+        {
+          "sha": "72931ab",
+          "subject": "test: AP-13 Waechter erkennt auch Tuple-Unpacking-Zuweisungen",
+          "kind": "test"
+        },
+        {
+          "sha": "f889130",
+          "subject": "test: AP-13 Waechter gegen direkte order.status-Zuweisung (AST)",
+          "kind": "test"
+        },
+        {
+          "sha": "9fba0b2",
+          "subject": "test: AP-13 Service-E2E an verdrahtete Kette angepasst",
+          "kind": "test"
+        },
+        {
+          "sha": "f34ae0e",
+          "subject": "feat: AP-13 OrderSubmitView reicht actor durch",
+          "kind": "feat"
+        },
+        {
+          "sha": "f5a350a",
+          "subject": "feat: AP-13 Provisioning verdrahtet (transition, Subscription, Notify, Stub-Abschluss)",
+          "kind": "feat"
+        },
+        {
+          "sha": "d549c9f",
+          "subject": "test: AP-13 TestGenehmigerRolle-Setup auf PENDING_APPROVAL",
+          "kind": "test"
+        },
+        {
+          "sha": "fb97fc7",
+          "subject": "feat: AP-13 submit_order verdrahtet (Approval-Branch, Auto-Approve, Notify)",
+          "kind": "feat"
+        },
+        {
+          "sha": "29fc547",
+          "subject": "docs: AP-13 Plan-Fix — Task-1-Test startet aus PENDING_APPROVAL (gueltiger Uebergang zu REJECTED)",
+          "kind": "docs"
+        },
+        {
+          "sha": "2497a95",
+          "subject": "feat: AP-13 ApprovalService verdrahtet (dispatch on_commit, Notify, Audit)",
+          "kind": "feat"
+        },
+        {
+          "sha": "5d85988",
+          "subject": "feat: AP-13 AccountService.list_users_with_min_role",
+          "kind": "feat"
+        },
+        {
+          "sha": "4d3fdec",
+          "subject": "feat: AP-13 zentraler order transition() mit Audit-Log",
+          "kind": "feat"
+        },
+        {
+          "sha": "cfdc0a9",
+          "subject": "docs: AP-13 Implementierungsplan — Bestellkette verdrahten",
+          "kind": "docs"
+        },
+        {
+          "sha": "a0d6cb1",
+          "subject": "docs: AP-13 Design-Spec — Bestellkette verdrahten",
+          "kind": "docs"
+        },
+        {
+          "sha": "f31bf3e",
+          "subject": "docs: Handoff + Insight + KPI-Zeile fuer Session 10 (v1.4.0)",
+          "kind": "docs"
+        },
         {
           "sha": "ed3114f",
           "subject": "merge: AP-22 Zugriffskontrolle (v1.4.0)",
@@ -1022,17 +1116,17 @@
     }
   },
   "stats": {
-    "totalCommits": 164,
+    "totalCommits": 182,
     "activeDays": 21,
     "longestStreak": 4,
     "topKinds": [
       {
         "kind": "feat",
-        "count": 62
+        "count": 68
       },
       {
         "kind": "docs",
-        "count": 52
+        "count": 57
       },
       {
         "kind": "fix",
@@ -1040,7 +1134,7 @@
       },
       {
         "kind": "other",
-        "count": 12
+        "count": 13
       },
       {
         "kind": "chore",
@@ -1048,10 +1142,14 @@
       },
       {
         "kind": "refactor",
-        "count": 4
+        "count": 5
+      },
+      {
+        "kind": "test",
+        "count": 5
       }
     ],
-    "testCount": 344
+    "testCount": 363
   },
   "phases": []
 }

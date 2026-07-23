@@ -407,5 +407,5 @@ class Command(BaseCommand):
         AuditService.log(
             user=None, action="system_startup",
             resource_type="system", resource_id=0,
-            details={"version": "1.4.0"},
+            details={"version": "1.5.0"},
         )

@@ -9,7 +9,7 @@
 | E2E | pytest-django | 4 |
 | **Gesamt** | | **347** |
 
-> Stand 2026-07-22: **347 Tests grün** (`venv/bin/python3 -m pytest`, 0 Errors).
+> Stand 2026-07-22: **366 Tests grün** (`venv/bin/python3 -m pytest`, 0 Errors).
 > Inkl. 8 Tests für `config.settings.production` (env-basierte Produktions-Settings)
 > und 78 Tests für den Offline-Installer (`deploy/lib.sh`, `deploy/ui.sh` — psql,
 > systemctl, dnf über Fakes injiziert; siehe `tests/unit/test_install_*.py`).

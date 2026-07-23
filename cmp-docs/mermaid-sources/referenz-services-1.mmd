@@ -1,0 +1,17 @@
+flowchart TD
+    DRAFT([DRAFT]) -->|"submit_order(actor)"| VALIDATED([VALIDATED])
+    VALIDATED --> SUBMITTED([SUBMITTED])
+    SUBMITTED -->|"Regel greift:<br/>create_approval_requests"| PENDING([PENDING_APPROVAL])
+    SUBMITTED -->|"keine Regel:<br/>Auto-Approve"| APPROVED([APPROVED])
+    PENDING -->|"approve — alle genehmigt"| APPROVED
+    PENDING -->|"reject"| REJECTED([REJECTED])
+    APPROVED -->|"on_commit:<br/>dispatch_provisioning"| PROVISIONING([PROVISIONING])
+    PROVISIONING -->|"complete_dispatch:<br/>alle erfolgreich"| DONE([DONE])
+    PROVISIONING -->|"complete_dispatch:<br/>ein Fehler"| FAILED([FAILED])
+    DONE -->|"create_from_order"| SUB[["Abonnement"]]
+
+    PENDING -.->|benachrichtigt| NG{{Genehmiger}}
+    APPROVED -.->|benachrichtigt| NB{{Besteller}}
+    REJECTED -.->|benachrichtigt| NB
+    DONE -.->|benachrichtigt| NB
+    FAILED -.->|benachrichtigt| NB

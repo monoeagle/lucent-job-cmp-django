@@ -6,6 +6,29 @@
 
 **Regel:** Views rufen Services auf. Services rufen Models auf. Kein direkter Model-Zugriff aus Views.
 
+## Bestellkette & zentraler Übergang
+
+Seit **v1.5.0** ist die komplette Kette verdrahtet: eine über die Oberfläche
+eingereichte Bestellung läuft bis zum Abonnement durch. Jeder Order-Statuswechsel
+geht über **einen** zentralen Übergang:
+
+`apps/orders/transitions.py::transition(order, to_status, actor, **details)` prüft
+den Übergang (`StatusMachine`), setzt den Status und schreibt den Audit-Eintrag
+(`action = "order.<status>"`). Es ist der **einzige** erlaubte Ort für
+`order.status = …`; ein AST-Wächter-Test verbietet direkte Zuweisungen überall
+sonst. Benachrichtigungen bleiben **bewusst** außerhalb von `transition()` — ihre
+Empfänger und Texte sind je Übergang verschieden und stehen an der jeweiligen
+Aufrufstelle. Der Übergang liegt in `apps/orders/` statt `core/domain/`, weil er
+`AuditService` aus `apps/` aufruft und `core/ → apps/` nicht rückwärts zeigen darf;
+`StatusMachine` bleibt rein in `core/domain`.
+
+<img src="../images/mermaid/referenz-services-1.svg" alt="Diagramm 1 aus referenz/services.md">
+
+Jeder durchgezogene Übergang schreibt über `transition()` einen Audit-Eintrag; die
+gestrichelten Kanten sind die Benachrichtigungen (`NotificationService.create`) am
+jeweiligen Aufrufort. Der Provisioning-Rückkanal ist bis AP-20 ein Stub, der sofort
+abschließt.
+
 ## AccountService
 
 **Datei:** `apps/accounts/services.py`
@@ -14,6 +37,7 @@
 |---------|-----------|----------|-------------|
 | `seed_stub_users()` | — | `int` | Erstellt 5 Demo-User, idempotent |
 | `is_at_least_role(user_role, minimum_role)` | str, str | `bool` | Prüft Rollen-Hierarchie |
+| `list_users_with_min_role(minimum_role)` | str | `list[User]` | Aktive User mit Rolle ≥ `minimum_role`; wählt die Genehmiger-Empfänger für Benachrichtigungen |
 
 ## CatalogService
 
@@ -39,7 +63,7 @@
 | `list_user_orders(user_id)` | int | `list[Order]` | Bestellungen eines Users |
 | `add_item(order_id, template_id, parameters)` | int, int, dict | `OrderItem` | Item hinzufügen (nur Draft) |
 | `remove_item(item_id)` | int | `None` | Item entfernen (nur Draft) |
-| `submit_order(order_id)` | int | `Order` | Bestellung einreichen (Draft → Submitted) |
+| `submit_order(order_id, actor)` | int, User | `Order` | Bestellung einreichen: Draft → Validated → Submitted, dann je nach Regel `create_approval_requests` (→ Pending Approval, Genehmiger benachrichtigt) oder Auto-Approve (→ Approved). `actor` landet im Audit-Log |
 
 ## ContextService
 
@@ -58,8 +82,8 @@
 
 | Methode | Parameter | Rückgabe | Beschreibung |
 |---------|-----------|----------|-------------|
-| `dispatch_order(order_id)` | int | `None` | Provisioning starten (Approved → Provisioning) |
-| `complete_dispatch(dispatch_log_id, success)` | int, bool | `None` | Dispatch abschließen, Order-Status aktualisieren |
+| `dispatch_order(order_id)` | int | `None` | Provisioning starten (Approved → Provisioning via `transition`, actor=System) |
+| `complete_dispatch(dispatch_log_id, success)` | int, bool | `None` | Dispatch abschließen: sind alle Logs fertig → Done (dann `create_from_order`) bzw. Failed; Besteller benachrichtigt |
 
 ## ApprovalService
 
@@ -68,9 +92,9 @@
 | Methode | Parameter | Rückgabe | Beschreibung |
 |---------|-----------|----------|-------------|
 | `needs_approval(order_id)` | int | `bool` | Prüft ob Approval nötig |
-| `create_approval_requests(order_id)` | int | `list[ApprovalRequest]` | Erstellt Requests (Submitted → Pending) |
-| `approve(request_id, approver)` | int, User | `None` | Genehmigen — prüft `rule.approver_role` |
-| `reject(request_id, approver, comment)` | int, User, str | `None` | Ablehnen — prüft `rule.approver_role` |
+| `create_approval_requests(order_id, actor)` | int, User | `list[ApprovalRequest]` | Erstellt Requests (Submitted → Pending Approval via `transition`) |
+| `approve(request_id, approver)` | int, User | `None` | Genehmigen — prüft `rule.approver_role`. Sind alle Requests genehmigt: → Approved, `transaction.on_commit(dispatch_provisioning.delay)`, Besteller benachrichtigt |
+| `reject(request_id, approver, comment)` | int, User, str | `None` | Ablehnen — prüft `rule.approver_role`; → Rejected via `transition`, Besteller benachrichtigt |
 | `_load_pending(request_id, approver)` | int, User | `ApprovalRequest` | Intern: lädt die offene Anfrage und prüft die von der Regel verlangte Rolle (`ForbiddenError`); unbekannter Rollenwert → `ConflictError` |
 | `list_pending_requests()` | — | `list[ApprovalRequest]` | Offene Requests |
 

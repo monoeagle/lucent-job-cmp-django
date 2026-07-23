@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.4.0">
+        <meta name="description" content="IT-Service CloudMan Portal · Django 6.0 + HTMX + DaisyUI · TDD · v1.5.0">
       
       
         <meta name="author" content="LucentTools">
@@ -1319,8 +1319,9 @@
 
 <h1 id="arbeitspakete-roadmap">Arbeitspakete &amp; Roadmap<a class="headerlink" href="#arbeitspakete-roadmap" title="Permanent link">&para;</a></h1>
 <p>Arbeitspaket-Quelle: <code>todo.md</code> (offen) / <code>todo-erledigt.md</code> (fertig) im Repo-Root.
-Status: <strong>AP-0 … AP-10 fertig</strong> (Backend B0–B9 + HTMX-Frontend) und <strong>AP-22 erledigt</strong>
-(Zugriffskontrolle) — 347 Tests grün, v1.4.0. <strong>AP-11 … AP-21 und AP-23 offen</strong>.</p>
+Status: <strong>AP-0 … AP-10 fertig</strong> (Backend B0–B9 + HTMX-Frontend), <strong>AP-22 erledigt</strong>
+(Zugriffskontrolle) und <strong>AP-13 erledigt</strong> (Bestellkette verdrahtet) — 366 Tests grün, v1.5.0.
+<strong>AP-11, AP-12, AP-14 … AP-21 und AP-23 offen</strong>.</p>
 <h3 id="offene-arbeitspakete">Offene Arbeitspakete<a class="headerlink" href="#offene-arbeitspakete" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -1340,11 +1341,6 @@ Status: <strong>AP-0 … AP-10 fertig</strong> (Backend B0–B9 + HTMX-Frontend)
 <td>AP-12</td>
 <td>Live-Updates (Django Channels)</td>
 <td>stand im v1-Zielbild, nie gebaut (kein <code>channels</code> in den Requirements, <code>asgi.py</code> Django-Default); Benachrichtigungen aktualisieren bis dahin per Seiten-Reload</td>
-</tr>
-<tr>
-<td><strong>AP-13</strong></td>
-<td><strong>Bestellkette verdrahten</strong> <em>(Vorrang)</em></td>
-<td>eingereichte Bestellungen erreichen keinen Genehmiger; Audit-Log und Benachrichtigungen zeigen nur Seed-Daten — <a href="../../intern/analyse-bestellportal/">Analyse §1c</a></td>
 </tr>
 <tr>
 <td>AP-14</td>
@@ -1393,8 +1389,9 @@ Status: <strong>AP-0 … AP-10 fertig</strong> (Backend B0–B9 + HTMX-Frontend)
 </tr>
 </tbody>
 </table>
-<p>Empfohlene Reihenfolge: <strong>13 → 15 → 14 → 16+17 → 18 → 19 → 20 → 21</strong>, AP-23 nebenher.
-AP-18 und AP-20 zahlen erst ein, wenn AP-13 die Auslösepunkte geschaffen hat.
+<p>Empfohlene Reihenfolge: <strong>15 → 14 → 16+17 → 18 → 19 → 20 → 21</strong>, AP-23 nebenher.
+AP-13 (Vorrang) ist mit v1.5.0 erledigt und hat die Auslösepunkte geschaffen, auf denen
+AP-18 (E-Mail) und AP-20 (echter GitLab-Client) nun aufsetzen können.
 AP-22 (Zugriffskontrolle) stand hier zuerst und ist mit v1.4.0 erledigt.
 AP-13 bis AP-21 stammen aus der <a href="../../intern/analyse-bestellportal/">Analyse der Bestellportal-Fremddoku</a>,
 AP-22 (erledigt) und AP-23 aus dem Code-Abgleich beim Schreiben des Bookstack-Handbuchs.</p>
@@ -1410,9 +1407,9 @@ AP-22 (erledigt) und AP-23 aus dem Code-Abgleich beim Schreiben des Bookstack-Ha
 <h2 id="roadmap-gantt">Roadmap-Gantt<a class="headerlink" href="#roadmap-gantt" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Spannen <strong>schematisch</strong>: Die Git-Historie wurde zu v1.0.0 (2026-03-29) gestaucht — die
-AP-<strong>Reihenfolge</strong> ist real, die Tagesspannen illustrieren nur den Ablauf. Für AP-13 … AP-21
+AP-<strong>Reihenfolge</strong> ist real, die Tagesspannen illustrieren nur den Ablauf. Für AP-14 … AP-21
 sind die Spannen <strong>Schätzungen</strong>, keine Zusagen.
-Offen: AP-11, AP-12 sowie AP-13 … AP-21 (siehe Tabelle oben).</p>
+Offen: AP-11, AP-12 sowie AP-14 … AP-21 und AP-23 (siehe Tabelle oben).</p>
 </blockquote>
 <p><img src="../../images/mermaid/entwicklung-arbeitspakete-2.svg" alt="Diagramm 2 aus entwicklung/arbeitspakete.md"></p>
 

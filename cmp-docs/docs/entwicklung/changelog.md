@@ -1,5 +1,54 @@
 # Changelog
 
+## v1.5.0 — Bestellkette verdrahtet — 2026-07-23
+
+**MINOR**: Verhaltensänderung, keine API- oder Rollenänderung. Eine über die
+Oberfläche eingereichte Bestellung durchläuft jetzt die ganze Kette bis zum
+Abonnement — bisher blieb sie in `SUBMITTED` stehen und erreichte keinen
+Genehmiger.
+
+### Warum
+
+Die Bausteine der Kette (`create_approval_requests`, die Celery-Tasks,
+`SubscriptionService.create_from_order`, `AuditService.log`,
+`NotificationService.create`) existierten und waren getestet — aber niemand rief
+sie im laufenden Code auf. Der E2E-Test rief die Services selbst nacheinander auf
+und verdeckte so, dass die Produktions-Verdrahtung fehlte. Folge im Betrieb:
+Audit-Log und Benachrichtigungs-Glocke zeigten ausschließlich Seed-Daten.
+
+### Geändert
+
+- **Zentraler Übergang** `apps/orders/transitions.py::transition(order, to_status,
+  actor, **details)` — bündelt Übergangsprüfung (`StatusMachine`), Statuswechsel
+  und `AuditService.log`. Der einzige erlaubte Ort für `order.status = …`; ein
+  AST-Wächter-Test verbietet direkte Zuweisungen überall sonst. Bewusst **ohne**
+  Benachrichtigungen — deren Empfänger/Text sind je Übergang verschieden und
+  bleiben am Aufrufort. Liegt in `apps/orders/` statt `core/domain/`, weil er
+  `AuditService` aus `apps/` aufruft und `core/ → apps/` nicht rückwärts zeigen
+  darf; `StatusMachine` bleibt rein in `core/domain`.
+- **Einreichen** (`OrderService.submit_order`): greift eine Genehmigungsregel,
+  entstehen `ApprovalRequest`s und die Order geht auf `PENDING_APPROVAL`, die
+  berechtigten Genehmiger werden benachrichtigt; greift keine Regel, wird direkt
+  auf `APPROVED` durchgeschaltet.
+- **Genehmigen** (`ApprovalService.approve`): sind alle Requests genehmigt, startet
+  die Provisionierung über `transaction.on_commit(dispatch_provisioning.delay)` —
+  im `on_commit`, damit der Task nicht vor dem Commit läuft. Der Besteller wird
+  benachrichtigt.
+- **Provisionieren**: `dispatch_order` → `PROVISIONING`; der Stub schließt sofort
+  ab (echter Rückkanal folgt mit AP-20). Bei `DONE` entsteht das Abonnement
+  (`create_from_order`), bei `DONE`/`FAILED` wird der Besteller benachrichtigt.
+- **Ablehnen**: `reject` schaltet über `transition()` auf `REJECTED` und
+  benachrichtigt den Besteller mit dem Kommentar.
+- **Genehmiger-Empfänger**: neuer Helfer `AccountService.list_users_with_min_role`
+  wählt je Regel die entscheidungsberechtigten Nutzer.
+
+### Nachweis
+
+Ein E2E-Test treibt die Kette **durch die Views** (`POST orders:submit` → Queue →
+`POST approvals:approve` → `DONE`, Abonnement, Audit-Log, Besteller benachrichtigt),
+mit `django_capture_on_commit_callbacks`, damit der `on_commit`-Dispatch feuert.
+347 → **366 Tests grün**.
+
 ## v1.4.0 — Zugriffskontrolle unterhalb der Rollen — 2026-07-22
 
 **MINOR**: Verhaltensänderung an der Zugriffsprüfung. Bestehende Rollen und

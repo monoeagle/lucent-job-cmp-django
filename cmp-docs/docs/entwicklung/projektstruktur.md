@@ -18,7 +18,7 @@ lucent-app-mpp-TDD-Django/
 │   ├── apps/                         # 10 Feature-Module
 │   │   ├── accounts/                # Auth, User, Rollen
 │   │   ├── catalog/                 # Service-Katalog
-│   │   ├── orders/                  # Bestellungen
+│   │   ├── orders/                  # Bestellungen + transitions.py (zentraler Statusübergang)
 │   │   ├── approvals/              # Genehmigungen
 │   │   ├── provisioning/           # Celery-Tasks, GitLab
 │   │   ├── cmdb/                   # CMDB-Stub, Context

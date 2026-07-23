@@ -31,37 +31,8 @@
 
 > **AP-13 … AP-21** ergänzt am 2026-07-22 aus der Analyse der Bestellportal-Fremddoku
 > (`analyse/analyse-bestellportal.md`, Doku-Seite unter „Intern"). Jede Zeile dort ist
-> grep-belegt gegen den echten Code. Empfohlene Reihenfolge: **13 → 15 → 14 → 16+17 → 18 → 19 → 20 → 21**.
-
-## AP-13 · Bestellkette verdrahten (Vorrang)
-> **Befund:** Die Bausteine existieren und sind getestet, aber niemand ruft sie auf.
-> `OrderService.submit_order` endet bei `SUBMITTED` — `create_approval_requests` wird
-> in `cmp/` **nirgends** aufgerufen, es entsteht kein `ApprovalRequest`, die Queue bleibt
-> leer. Eine über die Oberfläche eingereichte Bestellung erreicht **keinen Genehmiger**.
-> Ebenso ungenutzt: die Celery-Tasks, `SubscriptionService.create_from_order`,
-> `AuditService.log` und `NotificationService.create` (Letztere nur aus `seed.py`).
-> Folge: Audit-Log und Benachrichtigungen zeigen im Betrieb ausschließlich Seed-Daten.
-- [x] `apps/orders/transitions.py`: `transition(order, to_status, actor, **details)` — kapselt
-      Übergangsprüfung (`StatusMachine`) + Statuswechsel + `AuditService.log`. **Bewusst ohne
-      Benachrichtigungen** — deren Empfänger/Text sind je Übergang verschieden und bleiben am Aufrufort.
-      (Ort: `apps/orders/` statt `core/domain/`, weil `transition()` `AuditService` aus `apps/` aufruft
-      und `core/ → apps/` nicht rückwärts zeigen darf; `StatusMachine` bleibt rein in `core/domain`.)
-- [x] Lücke 1: Ende `submit_order` → `create_approval_requests`; greift keine Regel, direkt
-      `SUBMITTED → APPROVED` (von der `StatusMachine` bereits erlaubt)
-- [x] Lücke 2: Ende `ApprovalService.approve` (wenn alle Requests genehmigt) →
-      `transaction.on_commit(lambda: dispatch_provisioning.delay(order.pk))`
-- [x] Lücke 3: Rückmeldung → `complete_dispatch`; Stub schließt sofort ab (echter Rückkanal: AP-20)
-- [x] Lücke 4: Übergang nach `DONE` → `SubscriptionService.create_from_order`
-- [x] Lücke 5: `approve`/`reject` auf `transition()` umstellen — sie setzen `order.status`
-      heute direkt und umgehen `validate_transition`
-- [x] Lücke 6: Benachrichtigungen — eingereicht → Genehmiger; entschieden → Besteller;
-      fertig/fehlgeschlagen → Besteller
-- [x] **Wächter-Test:** verbietet direkte `order.status = …`-Zuweisungen außerhalb von
-      `transitions.py` — sonst schleicht sich der Umweg zurück (AST-Scan, erkennt auch Tuple-Unpacking)
-- **DoD:** ✅ E2E-Test geht **durch die Views** (`POST orders:submit` → Queue enthält den Request →
-  `POST approvals:approve` → Order `DONE`, Subscription existiert, Audit-Log gefüllt, Besteller
-  benachrichtigt) · kein direkter Service-Aufruf im Testkörper · Wächter-Test grün
-  — umgesetzt in `docs/superpowers/plans/2026-07-23-ap13-bestellkette-verdrahten.md`, 366 Tests grün
+> grep-belegt gegen den echten Code. **AP-13 ist mit v1.5.0 erledigt** (→ `todo-erledigt.md`).
+> Empfohlene Reihenfolge der offenen: **15 → 14 → 16+17 → 18 → 19 → 20 → 21**.
 
 ## AP-14 · Logging-Fundament
 > **Befund:** `grep LOGGING cmp/config/` und `grep getLogger cmp/` → **je 0 Treffer**.

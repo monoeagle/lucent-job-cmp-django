@@ -1,6 +1,27 @@
 # MPP Django — Todo erledigt
 
-> Fertige Arbeitspakete (newest-first). Quelle offen: `todo.md`. Stand 2026-07-22, v1.4.0, 347 Tests grün.
+> Fertige Arbeitspakete (newest-first). Quelle offen: `todo.md`. Stand 2026-07-23, v1.5.0, 366 Tests grün.
+
+## AP-13 · Bestellkette verdrahten ✅
+Die Bausteine der Kette existierten und waren getestet, aber niemand rief sie im
+laufenden Code auf — eine eingereichte Bestellung blieb in `SUBMITTED` stehen und
+erreichte keinen Genehmiger; Audit-Log und Benachrichtigungen zeigten nur Seed-Daten.
+Zentraler Übergang `apps/orders/transitions.py::transition(order, to_status, actor,
+**details)` bündelt jetzt Übergangsprüfung (`StatusMachine`) + Statuswechsel +
+`AuditService.log` und ist der einzige erlaubte Ort für `order.status = …` (ein
+AST-Wächter-Test verbietet direkte Zuweisungen sonst, erkennt auch Tuple-Unpacking).
+Bewusst in `apps/orders/` statt `core/domain/`, weil er `AuditService` aus `apps/`
+aufruft und `core/ → apps/` nicht rückwärts zeigen darf; `StatusMachine` bleibt rein.
+Die sechs fehlenden Aufrufe verdrahtet: `submit_order` → Genehmigungsanfragen bzw.
+Auto-Approve (+ Genehmiger-Benachrichtigung via neuem
+`AccountService.list_users_with_min_role`); `approve` → `transaction.on_commit(
+dispatch_provisioning.delay)` + Besteller-Benachrichtigung; Provisioning-Stub schließt
+sofort ab; `DONE` → `create_from_order` + Benachrichtigung; `reject` → `REJECTED` +
+Benachrichtigung. `approve`/`reject`/`submit`/Provisioning laufen jetzt alle über
+`transition()` statt direktem `order.status`-Setzen. Nachweis: E2E-Test **durch die
+Views** (`POST orders:submit` → Queue → `POST approvals:approve` → `DONE`, Abonnement,
+Audit-Log, Besteller benachrichtigt) mit `django_capture_on_commit_callbacks`.
+347 → 366 Tests grün. Plan: `docs/superpowers/plans/2026-07-23-ap13-bestellkette-verdrahten.md`.
 
 ## AP-22 · Zugriffskontrolle schließen ✅
 Objektbezogene Prüfung unterhalb der Rollen-Mixins: `get_order_for_user`,
