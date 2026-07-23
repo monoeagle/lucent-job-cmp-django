@@ -5,7 +5,7 @@ from apps.notifications.services import NotificationService
 from apps.orders.models import Order, OrderItem
 from apps.orders.transitions import transition
 from core.domain.enums import UserRole
-from core.domain.value_objects import OrderStatus, StatusMachine
+from core.domain.value_objects import OrderStatus
 from core.exceptions import ConflictError, NotFoundError, ValidationError
 
 

@@ -9,7 +9,7 @@ from apps.orders.services import OrderService
 from apps.orders.transitions import transition
 from apps.provisioning.tasks import dispatch_provisioning
 from core.domain.enums import UserRole
-from core.domain.value_objects import OrderStatus, StatusMachine
+from core.domain.value_objects import OrderStatus
 from core.exceptions import ConflictError, ForbiddenError, NotFoundError
 
 

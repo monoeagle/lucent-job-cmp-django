@@ -7,7 +7,7 @@ from apps.orders.transitions import transition
 from apps.provisioning.clients import GitLabStubClient
 from apps.provisioning.models import DispatchLog
 from apps.subscriptions.services import SubscriptionService
-from core.domain.value_objects import OrderStatus, StatusMachine
+from core.domain.value_objects import OrderStatus
 from core.exceptions import ConflictError, NotFoundError
 
 
