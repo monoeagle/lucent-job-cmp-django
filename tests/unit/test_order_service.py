@@ -69,19 +69,51 @@ class TestOrderServiceSubmit:
     def test_submit_order_with_items(self):
         order = OrderFactory()
         OrderItemFactory(order=order)
-        result = OrderService.submit_order(order_id=order.pk)
-        assert result.status == OrderStatus.SUBMITTED
+        result = OrderService.submit_order(order_id=order.pk, actor=order.user)
+        assert result.status == OrderStatus.APPROVED
 
     def test_submit_empty_order_raises(self):
         order = OrderFactory()
         with pytest.raises(ValidationError):
-            OrderService.submit_order(order_id=order.pk)
+            OrderService.submit_order(order_id=order.pk, actor=order.user)
 
     def test_submit_non_draft_raises(self):
         order = OrderFactory(status=OrderStatus.SUBMITTED)
         OrderItemFactory(order=order)
         with pytest.raises(ConflictError):
-            OrderService.submit_order(order_id=order.pk)
+            OrderService.submit_order(order_id=order.pk, actor=order.user)
+
+
+@pytest.mark.django_db
+class TestOrderServiceSubmitWiring:
+    def test_submit_without_rule_auto_approves(self):
+        from apps.audit.models import AuditLog
+        user = UserFactory(role="requester")
+        template = ServiceTemplateFactory()
+        order = OrderFactory(user=user)
+        OrderItemFactory(order=order, template=template)
+        result = OrderService.submit_order(order_id=order.pk, actor=user)
+        assert result.status == OrderStatus.APPROVED
+        assert AuditLog.objects.filter(
+            resource_type="order", resource_id=order.pk, action="order.approved"
+        ).exists()
+
+    def test_submit_with_rule_goes_pending_and_notifies_approvers(self):
+        from apps.approvals.models import ApprovalRule, ApprovalRequest
+        from apps.notifications.models import Notification
+        user = UserFactory(role="requester")
+        approver = UserFactory(role="approver")
+        template = ServiceTemplateFactory()
+        ApprovalRule.objects.create(template=template, approver_role="approver")
+        order = OrderFactory(user=user)
+        OrderItemFactory(order=order, template=template)
+        OrderService.submit_order(order_id=order.pk, actor=user)
+        order.refresh_from_db()
+        assert order.status == OrderStatus.PENDING_APPROVAL
+        assert ApprovalRequest.objects.filter(order=order).count() == 1
+        assert Notification.objects.filter(
+            user=approver, title="Neue Genehmigung erforderlich"
+        ).exists()
 
 
 @pytest.mark.django_db
