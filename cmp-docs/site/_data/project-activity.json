@@ -1,20 +1,30 @@
 {
-  "generatedAt": "2026-07-23T12:13:19",
+  "generatedAt": "2026-07-23T13:15:40",
   "range": {
     "from": "2025-07-24",
     "to": "2026-07-23"
   },
   "byDay": {
     "2026-07-23": {
-      "commits": 20,
+      "commits": 22,
       "kinds": {
-        "other": 3,
-        "docs": 5,
+        "docs": 6,
+        "other": 4,
         "refactor": 1,
         "test": 5,
         "feat": 6
       },
       "list": [
+        {
+          "sha": "2f87f15",
+          "subject": "docs: Handoff + Insight + KPI-Zeile fuer Session 11 (v1.5.0)",
+          "kind": "docs"
+        },
+        {
+          "sha": "7fdc9f8",
+          "subject": "release: v1.5.0 — AP-13 Bestellkette; Doku, Ablaufdiagramm und Kennzahlen nachgezogen",
+          "kind": "other"
+        },
         {
           "sha": "f5ab238",
           "subject": "merge: AP-13 Bestellkette verdrahtet",
@@ -1116,7 +1126,7 @@
     }
   },
   "stats": {
-    "totalCommits": 182,
+    "totalCommits": 184,
     "activeDays": 21,
     "longestStreak": 4,
     "topKinds": [
@@ -1126,7 +1136,7 @@
       },
       {
         "kind": "docs",
-        "count": 57
+        "count": 58
       },
       {
         "kind": "fix",
@@ -1134,7 +1144,7 @@
       },
       {
         "kind": "other",
-        "count": 13
+        "count": 14
       },
       {
         "kind": "chore",
