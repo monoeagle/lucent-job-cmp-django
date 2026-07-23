@@ -7,6 +7,15 @@ CMP_ROOT = Path(__file__).resolve().parents[2] / "cmp"
 ALLOWED = {CMP_ROOT / "apps" / "orders" / "transitions.py"}
 
 
+def _leaf_targets(target):
+    """Recursively yield all leaf targets from tuple/list unpacking."""
+    if isinstance(target, (ast.Tuple, ast.List)):
+        for elt in target.elts:
+            yield from _leaf_targets(elt)
+    else:
+        yield target
+
+
 def _order_status_assignments(path):
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     hits = []
@@ -18,13 +27,14 @@ def _order_status_assignments(path):
         else:
             continue
         for target in targets:
-            if not (isinstance(target, ast.Attribute) and target.attr == "status"):
-                continue
-            base = target.value
-            name = base.id if isinstance(base, ast.Name) else (
-                base.attr if isinstance(base, ast.Attribute) else "")
-            if "order" in name.lower():   # order.status, req.order.status, ...
-                hits.append(node.lineno)
+            for leaf in _leaf_targets(target):
+                if not (isinstance(leaf, ast.Attribute) and leaf.attr == "status"):
+                    continue
+                base = leaf.value
+                name = base.id if isinstance(base, ast.Name) else (
+                    base.attr if isinstance(base, ast.Attribute) else "")
+                if "order" in name.lower():   # order.status, req.order.status, ...
+                    hits.append(node.lineno)
     return hits
 
 
